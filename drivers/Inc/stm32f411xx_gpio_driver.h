@@ -31,29 +31,29 @@ typedef struct
 /*
  * Peripheral Clock setup
  */
-void GPIO_PeriClockControl(void);
+void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi);       /* enOrDi - enable or disable value */
 
 /*
  * Init and De-init
  */
-void GPIO_Init(void);
-void GPIO_DeInit(void);
+void GPIO_Init(GPIO_Handler_TypeDef *pGPIOHandle);          /* Initialise GPIO through GPIO reg + GPIO settings struct */
+void GPIO_DeInit(GPIO_Reg_TypeDef *pGPIOx);                 /* Reset through RCC */
 
 /*
  * Read and write
  */
-void GPIO_ReadFromInputPin(void);
-void GPIO_ReadFromInputPort(void);
-void GPIO_WriteToOutputPin(void);
-void GPIO_WriteToOutputPort(void);
-void GPIO_ToggleOutputPin(void);
+uint8_t GPIO_ReadFromInputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber);
+uint16_t GPIO_ReadFromInputPort(GPIO_Reg_TypeDef *pGPIOx);
+void GPIO_WriteToOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber, uint8_t value);
+void GPIO_WriteToOutputPort(GPIO_Reg_TypeDef *pGPIOx, uint16_t value);
+void GPIO_ToggleOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber);
 
 /*
  * IRQ configuration and handling 
  */
 
-void GPIO_IRQConfig(void);
-void GPIO_IRQHandling(void);
+void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t enOrDi);        /* enOrDi - enable or disable value */
+void GPIO_IRQHandling(uint8_t pinNumber);
 
 
 
