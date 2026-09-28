@@ -1,6 +1,8 @@
 
 
 #include "stm32f411xx_gpio_driver.h"
+#include "stm32f411xx.h"
+#include <stdint.h>
 
 
 
@@ -20,7 +22,17 @@
  */
 void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi)
 {
+    uint32_t index = ((uint32_t)pGPIOx - (uint32_t)GPIOA) / (0x0400);
 
+    if (index > 7) return;
+
+    if(enOrDi == ENABLE) 
+    {
+        RCC->AHB1ENR |= (1U << index);
+    } else
+    {
+        RCC->AHB1ENR &= ~(1U << index);
+    }
 }
 
 
