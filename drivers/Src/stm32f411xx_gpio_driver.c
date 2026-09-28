@@ -118,7 +118,7 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
 void GPIO_DeInit(GPIO_Reg_TypeDef *pGPIOx)
 {
     if (pGPIOx == NULL) return;
-    
+
     uint32_t index = ((uint32_t)pGPIOx - (uint32_t)GPIOA) / (0x0400);
 
     if (index > 7) return;
@@ -147,7 +147,8 @@ void GPIO_DeInit(GPIO_Reg_TypeDef *pGPIOx)
  */
 uint8_t GPIO_ReadFromInputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
 {
-
+    uint8_t value = (uint8_t) ((pGPIOx->IDR >> pinNumber) & 0x00000001);
+    return value;
 }
 
 
@@ -167,7 +168,8 @@ uint8_t GPIO_ReadFromInputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
  */
 uint16_t GPIO_ReadFromInputPort(GPIO_Reg_TypeDef *pGPIOx)
 {
-    
+    uint16_t value = (uint16_t) (pGPIOx->IDR);
+    return value;   
 }
 
 
@@ -187,7 +189,7 @@ uint16_t GPIO_ReadFromInputPort(GPIO_Reg_TypeDef *pGPIOx)
  */
 void GPIO_WriteToOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber, uint8_t value)
 {
-
+    
 }
 
 
