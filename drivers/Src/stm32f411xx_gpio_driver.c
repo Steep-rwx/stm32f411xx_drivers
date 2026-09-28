@@ -85,7 +85,9 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
 
     if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_AF)
     {
-        //TODO
+        uint8_t AFR_choose = (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 8);
+        uint8_t AFR_pin_pos = (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 8);
+        pGPIOHandle->pGPIOx->AFR[AFR_choose] |= (pGPIOHandle->GPIO_PinConfig.GPIO_PinAltFunMode << (4 * AFR_pin_pos));
     }
 
 }
