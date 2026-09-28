@@ -117,7 +117,14 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
  */
 void GPIO_DeInit(GPIO_Reg_TypeDef *pGPIOx)
 {
+    if (pGPIOx == NULL) return;
+    
+    uint32_t index = ((uint32_t)pGPIOx - (uint32_t)GPIOA) / (0x0400);
 
+    if (index > 7) return;
+
+    RCC->AHB1RSTR |= (1UL << index);
+    RCC->AHB1RSTR &= ~(1UL << index);
 }
 
 
