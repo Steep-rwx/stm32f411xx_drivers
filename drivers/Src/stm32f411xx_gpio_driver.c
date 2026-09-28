@@ -53,6 +53,41 @@ void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi)
 void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
 {
 
+    uint32_t temp = 0;
+
+    /* Setting mode */
+
+    if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode <= GPIO_MODE_AN)
+    {
+        temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
+        pGPIOHandle->pGPIOx->MODER = |temp;
+    } else
+    {
+        //TODO interrupt mode
+    }
+
+    temp = 0;
+    
+    /* Setting speed */
+    temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
+    pGPIOHandle->pGPIOx->OSPEEDR |= temp;
+    temp = 0;
+
+    /* Setting pupd */
+    temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinPuPdControl << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
+    pGPIOHandle->pGPIOx->PUPDR |= temp;
+    temp = 0;
+
+    /* Setting output type*/
+    temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+    pGPIOHandle->pGPIOx->OTYPER |= temp;
+    temp = 0;
+
+    if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_AF)
+    {
+        //TODO
+    }
+
 }
 
 
