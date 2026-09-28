@@ -50,7 +50,7 @@ void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi)
  * @Note                - none
  *
  */
-void GPIO_Init(GPIO_Handler_TypeDef *pGPIOHandle)
+void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
 {
 
 }
