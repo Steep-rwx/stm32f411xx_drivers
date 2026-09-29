@@ -189,7 +189,13 @@ uint16_t GPIO_ReadFromInputPort(GPIO_Reg_TypeDef *pGPIOx)
  */
 void GPIO_WriteToOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber, uint8_t value)
 {
-    
+    if (value == GPIO_PIN_SET)
+    {
+        pGPIOx->ODR |= (1 << pinNumber);
+    } else
+    {
+        pGPIOx->ODR &= ~(1 << pinNumber);
+    }
 }
 
 
