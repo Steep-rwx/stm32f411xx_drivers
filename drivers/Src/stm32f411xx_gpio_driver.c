@@ -88,6 +88,7 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
     pGPIOHandle->pGPIOx->OTYPER &= ~(0x1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle->pGPIOx->OTYPER |= temp;
 
+    /* Setting alternate function */
     if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_AF)
     {
         uint8_t AFR_choose = (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 8);
