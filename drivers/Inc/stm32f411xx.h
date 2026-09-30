@@ -153,7 +153,7 @@ typedef struct
 #define GPIOH   ((GPIO_Reg_TypeDef*) GPIOH_BASEADDR)
 
 #define EXTI    ((EXTI_Reg_TypeDef*) EXTI_BASEADDR)
-#define SYSCFG  ((SYSCFG_Reg_TypeDEf*)) SYSCFG_BASEADDR;
+#define SYSCFG  ((SYSCFG_Reg_TypeDef*) SYSCFG_BASEADDR)
 
 #define RCC     ((RCC_Reg_TypeDef*) RCC_BASEADDR)
 
@@ -223,6 +223,15 @@ typedef struct
   * Clock disable for SYSCFG peripheral
   */
 #define SYSCFG_PCLK_DI()    (RCC->APB2ENR &= ~(1 << 14))
+
+
+#define GPIO_BASEADDR_TO_CODE     ((x == GPIOA)?0:\
+                                   (x == GPIOB)?1:\
+                                   (x == GPIOC)?2:\
+                                   (x == GPIOD)?3:\
+                                   (x == GPIOE)?4:\
+                                   (x == GPIOH)?7:0
+                                  )
 
 
 /*
