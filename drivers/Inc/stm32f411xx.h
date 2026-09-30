@@ -61,9 +61,9 @@
 /******************peripheral register definition structures*********************/
 
 
-/**
-  * GPIO registers structure
-  */
+/*
+ * GPIO registers structure
+ */
 typedef struct
 {
     volatile uint32_t MODER;         /*!< GPIO port mode,                    address offset: 0x00 */
@@ -75,10 +75,10 @@ typedef struct
     volatile uint32_t BSRR;          /*!< GPIO port bit set/reset,           address offset: 0x18 */
     volatile uint32_t LCKR;          /*!< GPIO port lock,                    address offset: 0x1C */
     volatile uint32_t AFR[2];        /*!< GPIO port alternative func,        address offset: 0x20 for AF low, 0x24 for AF high */
-}GPIO_Reg_TypeDef;
+} GPIO_Reg_TypeDef;
 
 
-/*!
+/*
  * RCC registers structure
  */
 typedef struct
@@ -112,13 +112,26 @@ typedef struct
     volatile uint32_t PLLI2SCFGR;   /*!< RCC PLLI2S configuration register,                             address offset: 0x84 */
     uint32_t      RESERVED7;        /*!< Reserved,                                                      address offset: 0x88 */
     volatile uint32_t DCKCFGR;      /*!< RCC Dedicated Clocks Configuration Register,                   address offset: 0x8C */
-}RCC_Reg_TypeDef;
+} RCC_Reg_TypeDef;
+
+/*
+ * EXTI registers structure
+ */
+
+typedef struct
+{
+  volatile uint32_t IMR;            /*!< EXTI Interrupt mask register,                  address offset: 0x00 */
+  volatile uint32_t EMR;            /*!< EXTI Event mask register,                      address offset: 0x04 */
+  volatile uint32_T RTSR;           /*!< EXTI Rising trigger selection register,        address offset: 0x08 */
+  volatile uint32_t FTSR;           /*!< EXTI Falling trigger selection register,       address offset: 0x0C */
+  volatile uint32_t SWIER;          /*!< EXTI Software interrupt event register,        address offset: 0x10 */
+  volatile uint32_t PR;             /*!< EXTI Pending register,                         address offset: 0x14 */
+} EXTI_Reg_TypeDef;
 
 
-
-/**
-  * peripheral definition
-  */
+/*
+ * peripheral definition
+ */
 
 #define GPIOA ((GPIO_Reg_TypeDef*) GPIOA_BASEADDR)
 #define GPIOB ((GPIO_Reg_TypeDef*) GPIOB_BASEADDR)
@@ -126,6 +139,8 @@ typedef struct
 #define GPIOD ((GPIO_Reg_TypeDef*) GPIOD_BASEADDR)
 #define GPIOE ((GPIO_Reg_TypeDef*) GPIOE_BASEADDR)
 #define GPIOH ((GPIO_Reg_TypeDef*) GPIOH_BASEADDR)
+
+#define EXTI  ((EXTI_Reg_TypeDef*) EXTI_BASEADDR)
 
 #define RCC   ((RCC_Reg_TypeDef*) RCC_BASEADDR)
 
