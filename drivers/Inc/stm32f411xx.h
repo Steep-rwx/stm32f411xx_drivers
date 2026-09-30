@@ -58,7 +58,7 @@
 
 
 
-/******************peripheral register definition structures*********************/
+/****************** peripheral register definition structures *********************/
 
 
 /*
@@ -128,21 +128,36 @@ typedef struct
   volatile uint32_t PR;             /*!< EXTI Pending register,                         address offset: 0x14 */
 } EXTI_Reg_TypeDef;
 
+/*
+ * SYSCFG registers structure
+ */
+
+ typedef struct
+ {
+  volatile uint32_t MEMRMP;
+  volatile uint32_t PMC;
+  volatile uint32_t EXTICR1;
+  volatile uint32_t EXTICR2;
+  volatile uint32_t EXTICR3;
+  volatile uint32_t EXTICR4;
+  volatile uint32_t CMPCR;
+ } SYSCFG_Reg_TypeDef;
 
 /*
  * peripheral definition
  */
 
-#define GPIOA ((GPIO_Reg_TypeDef*) GPIOA_BASEADDR)
-#define GPIOB ((GPIO_Reg_TypeDef*) GPIOB_BASEADDR)
-#define GPIOC ((GPIO_Reg_TypeDef*) GPIOC_BASEADDR)
-#define GPIOD ((GPIO_Reg_TypeDef*) GPIOD_BASEADDR)
-#define GPIOE ((GPIO_Reg_TypeDef*) GPIOE_BASEADDR)
-#define GPIOH ((GPIO_Reg_TypeDef*) GPIOH_BASEADDR)
+#define GPIOA   ((GPIO_Reg_TypeDef*) GPIOA_BASEADDR)
+#define GPIOB   ((GPIO_Reg_TypeDef*) GPIOB_BASEADDR)
+#define GPIOC   ((GPIO_Reg_TypeDef*) GPIOC_BASEADDR)
+#define GPIOD   ((GPIO_Reg_TypeDef*) GPIOD_BASEADDR)
+#define GPIOE   ((GPIO_Reg_TypeDef*) GPIOE_BASEADDR)
+#define GPIOH   ((GPIO_Reg_TypeDef*) GPIOH_BASEADDR)
 
-#define EXTI  ((EXTI_Reg_TypeDef*) EXTI_BASEADDR)
+#define EXTI    ((EXTI_Reg_TypeDef*) EXTI_BASEADDR)
+#define SYSCFG  ((SYSCFG_Reg_TypeDEf*)) SYSCFG_BASEADDR;
 
-#define RCC   ((RCC_Reg_TypeDef*) RCC_BASEADDR)
+#define RCC     ((RCC_Reg_TypeDef*) RCC_BASEADDR)
 
 
 /**
