@@ -134,13 +134,11 @@ typedef struct
 
  typedef struct
  {
-  volatile uint32_t MEMRMP;
-  volatile uint32_t PMC;
-  volatile uint32_t EXTICR1;
-  volatile uint32_t EXTICR2;
-  volatile uint32_t EXTICR3;
-  volatile uint32_t EXTICR4;
-  volatile uint32_t CMPCR;
+  volatile uint32_t MEMRMP;         /*!< SYSCFG memory remap register,                            address offset: 0x00 */
+  volatile uint32_t PMC;            /*!< SYSCFG peripheral mode configuration register,           address offset: 0x04 */
+  volatile uint32_t EXTICR[4];      /*!< SYSCFG external interrupt configuration registers 1-4,   address offset: 0x08-0x14 */
+  volatile uint32_t RESERVED[2];    /*!< Reserved,                                                address offset: 0x18-0x1C */
+  volatile uint32_t CMPCR;          /*!< SYSCFG Compensation cell control register,               address offset: 0x20 */
  } SYSCFG_Reg_TypeDef;
 
 /*
