@@ -72,25 +72,25 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
     {
         if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_FT)
         {
-            EXTI->FTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-            EXTI->RTSR &= ~(1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+            EXTI->FTSR |= (1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+            EXTI->RTSR &= ~(1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
         } else if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_RT)
         {
-            EXTI->RTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-            EXTI->FTSR &= ~(1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+            EXTI->RTSR |= (1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+            EXTI->FTSR &= ~(1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
         } else if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_RFT)
         {
-            EXTI->FTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-            EXTI->RTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+            EXTI->FTSR |= (1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+            EXTI->RTSR |= (1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
         }
 
         uint8_t CRx = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 4;
         uint8_t CRpos = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 4;
         uint8_t portcode = GPIO_BASEADDR_TO_CODE(pGPIOHandle->pGPIOx);
         SYSCFG_PCLK_EN();
-        SYSCFG->CMPCR[CRx] = portcode << (CRpos * 4);
+        SYSCFG->CMPCR[CRx] = (portcode << (CRpos * 4));
 
-        EXTI->IMR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+        EXTI->IMR |= (1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     }
     
     /* Setting speed */
@@ -214,10 +214,10 @@ void GPIO_WriteToOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber, uint8_t 
 
     if (value == GPIO_PIN_SET)
     {
-        pGPIOx->ODR |= (1 << pinNumber);
+        pGPIOx->ODR |= (1UL << pinNumber);
     } else
     {
-        pGPIOx->ODR &= ~(1 << pinNumber);
+        pGPIOx->ODR &= ~(1UL << pinNumber);
     }
 }
 
@@ -262,7 +262,7 @@ void GPIO_WriteToOutputPort(GPIO_Reg_TypeDef *pGPIOx, uint16_t value)
  */
 void GPIO_ToggleOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
 {
-    pGPIOx->ODR ^= (1 << pinNumber);
+    pGPIOx->ODR ^= (1UL << pinNumber);
 }
 
 
