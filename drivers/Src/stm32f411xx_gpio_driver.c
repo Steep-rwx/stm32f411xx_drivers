@@ -282,7 +282,13 @@ void GPIO_ToggleOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
  */
 void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t enOrDi)
 {
+    if (enOrDi == ENABLE)
+    {
+        
+    } else 
+    {
 
+    }
 }
 
 

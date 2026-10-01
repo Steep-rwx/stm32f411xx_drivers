@@ -7,6 +7,30 @@
 #include <stdint.h>
 
 
+/***************** Processor Specific Details ****************/
+
+/*
+ * NVIC ISERx register adresses
+ */
+
+typedef struct
+{
+  volatile uint32_t ISER[8];              /*!< NVIC Interrupt Set-enable Registers,     address offset: TODO */
+  uint32_t RESERVED0[24];                 /*!< Reserved,                                address offset: TODO */
+  volatile uint32_t ICER[8];              /*!< NVIC Interrupt Clear-enable Registers,   address offset: TODO */
+  uint32_t RESERVED1[24];                 /*!< Reserved,                                address offset: TODO */
+  volatile uint32_t ISPR[8];              /*!< NVIC Interrupt Set-pending Registers,    address offset: TODO */
+  uint32_t RESERVED2[24];                 /*!< Reserved,                                address offset: TODO */
+  volatile uint32_t ICPR[8];              /*!< NVIC Interrupt Clear-pending Registers,  address offset: TODO */
+  uint32_t RESERVED3[24];                 /*!< Reserved,                                address offset: TODO */
+  volatile uint32_t IABR[8];              /*!< NVIC Interrupt Active Bit Registers,     address offset: TODO */
+  uint32_t RESERVED4[56];                 /*!< Reserved,                                address offset: TODO */
+  volatile uint32_t IPR[60];              /*!< NVIC Interrupt Priority Registers,       address offset: TODO */
+} NVIC_Reg_TypeDef;
+
+
+
+
 
 #define FLASH_BASEADDR                      0x08000000U                     /*!< Flash memory */
 #define SRAM_BASEADDR                       0x20000000U                     /*!< SRAM memory */
@@ -19,6 +43,7 @@
 #define APB2PERIPH_BASEADDR                 0x40010000U                     /*!< Base address of APB2 */
 #define AHB1PERIPH_BASEADDR                 0x40020000U                     /*!< Base address of AHB1 */
 #define AHB2PERIPH_BASEADDR                 0x50000000U                     /*!< Base address of AHB2 */
+#define NVIC_BASEADDR                       0xE000E100U                     /*!< Base address of NVIC */
 
 
 /**
@@ -156,6 +181,8 @@ typedef struct
 #define SYSCFG  ((SYSCFG_Reg_TypeDef*) SYSCFG_BASEADDR)
 
 #define RCC     ((RCC_Reg_TypeDef*) RCC_BASEADDR)
+
+#define NVIC    ((NVIC_Reg_TypeDef*) NVIC_BASEADDR)
 
 
 /**
