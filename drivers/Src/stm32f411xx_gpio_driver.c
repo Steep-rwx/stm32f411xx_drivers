@@ -281,14 +281,16 @@ void GPIO_ToggleOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
  */
 void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi)
 {
-    uint8_t choose_reg = IRQNumber / 32;
-    uint8_t choose_pos = IRQNumber % 32;
+    if (IRQNumber >= 240) return;
+
+    uint8_t ipr_idx = IRQNumber / 32;
+    uint8_t bit_pos = IRQNumber % 32;
     if (enOrDi)
     {
-        NVIC->ISER[choose_reg] |= (1 << choose_pos);
+        NVIC->ISER[ipr_idx] |= (1UL << bit_pos);
     } else 
     {
-        NVIC->ICER[choose_reg] |= (1 << choose_pos);
+        NVIC->ICER[ipr_idx] |= (1UL << bit_pos);
     }
 }
 
@@ -307,10 +309,16 @@ void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi)
  */
 void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
 {
-    uint8_t choosed_reg = IRQNumber / 4;
-    uint8_t choosed_pos = IRQNumber % 4;
+    if (IRQNumber >= 240) return;
 
-    NVIC->ISPR[choosed_reg] |= (IRQPriority << (choosed_pos * 8));
+    uint8_t ipr_idx = IRQNumber / 4;
+    uint8_t byte_shift = ((IRQNumber % 4) * 8);
+
+    uint8_t shift_amount = (byte_shift + (8 - NO_PR_BITS_IMPLEMENTED));
+
+    NVIC->IPR[ipr_idx] &= ~(0xFFUL << byte_shift);
+
+    NVIC->IPR[ipr_idx] |= ((uint32_t)IRQPriority << shift_amount);
 }
 
 /********************************************************************

@@ -29,7 +29,7 @@ typedef struct
 } NVIC_Reg_TypeDef;
 
 
-
+#define NO_PR_BITS_IMPLEMENTED              4
 
 
 #define FLASH_BASEADDR                      0x08000000U                     /*!< Flash memory */
