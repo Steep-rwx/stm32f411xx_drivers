@@ -266,13 +266,12 @@ void GPIO_ToggleOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
 }
 
 
-/********************************************************************
+/*******************************************************************
  * @fn                  - GPIO_IRQConfig
  *
  * @brief               - Configures IRQ from number
  *
  * @param[in]           - IRQNumber: Number choosed IRQ
- * @param[in]           - IRQPriority: Priority of IRQ
  * @param[in]           - enOrDi: ENABLE or DISABLE macro
  *
  * @return              - none
@@ -280,18 +279,39 @@ void GPIO_ToggleOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
  * @Note                - none
  *
  */
-void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t enOrDi)
+void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi)
 {
-    if (enOrDi == ENABLE)
+    uint8_t choose_reg = IRQNumber / 32;
+    uint8_t choose_pos = IRQNumber % 32;
+    if (enOrDi)
     {
-        
+        NVIC->ISER[choose_reg] |= (1 << choose_pos);
     } else 
     {
-
+        NVIC->ICER[choose_reg] |= (1 << choose_pos);
     }
 }
 
+/*******************************************************************
+ * @fn                  - GPIO_IRQPriority
+ *
+ * @brief               - Configures IRQ Priority
+ *
+ * @param[in]           - IRQNumber: Number choosed IRQ
+ * @param[in]           - IRQPriority: Choosed priority 0-15
+ *
+ * @return              - none
+ *
+ * @Note                - none
+ *
+ */
+void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
+{
+    uint8_t choosed_reg = IRQNumber / 4;
+    uint8_t choosed_pos = IRQNumber % 4;
 
+    NVIC->ISPR[choosed_reg] |= (IRQPriority << (choosed_pos * 8));
+}
 
 /********************************************************************
  * @fn                  - GPIO_IRQHandling
