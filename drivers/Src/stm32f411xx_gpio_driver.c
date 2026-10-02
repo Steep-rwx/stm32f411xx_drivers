@@ -88,7 +88,7 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
         uint8_t CRpos = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 4;
         uint8_t portcode = GPIO_BASEADDR_TO_CODE(pGPIOHandle->pGPIOx);
         SYSCFG_PCLK_EN();
-        SYSCFG->CMPCR[CRx] = (portcode << (CRpos * 4));
+        SYSCFG->EXTICR[CRx] = (portcode << (CRpos * 4));
 
         EXTI->IMR |= (1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     }

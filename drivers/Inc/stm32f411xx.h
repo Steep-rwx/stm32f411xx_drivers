@@ -147,7 +147,7 @@ typedef struct
 {
   volatile uint32_t IMR;            /*!< EXTI Interrupt mask register,                  address offset: 0x00 */
   volatile uint32_t EMR;            /*!< EXTI Event mask register,                      address offset: 0x04 */
-  volatile uint32_T RTSR;           /*!< EXTI Rising trigger selection register,        address offset: 0x08 */
+  volatile uint32_t RTSR;           /*!< EXTI Rising trigger selection register,        address offset: 0x08 */
   volatile uint32_t FTSR;           /*!< EXTI Falling trigger selection register,       address offset: 0x0C */
   volatile uint32_t SWIER;          /*!< EXTI Software interrupt event register,        address offset: 0x10 */
   volatile uint32_t PR;             /*!< EXTI Pending register,                         address offset: 0x14 */
@@ -252,13 +252,12 @@ typedef struct
 #define SYSCFG_PCLK_DI()    (RCC->APB2ENR &= ~(1 << 14))
 
 
-#define GPIO_BASEADDR_TO_CODE     ((x == GPIOA)?0:\
+#define GPIO_BASEADDR_TO_CODE(x)   ((x == GPIOA)?0:\
                                    (x == GPIOB)?1:\
                                    (x == GPIOC)?2:\
                                    (x == GPIOD)?3:\
                                    (x == GPIOE)?4:\
-                                   (x == GPIOH)?7:0
-                                  )
+                                   (x == GPIOH)?7:0)
 
 
 
