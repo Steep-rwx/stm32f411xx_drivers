@@ -341,6 +341,6 @@ void GPIO_IRQHandling(uint8_t pinNumber)
     if(EXTI->PR & (1 << pinNumber))
     {
         // writing 1 to clear PR
-        EXTI->PR |= (1 << pinNumber)
+        EXTI->PR |= (1 << pinNumber);
     }
 }
