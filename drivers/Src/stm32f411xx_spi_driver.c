@@ -19,7 +19,20 @@
  * @Note                - none
  *
  */
-void SPI_PeriClockControl(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi);       /* enOrDi - enable or disable value */
+void SPI_PeriClockControl(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi)
+{
+    if(enOrDi == ENABLE) 
+    {
+        if (pSPIx == SPI1)      { SPI1_PCLK_EN(); }
+        else if (pSPIx == SPI2) { SPI2_PCLK_EN(); }
+        else if (pSPIx == SPI3) { SPI3_PCLK_EN(); }
+    } else
+    {
+        if (pSPIx == SPI1)      { SPI1_PCLK_DI(); }
+        else if (pSPIx == SPI2) { SPI2_PCLK_DI(); }
+        else if (pSPIx == SPI3) { SPI3_PCLK_DI(); }
+    }
+}
 
 
 /********************************************************************
