@@ -1,11 +1,9 @@
-#include <stdint.h>
-#include <stddef.h>
-
-
 #include "stm32f411xx_gpio_driver.h"
 #include "stm32f411xx.h"
 
 
+#include <stdint.h>
+#include <stddef.h>
 
 
 /********************************************************************
@@ -15,7 +13,6 @@
  *
  * @param[in]           - pGPIOx: GPIO base address
  * @param[in]           - enOrDi: ENABLE or DISABLE macro
- * @param[in]           -
  *
  * @return              - none
  *
@@ -44,8 +41,6 @@ void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi)
  * @brief               - Initializes the specifies pin
  *
  * @param[in]           - pGPIOHandle: A structure that contains pin base address and pin config
- * @param[in]           - 
- * @param[in]           -
  *
  * @return              - none
  *
@@ -123,13 +118,11 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
 
 
 /********************************************************************
- * @fn                  - GPIO_Reg_TypeDef
+ * @fn                  - GPIO_DeInit
  *
  * @brief               - Deinitializes the specified pin
  *
- * @param[in]           - pGPIOHandle: A structure that contains pin base address and pin config
- * @param[in]           - 
- * @param[in]           -
+ * @param[in]           - pGPIOx: base address of GPIOx
  *
  * @return              - none
  *
@@ -159,7 +152,6 @@ void GPIO_DeInit(GPIO_Reg_TypeDef *pGPIOx)
  *
  * @param[in]           - pGPIOx: base address of GPIO
  * @param[in]           - pinNumber: number of choosed pin
- * @param[in]           -
  *
  * @return              - Readed value from pin
  *
@@ -179,8 +171,6 @@ uint8_t GPIO_ReadFromInputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
  * @brief               - Reads information from port (16 pins)
  *
  * @param[in]           - pGPIOx: base address of GPIO
- * @param[in]           - 
- * @param[in]           -
  *
  * @return              - Readed value from port
  *
@@ -230,7 +220,6 @@ void GPIO_WriteToOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber, uint8_t 
  *
  * @param[in]           - pGPIOx: base address of GPIO
  * @param[in]           - value: a value that need to write (0x3 - will be 1 to pin 0 and 1 to pin 1)
- * @param[in]           -
  *
  * @return              - none
  *
