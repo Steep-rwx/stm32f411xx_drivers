@@ -162,7 +162,7 @@ typedef struct
   volatile uint32_t MEMRMP;         /*!< SYSCFG memory remap register,                            address offset: 0x00 */
   volatile uint32_t PMC;            /*!< SYSCFG peripheral mode configuration register,           address offset: 0x04 */
   volatile uint32_t EXTICR[4];      /*!< SYSCFG external interrupt configuration registers 1-4,   address offset: 0x08-0x14 */
-  volatile uint32_t RESERVED[2];    /*!< Reserved,                                                address offset: 0x18-0x1C */
+  uint32_t RESERVED[2];    /*!< Reserved,                                                address offset: 0x18-0x1C */
   volatile uint32_t CMPCR;          /*!< SYSCFG Compensation cell control register,               address offset: 0x20 */
  } SYSCFG_Reg_TypeDef;
 
@@ -203,7 +203,7 @@ typedef struct
 
 #define I2C1_PCLK_EN()      (RCC->APB1ENR |= (1 << 21))
 #define I2C2_PCLK_EN()      (RCC->APB1ENR |= (1 << 22))
-#define I2C3_PCLK_EN()      (RCC->APB1ENR |= (1 << 23))
+#define I2C3_PCLK_EN()      (RCC->APB1ENuint32_t R |= (1 << 23))
 
 /**
   * Clock enable for SPIx peripherals
@@ -217,7 +217,7 @@ typedef struct
   */
 #define USART1_PCLK_EN()    (RCC->APB2ENR |= (1 << 4))
 #define USART2_PCLK_EN()    (RCC->APB1ENR |= (1 << 17))
-#define USART6_PCLK_EN()    (RCC->APB1ENR |= (1 << 5))
+#define USART6_PCLK_EN()    (RCC->APB2ENR |= (1 << 5))
 
 /**
   * Clock enable for SYSCFG peripheral
@@ -251,13 +251,28 @@ typedef struct
   */
 #define SYSCFG_PCLK_DI()    (RCC->APB2ENR &= ~(1 << 14))
 
-#define GPIO_BASEADDR_TO_CODE(x)  ((x == GPIOA)?0:\
-                                   (x == GPIOB)?1:\
-                                   (x == GPIOC)?2:\
-                                   (x == GPIOD)?3:\
-                                   (x == GPIOE)?4:\
-                                   (x == GPIOH)?7:0)
+/*
+ * Two types implementations of gpio_base_to_code convertion function below 
+ */
 
+
+// #define GPIO_BASEADDR_TO_CODE(x)  ((x == GPIOA)?0:\
+//                                    (x == GPIOB)?1:\
+//                                    (x == GPIOC)?2:\
+//                                    (x == GPIOD)?3:\
+//                                    (x == GPIOE)?4:\
+//                                    (x == GPIOH)?7:0)
+
+
+static inline uint8_t gpio_base_to_code(const GPIO_Reg_TypeDef *pGPIOx) 
+{
+  if (pGPIOx == GPIOA) return 0;
+  if (pGPIOx == GPIOB) return 1;
+  if (pGPIOx == GPIOC) return 2;
+  if (pGPIOx == GPIOD) return 3;
+  if (pGPIOx == GPIOE) return 4;
+  if (pGPIOx == GPIOH) return 7;
+}
 
 
 /*
