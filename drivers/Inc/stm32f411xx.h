@@ -189,67 +189,67 @@ typedef struct
   * Clock enable GPIO peripherals
   */
 
-#define GPIOA_PCLK_EN()   (RCC->AHB1ENR |= (1 << 0))
-#define GPIOB_PCLK_EN()   (RCC->AHB1ENR |= (1 << 1))
-#define GPIOC_PCLK_EN()   (RCC->AHB1ENR |= (1 << 2))
-#define GPIOD_PCLK_EN()   (RCC->AHB1ENR |= (1 << 3))
-#define GPIOE_PCLK_EN()   (RCC->AHB1ENR |= (1 << 4))
-#define GPIOH_PCLK_EN()   (RCC->AHB1ENR |= (1 << 7))
+#define GPIOA_PCLK_EN()   (RCC->AHB1ENR |= (1U << 0U))
+#define GPIOB_PCLK_EN()   (RCC->AHB1ENR |= (1U << 1U))
+#define GPIOC_PCLK_EN()   (RCC->AHB1ENR |= (1U << 2U))
+#define GPIOD_PCLK_EN()   (RCC->AHB1ENR |= (1U << 3U))
+#define GPIOE_PCLK_EN()   (RCC->AHB1ENR |= (1U << 4U))
+#define GPIOH_PCLK_EN()   (RCC->AHB1ENR |= (1U << 7U))
 
 
 /**
   * Clock enable for I2Cx peripherals
   */
 
-#define I2C1_PCLK_EN()      (RCC->APB1ENR |= (1 << 21))
-#define I2C2_PCLK_EN()      (RCC->APB1ENR |= (1 << 22))
-#define I2C3_PCLK_EN()      (RCC->APB1ENuint32_t R |= (1 << 23))
+#define I2C1_PCLK_EN()      (RCC->APB1ENR |= (1U << 21U))
+#define I2C2_PCLK_EN()      (RCC->APB1ENR |= (1U << 22U))
+#define I2C3_PCLK_EN()      (RCC->APB1ENR |= (1U << 23U))
 
 /**
   * Clock enable for SPIx peripherals
   */
-#define SPI1_PCLK_EN()      (RCC->APB2ENR |= (1 << 12))
-#define SPI2_PCLK_EN()      (RCC->APB1ENR |= (1 << 14))
-#define SPI3_PCLK_EN()      (RCC->APB1ENR |= (1 << 15))
+#define SPI1_PCLK_EN()      (RCC->APB2ENR |= (1U << 12U))
+#define SPI2_PCLK_EN()      (RCC->APB1ENR |= (1U << 14U))
+#define SPI3_PCLK_EN()      (RCC->APB1ENR |= (1U << 15U))
 
 /**
   * Clock enable for USARTx peripherals
   */
-#define USART1_PCLK_EN()    (RCC->APB2ENR |= (1 << 4))
-#define USART2_PCLK_EN()    (RCC->APB1ENR |= (1 << 17))
-#define USART6_PCLK_EN()    (RCC->APB2ENR |= (1 << 5))
+#define USART1_PCLK_EN()    (RCC->APB2ENR |= (1U << 4U))
+#define USART2_PCLK_EN()    (RCC->APB1ENR |= (1U << 17U))
+#define USART6_PCLK_EN()    (RCC->APB2ENR |= (1U << 5U))
 
 /**
   * Clock enable for SYSCFG peripheral
   */
-#define SYSCFG_PCLK_EN()    (RCC->APB2ENR |= (1 << 14))
+#define SYSCFG_PCLK_EN()    (RCC->APB2ENR |= (1U << 14U))
 
 /**
   * Clock disable for I2Cx peripherals
   */
 
-#define I2C1_PCLK_DI()      (RCC->APB1ENR &= ~(1 << 21))
-#define I2C2_PCLK_DI()      (RCC->APB1ENR &= ~(1 << 22))
-#define I2C3_PCLK_DI()      (RCC->APB1ENR &= ~(1 << 23))
+#define I2C1_PCLK_DI()      (RCC->APB1ENR &= ~(1U << 21U))
+#define I2C2_PCLK_DI()      (RCC->APB1ENR &= ~(1U << 22U))
+#define I2C3_PCLK_DI()      (RCC->APB1ENR &= ~(1U << 23U))
 
 /**
   * Clock disable for SPIx peripherals
   */
-#define SPI1_PCLK_DI()      (RCC->APB2ENR &= ~(1 << 12))
-#define SPI2_PCLK_DI()      (RCC->APB1ENR &= ~(1 << 14))
-#define SPI3_PCLK_DI()      (RCC->APB1ENR &= ~(1 << 15))
+#define SPI1_PCLK_DI()      (RCC->APB2ENR &= ~(1U << 12U))
+#define SPI2_PCLK_DI()      (RCC->APB1ENR &= ~(1U << 14U))
+#define SPI3_PCLK_DI()      (RCC->APB1ENR &= ~(1U << 15U))
 
 /**
   * Clock disable for USARTx peripherals
   */
-#define USART1_PCLK_DI()    (RCC->APB2ENR &= ~(1 << 4))
-#define USART2_PCLK_DI()    (RCC->APB1ENR &= ~(1 << 17))
-#define USART6_PCLK_DI()    (RCC->APB1ENR &= ~(1 << 5))
+#define USART1_PCLK_DI()    (RCC->APB2ENR &= ~(1U << 4U))
+#define USART2_PCLK_DI()    (RCC->APB1ENR &= ~(1U << 17U))
+#define USART6_PCLK_DI()    (RCC->APB1ENR &= ~(1U << 5U))
 
 /**
   * Clock disable for SYSCFG peripheral
   */
-#define SYSCFG_PCLK_DI()    (RCC->APB2ENR &= ~(1 << 14))
+#define SYSCFG_PCLK_DI()    (RCC->APB2ENR &= ~(1U << 14U))
 
 /*
  * Two types implementations of gpio_base_to_code convertion function below 
