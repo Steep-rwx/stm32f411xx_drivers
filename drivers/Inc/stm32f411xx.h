@@ -12,7 +12,6 @@
 /*
  * NVIC ISERx register adresses
  */
-
 typedef struct
 {
   volatile uint32_t ISER[8];              /*!< NVIC Interrupt Set-enable Registers,     address offset: TODO */
@@ -49,7 +48,6 @@ typedef struct
 /**
   * Base addresses of AHB1 bus
   */
-
 #define GPIOA_BASEADDR                      (AHB1PERIPH_BASEADDR + 0x0000U)
 #define GPIOB_BASEADDR                      (AHB1PERIPH_BASEADDR + 0x0400U)
 #define GPIOC_BASEADDR                      (AHB1PERIPH_BASEADDR + 0x0800U)
@@ -63,7 +61,6 @@ typedef struct
 /**
   * Base addresses of APB1 bus
   */
-
 #define I2C1_BASEADDR                       (APB1PERIPH_BASEADDR + 0x5400U)
 #define I2C2_BASEADDR                       (APB1PERIPH_BASEADDR + 0x5800U)
 #define I2C3_BASEADDR                       (APB1PERIPH_BASEADDR + 0x5C00U)
@@ -74,7 +71,6 @@ typedef struct
 /**
   * Base addresses of APB2 bus
   */
-
 #define SPI1_BASEADDR                       (APB2PERIPH_BASEADDR + 0x3000U)
 #define USART1_BASEADDR                     (APB2PERIPH_BASEADDR + 0x1000U)
 #define USART6_BASEADDR                     (APB2PERIPH_BASEADDR + 0x1400U)
@@ -87,7 +83,7 @@ typedef struct
 
 
 /*
- * GPIO registers structure
+ *  @Brief GPIO registers structure
  */
 typedef struct
 {
@@ -104,7 +100,7 @@ typedef struct
 
 
 /*
- * RCC registers structure
+ * @Brief RCC registers structure
  */
 typedef struct
 {
@@ -140,7 +136,7 @@ typedef struct
 } RCC_Reg_TypeDef;
 
 /*
- * EXTI registers structure
+ * @Brief EXTI registers structure
  */
 
 typedef struct
@@ -154,7 +150,7 @@ typedef struct
 } EXTI_Reg_TypeDef;
 
 /*
- * SYSCFG registers structure
+ * @Brief SYSCFG registers structure
  */
 
  typedef struct
@@ -166,10 +162,29 @@ typedef struct
   volatile uint32_t CMPCR;          /*!< SYSCFG Compensation cell control register,               address offset: 0x20 */
  } SYSCFG_Reg_TypeDef;
 
+
+/*******************************peripheral interfaces structures***********************************************/
+
+typedef struct 
+{
+  volatile uint32_t CR1;          /*!< SPI control register 1,                address offset: 0x00 */
+  volatile uint32_t CR2;          /*!< SPI control register 2,                address offset: 0x04 */
+  volatile uint32_t SR;           /*!< SPI status register,                   address offset: 0x08 */
+  volatile uint32_t DR;           /*!< SPI data register,                     address offset: 0x0C */
+  volatile uint32_t CRCPR;        /*!< SPI CRC polynomial register,           address offset: 0x10 */
+  volatile uint32_t RXCRCR;       /*!< SPI RX CRC register,                   address offset: 0x14 */
+  volatile uint32_t TXCRCR;       /*!< SPI TX CRC register,                   address offset: 0x18 */
+  volatile uint32_t I2SCFGR;      /*!< SPI_I2S configuration register,        address offset: 0x1C */
+  volatile uint32_t I2SPR;        /*!< SPI_I2S prescaler register,            address offset: 0x20 */
+} SPI_Reg_TypeDef;
+
+
+/********************************peripheral definitions*****************************************************************/
+
+
 /*
  * peripheral definition
  */
-
 #define GPIOA   ((GPIO_Reg_TypeDef*) GPIOA_BASEADDR)
 #define GPIOB   ((GPIO_Reg_TypeDef*) GPIOB_BASEADDR)
 #define GPIOC   ((GPIO_Reg_TypeDef*) GPIOC_BASEADDR)
@@ -185,10 +200,17 @@ typedef struct
 #define NVIC    ((NVIC_Reg_TypeDef*) NVIC_BASEADDR)
 
 
+/*
+ * SPI definition
+ */
+#define SPI1          ((SPI_Reg_TypeDef*) SPI1_BASEADDR)
+#define SPI2          ((SPI_Reg_TypeDef*) SPI2_BASEADDR)
+#define SPI3          ((SPI_Reg_TypeDef*) SPI3_BASEADDR)
+
+
 /**
   * Clock enable GPIO peripherals
   */
-
 #define GPIOA_PCLK_EN()   (RCC->AHB1ENR |= (1U << 0U))
 #define GPIOB_PCLK_EN()   (RCC->AHB1ENR |= (1U << 1U))
 #define GPIOC_PCLK_EN()   (RCC->AHB1ENR |= (1U << 2U))
@@ -200,7 +222,6 @@ typedef struct
 /**
   * Clock enable for I2Cx peripherals
   */
-
 #define I2C1_PCLK_EN()      (RCC->APB1ENR |= (1U << 21U))
 #define I2C2_PCLK_EN()      (RCC->APB1ENR |= (1U << 22U))
 #define I2C3_PCLK_EN()      (RCC->APB1ENR |= (1U << 23U))
