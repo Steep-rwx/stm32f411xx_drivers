@@ -128,7 +128,32 @@ void SPI_DeInit(SPI_Reg_TypeDef *pSPIx)
  * @Note                - none
  *
  */
-void SPI_SendData(SPI_Reg_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t length);
+void SPI_SendData(SPI_Reg_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t length)
+{
+    if ((pSPIx->CR1 >> SPI_CR1_DFF) & 0x1)
+    {
+        uint16_t *pTxBuffer16 = ((uint16_t*) pTxBuffer);
+        uint32_t count16 = length / 2;
+        while (count16 > 0)
+        {
+            SPI_WaitTxEmpty(pSPIx);
+
+            pSPIx->DR = *pTxBuffer16;
+            pTxBuffer16++;
+            count16--;        
+        }
+    } else
+    {
+        while (length > 0)
+        {
+            SPI_WaitTxEmpty(pSPIx);
+
+            pSPIx->DR = *pTxBuffer;
+            pTxBuffer++;
+            length--;
+        }        
+    } 
+}
 
 /********************************************************************
  * @fn                  - SPI_ReceiveData
