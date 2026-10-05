@@ -357,4 +357,22 @@ static inline uint8_t gpio_base_to_code(const GPIO_Reg_TypeDef *pGPIOx)
 #define SPI_CR1_BIDIOE          14
 #define SPI_CR1_BIDIMODE        15
 
+#define SPI_CR2_RXDMAEN         0
+#define SPI_CR2_TXDMAEN         1
+#define SPI_CR2_SSOE            2
+#define SPI_CR2_FRF             4
+#define SPI_CR2_ERRIE           5
+#define SPI_CR2_RXNEIE          6
+#define SPI_CR2_TXEIE           7
+
+#define SPI_SR_RXNE             0
+#define SPI_SR_TXE              1
+#define SPI_SR_CHSIDE           2
+#define SPI_SR_UDR              3
+#define SPI_SR_CRCERR           4
+#define SPI_SR_MODF             5
+#define SPI_SR_OVR              6
+#define SPI_SR_BSY              7
+#define SPI_SR_FRE              8
+
 #endif /* INC_STM32F411XX_H_ */
