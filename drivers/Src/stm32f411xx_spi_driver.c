@@ -52,35 +52,35 @@ void SPI_Init(SPI_Handle_TypeDef *pSPIHandle)
     uint32_t tempreg = 0;
 
     //configuring mode
-    tempreg |= (pSPIHandle->SPIConfig.SPI_DeviceMode << 2);
+    tempreg |= (pSPIHandle->SPIConfig.SPI_DeviceMode << SPI_CR1_MSTR);
 
     //configuring bus config
     if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_FULLDUPLEX)
     {
-        tempreg &= ~(1 << 15);
+        tempreg &= ~(1U << SPI_CR1_BIDIMODE);
     } else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_HALFDUPLEX)
     {
-        tempreg |= (1 << 15);
+        tempreg |= (1U << SPI_CR1_BIDIMODE);
     } else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_SIMPLEX_RXONLY)
     {
-        tempreg &= ~(1 << 15);
-        tempreg |= (1 << 10);
+        tempreg &= ~(1U << SPI_CR1_BIDIMODE);
+        tempreg |= (1U << SPI_CR1_RXONLY);
     }
 
     //configuring Sclk speed
-    tempreg |= (pSPIHandle->SPIConfig.SPI_SclkSpeed << 3);
+    tempreg |= (pSPIHandle->SPIConfig.SPI_SclkSpeed << SPI_CR1_BR);
 
     //configuring DFF
-    tempreg |= (pSPIHandle->SPIConfig.SPI_DFF << 11);
+    tempreg |= (pSPIHandle->SPIConfig.SPI_DFF << SPI_CR1_DFF);
 
     //configuring CPOL
-    tempreg |= (pSPIHandle->SPIConfig.SPI_CPOL << 1);
+    tempreg |= (pSPIHandle->SPIConfig.SPI_CPOL << SPI_CR1_CPOL);
     
     //configuring CPHA
-    tempreg |= (pSPIHandle->SPIConfig.SPI_CPHA << 0);
+    tempreg |= (pSPIHandle->SPIConfig.SPI_CPHA << SPI_CR1_CPHA);
 
     //configuring SSM
-    tempreg |= (pSPIHandle->SPIConfig.SPI_SSM << 9);
+    tempreg |= (pSPIHandle->SPIConfig.SPI_SSM << SPI_CR1_SSM);
 
     pSPIHandle->pSPIx->CR1 = tempreg;
 }
