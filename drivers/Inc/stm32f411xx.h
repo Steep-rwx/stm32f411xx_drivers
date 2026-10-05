@@ -339,6 +339,8 @@ static inline uint8_t gpio_base_to_code(const GPIO_Reg_TypeDef *pGPIOx)
 #define RESET               DISABLE
 #define GPIO_PIN_SET        SET
 #define GPIO_PIN_RESET      RESET
+#define FLAG_SET            SET
+#define FLAG_RESET          RESET
 
 
 /********************bit positions of SPI peripheral**********************************/

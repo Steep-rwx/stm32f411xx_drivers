@@ -78,11 +78,24 @@ typedef struct
 #define SPI_SSM_DISABLED            0
 #define SPI_SSM_ENABLED             1
 
+/*
+ * SPI flag definitions
+ */
+#define SPI_TXE_FLAG            (1 << SPI_SR_TXE)
+#define SPI_RXNE_FLAG           (1 << SPI_SR_RXNE)
+#define SPI_BUSY_FLAG           (1 << SPI_SR_BSY)
+
+
 /*************************utility functions*******************************/
 
 static inline void SPI_WaitTxEmpty(SPI_Reg_TypeDef *pSPIx)
 {
     while (!((pSPIx->SR >> SPI_SR_TXE) & 0x1));
+}
+
+static inline uint8_t SPI_GetFlagStatus(SPI_Reg_TypeDef *pSPIx, uint32_t FlagName)
+{
+    return (pSPIx->SR & FlagName) ? FLAG_SET : FLAG_RESET;
 }
 
 /******************APIs supported by this driver**********************/
