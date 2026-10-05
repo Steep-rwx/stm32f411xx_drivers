@@ -78,6 +78,13 @@ typedef struct
 #define SPI_SSM_DISABLED            0
 #define SPI_SSM_ENABLED             1
 
+/*************************utility functions*******************************/
+
+static inline void SPI_WaitTxEmpty(SPI_Reg_TypeDef *pSPIx)
+{
+    while (!((pSPIx->SR >> SPI_SR_TXE) & 0x1));
+}
+
 /******************APIs supported by this driver**********************/
 
 /*
