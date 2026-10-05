@@ -97,7 +97,22 @@ void SPI_Init(SPI_Handle_TypeDef *pSPIHandle)
  * @Note                - none
  *
  */
-void SPI_DeInit(SPI_Reg_TypeDef *pSPIx);                /* Reset through RCC */
+void SPI_DeInit(SPI_Reg_TypeDef *pSPIx)
+{
+    if (pSPIx == SPI1)
+    {
+        RCC->APB2RSTR |= (1U << 12);
+        RCC->APB2RSTR &= ~(1U << 12);
+    } else if (pSPIx == SPI2)
+    {
+        RCC->APB1RSTR |= (1U << 14);
+        RCC->APB1RSTR &= ~(1U << 14);
+    } else if (pSPIx == SPI3)
+    {
+        RCC->APB1RSTR |= (1U << 15);
+        RCC->APB1RSTR &= ~(1U << 15);
+    }
+}
 
 /********************************************************************
  * @fn                  - SPI_SendData
