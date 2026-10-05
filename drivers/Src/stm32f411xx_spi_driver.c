@@ -47,7 +47,43 @@ void SPI_PeriClockControl(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi)
  * @Note                - none
  *
  */
-void SPI_Init(SPI_Handle_TypeDef *pSPIHandle);          /* Initialise SPI through SPI reg + SPI settings struct */
+void SPI_Init(SPI_Handle_TypeDef *pSPIHandle)
+{
+    uint32_t tempreg = 0;
+
+    //configuring mode
+    tempreg |= (pSPIHandle->SPIConfig.SPI_DeviceMode << 2);
+
+    //configuring bus config
+    if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_FULLDUPLEX)
+    {
+        tempreg &= ~(1 << 15);
+    } else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_HALFDUPLEX)
+    {
+        tempreg |= (1 << 15);
+    } else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_SIMPLEX_RXONLY)
+    {
+        tempreg &= ~(1 << 15);
+        tempreg |= (1 << 10);
+    }
+
+    //configuring Sclk speed
+    tempreg |= (pSPIHandle->SPIConfig.SPI_SclkSpeed << 3);
+
+    //configuring DFF
+    tempreg |= (pSPIHandle->SPIConfig.SPI_DFF << 11);
+
+    //configuring CPOL
+    tempreg |= (pSPIHandle->SPIConfig.SPI_CPOL << 1);
+    
+    //configuring CPHA
+    tempreg |= (pSPIHandle->SPIConfig.SPI_CPHA << 0);
+
+    //configuring SSM
+    tempreg |= (pSPIHandle->SPIConfig.SPI_SSM << 9);
+
+    pSPIHandle->pSPIx->CR1 = tempreg;
+}
 
 /********************************************************************
  * @fn                  - SPI_DeInit
