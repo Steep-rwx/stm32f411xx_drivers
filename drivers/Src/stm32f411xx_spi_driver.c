@@ -49,6 +49,9 @@ void SPI_PeriClockControl(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi)
  */
 void SPI_Init(SPI_Handle_TypeDef *pSPIHandle)
 {
+
+    SPI_PeriClockControl(pSPIHandle->pSPIx, ENABLE);
+
     uint32_t tempreg = 0;
 
     //configuring mode
@@ -125,7 +128,7 @@ void SPI_DeInit(SPI_Reg_TypeDef *pSPIx)
  *
  * @return              - none
  *
- * @Note                - none
+ * @Note                - This is blocking call
  *
  */
 void SPI_SendData(SPI_Reg_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t length)
