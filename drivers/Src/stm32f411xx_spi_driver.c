@@ -209,9 +209,7 @@ void SPI_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
  *
  * @brief               - Clears pending interrupt
  *
- * @param[in]           - pinNumber: number which need to clear
- * @param[in]           - 
- * @param[in]           -
+ * @param[in]           - pSPIHandle: address of SPIHandle struct
  *
  * @return              - none
  *
@@ -219,3 +217,27 @@ void SPI_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
  *
  */
 void SPI_IRQHandling(SPI_Handle_TypeDef *pSPIHandle);
+
+/********************************************************************
+ * @fn                  - SPI_PeripheralControl
+ *
+ * @brief               - Enables SPI choosen peripheral
+ *
+ * @param[in]           - pSPIx: base address
+ * @param[in]           - enOrDi: ENABLE or DISABLE
+ *
+ * @return              - none
+ *
+ * @Note                - none
+ *
+ */
+void SPI_PeripheralControl(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi)
+{
+    if (enOrDi)
+    {
+        pSPIx->CR1 |= (1U << SPI_CR1_SPE);
+    } else
+    {
+        pSPIx->CR1 &= ~(1U << SPI_CR1_SPE);
+    }
+}
