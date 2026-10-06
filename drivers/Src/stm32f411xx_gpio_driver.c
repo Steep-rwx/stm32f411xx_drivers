@@ -49,6 +49,8 @@ void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi)
  */
 void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
 {
+
+    GPIO_PeriClockControl(pGPIOHandle->pGPIOx, ENABLE);
     
     if (pGPIOHandle == NULL || pGPIOHandle->pGPIOx == NULL) return;
     if (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber > 15) return;
