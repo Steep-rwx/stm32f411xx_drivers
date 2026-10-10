@@ -90,7 +90,7 @@ typedef struct
 
 static inline void SPI_WaitTxEmpty(SPI_Reg_TypeDef *pSPIx)
 {
-    while ((pSPIx->SR & SPI_SR_TXE) == 0);
+    while (!(pSPIx->SR & (SPI_TXE_FLAG)));
 }
 
 static inline uint8_t SPI_GetFlagStatus(SPI_Reg_TypeDef *pSPIx, uint32_t FlagName)
