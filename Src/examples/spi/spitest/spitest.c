@@ -69,5 +69,5 @@ int main(void)
         SPI_SendData(SPI2, (uint8_t*) user_data, strlen(user_data));
         for(volatile uint32_t i = 0; i < 100000; i++);
     }
-
+    return 0;
 }
