@@ -32,9 +32,6 @@ int main(void)
     gpio_key.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_LOW;
     gpio_key.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_PU;
 
-    GPIO_PeriClockControl(ledunit.pGPIOx, ENABLE);
-    GPIO_PeriClockControl(gpio_key.pGPIOx, ENABLE);
-
     GPIO_Init(&ledunit);
     GPIO_Init(&gpio_key);
 
