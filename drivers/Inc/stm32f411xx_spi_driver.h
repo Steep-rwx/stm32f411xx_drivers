@@ -19,6 +19,7 @@ typedef struct
     uint8_t SPI_CPHA;
     uint8_t SPI_SSM;
     uint8_t SPI_SSI;
+    uint8_t SPI_SSOE;
 } SPI_Config_TypeDef;
 
 /*
@@ -85,6 +86,12 @@ typedef struct
  */
 #define SPI_SSI_DISABLED            0
 #define SPI_SSI_ENABLED             1
+
+/*
+ * @SPI_SSOE
+ */
+#define SPI_SSOE_DISABLED            0
+#define SPI_SSOE_ENABLED             1
 
 /*
  * SPI flag definitions

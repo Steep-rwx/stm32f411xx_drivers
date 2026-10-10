@@ -52,7 +52,11 @@ void SPI_Init(SPI_Handle_TypeDef *pSPIHandle)
 
     SPI_PeriClockControl(pSPIHandle->pSPIx, ENABLE);
 
+    // tempreg for CR1
     uint32_t tempreg = 0;
+
+    // tempreg2 for CR2
+    uint32_t tempreg2 = 0;
 
     //configuring mode
     tempreg |= (pSPIHandle->SPIConfig.SPI_DeviceMode << SPI_CR1_MSTR);
@@ -88,7 +92,11 @@ void SPI_Init(SPI_Handle_TypeDef *pSPIHandle)
     //configuring SSI
     tempreg |= (pSPIHandle->SPIConfig.SPI_SSI << SPI_CR1_SSI);
 
+    //configuring SSOE
+    tempreg2 |= (pSPIHandle->SPIConfig.SPI_SSOE << SPI_CR2_SSOE);
+
     pSPIHandle->pSPIx->CR1 = tempreg;
+    pSPIHandle->pSPIx->CR2 = tempreg2;
 }
 
 /********************************************************************
