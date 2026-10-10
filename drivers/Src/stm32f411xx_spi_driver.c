@@ -83,11 +83,10 @@ void SPI_Init(SPI_Handle_TypeDef *pSPIHandle)
     tempreg |= (pSPIHandle->SPIConfig.SPI_CPHA << SPI_CR1_CPHA);
 
     //configuring SSM
-    if (pSPIHandle->SPIConfig.SPI_SSM == SPI_SSM_ENABLED)
-    {
-        tempreg |= (pSPIHandle->SPIConfig.SPI_SSM << SPI_CR1_SSM);
-        tempreg |= (1U << SPI_CR1_SSI);
-    }
+    tempreg |= (pSPIHandle->SPIConfig.SPI_SSM << SPI_CR1_SSM);
+
+    //configuring SSI
+    tempreg |= (pSPIHandle->SPIConfig.SPI_SSI << SPI_CR1_SSI);
 
     pSPIHandle->pSPIx->CR1 = tempreg;
 }

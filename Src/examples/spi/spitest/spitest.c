@@ -48,6 +48,7 @@ void SPI2_Inits(void)
     SPI2Handle.SPIConfig.SPI_CPOL = SPI_CPOL_LOW;
     SPI2Handle.SPIConfig.SPI_CPHA = SPI_CPHA_FIRST_CAPTURE;
     SPI2Handle.SPIConfig.SPI_SSM = SPI_SSM_ENABLED;
+    SPI2Handle.SPIConfig.SPI_SSI = SPI_SSI_ENABLED;
 
     SPI_Init(&SPI2Handle);
 }
