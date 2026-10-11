@@ -183,7 +183,38 @@ void SPI_SendData(SPI_Reg_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t length)
  * @Note                - none
  *
  */
-void SPI_ReceiveData(SPI_Reg_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t length);
+void SPI_ReceiveData(SPI_Reg_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t length)
+{
+    if ((pSPIx->CR1 >> SPI_CR1_DFF) & 0x1)
+    {
+        uint16_t *pRxBuffer16 = ((uint16_t*) pRxBuffer);
+        uint32_t count16 = length / 2;
+        while (count16 > 0)
+        {
+            SPI_WaitTxEmpty(pSPIx);
+            pSPIx->DR = 0xFFFF;
+
+            SPI_WaitRxNotEmpty(pSPIx);
+
+            *pRxBuffer16 = (uint16_t) pSPIx->DR;
+            pRxBuffer16++;
+            count16--;        
+        }
+    } else
+    {
+        while (length > 0)
+        {
+            SPI_WaitTxEmpty(pSPIx);
+            pSPIx->DR = 0xFF;
+
+            SPI_WaitRxNotEmpty(pSPIx);
+
+            *pRxBuffer = (uint8_t) pSPIx->DR;
+            pRxBuffer++;
+            length--;
+        }        
+    }
+}
 
 /*******************************************************************
  * @fn                  - SPI_IRQConfig

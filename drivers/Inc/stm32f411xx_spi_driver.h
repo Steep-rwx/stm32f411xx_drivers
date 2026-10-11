@@ -108,6 +108,12 @@ static inline void SPI_WaitTxEmpty(SPI_Reg_TypeDef *pSPIx)
     while (!(pSPIx->SR & (SPI_TXE_FLAG)));
 }
 
+static inline void SPI_WaitRxNotEmpty(SPI_Reg_TypeDef *pSPIx)
+{
+    while (!(pSPIx->SR & (SPI_RXNE_FLAG)));
+}
+
+
 static inline uint8_t SPI_GetFlagStatus(SPI_Reg_TypeDef *pSPIx, uint32_t FlagName)
 {
     return (pSPIx->SR & FlagName) ? FLAG_SET : FLAG_RESET;
