@@ -216,6 +216,45 @@ void SPI_ReceiveData(SPI_Reg_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t length
     }
 }
 
+/********************************************************************
+ * @fn                  - SPI_SendDataIt
+ *
+ * @brief               - Send data through SPI with interrupt
+ *
+ * @param[in]           - pSPIx: base address of handle
+ * @param[in]           - pTxBuffer: Tx buffer
+ * @param[in]           - length: length of info
+ *
+ * @return              - none
+ *
+ * @Note                - This is non blocking call
+ *
+ */
+void SPI_SendDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pTxBuffer, uint32_t length)
+{
+    
+}
+
+/********************************************************************
+ * @fn                  - SPI_ReceiveDataIT
+ *
+ * @brief               - Receive data through SPI with interrupt
+ *
+ * @param[in]           - pSPIx: base address of handle
+ * @param[in]           - pRxBuffer: Rx buffer
+ * @param[in]           - length: length of info
+ *
+ * @return              - none
+ *
+ * @Note                - None blocking
+ *
+ */
+void SPI_ReceiveDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pRxBuffer, uint32_t length)
+{
+    
+}
+
+
 /*******************************************************************
  * @fn                  - SPI_IRQConfig
  *

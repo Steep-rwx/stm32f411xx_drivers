@@ -27,8 +27,14 @@ typedef struct
  */
 typedef struct
 {
-    SPI_Reg_TypeDef *pSPIx;
-    SPI_Config_TypeDef SPIConfig;
+    SPI_Reg_TypeDef     *pSPIx;
+    SPI_Config_TypeDef  SPIConfig;
+    uint8_t             *pTxBuffer;
+    uint8_t             *pRxBuffer;
+    uint32_t            TxLen;
+    uint32_t            RxLen;
+    uint8_t             TxState;
+    uint8_t             RxState;
 } SPI_Handle_TypeDef;
 
 /*
@@ -100,6 +106,12 @@ typedef struct
 #define SPI_RXNE_FLAG           (1 << SPI_SR_RXNE)
 #define SPI_BUSY_FLAG           (1 << SPI_SR_BSY)
 
+/*
+ * SPI status definitions
+ */
+#define SPI_READY       0
+#define SPI_BUSY_RX     1
+#define SPI_BUSY_TX     2
 
 /*************************utility functions*******************************/
 
@@ -137,6 +149,9 @@ void SPI_DeInit(SPI_Reg_TypeDef *pSPIx);                /* Reset through RCC */
  */
 void SPI_SendData(SPI_Reg_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t length);
 void SPI_ReceiveData(SPI_Reg_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t length);
+
+void SPI_SendDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pTxBuffer, uint32_t length);
+void SPI_ReceiveDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pRxBuffer, uint32_t length);
 
 /*
  * IRQ Configuration and ISR handling
