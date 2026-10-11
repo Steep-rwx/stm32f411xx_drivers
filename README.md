@@ -1,22 +1,36 @@
-# stm32f411xx_drivers
+# STM32 Bare-Metal Drivers
 
-## Main Goal;
-Написать драйвера для GPIO, SPI, I2C, USART и протестить их через examples
+Учебный репозиторий с реализацией драйверов для микроконтроллера **STM32F411** (ARM Cortex-M4) на C (Register Level).
+
+## GOAL:
+
+Разработка драйверов базовых интерфейсов:
+- [x] **GPIO**
+- [/] **SPI** *(в разработке)*
+- [ ] **I2C** *(запланировано)*
+- [ ] **USART** *(запланировано)*
+
+---
+
+## EXAMPLES:
+
+### GPIO Driver
+*(Примеры будут добавлены позже)*
+
+---
 
 
-## GPIO driver:
+### SPI Driver
+Все примеры протестированы с использованием логического анализатора (Saleae) и отладчика ST-Link.
+
+1. **[SPI Tx Test](Src/examples/spi/spitest/README.md)** — Базовая проверка передачи данных (`SPI_SendData`) и сигналов на логическом анализаторе.
+2. **[STM32 to ESP32 Tx](Src/examples/spi/spi_esp_communication/README.md)** — Однонаправленная передача данных с STM32 на ESP32.
+3. **[STM32 to ESP32 Full-Duplex (Tx/Rx)](Src/examples/spi/spi_esp_tx_rx_test/README.md)** — Полнодуплексный обмен данными (Tx/Rx) с проверкой в STM32CubeIDE debugger и Saleae.
 
 
-### Examples:
+## HARDWARE & SOFTWARE
 
-
-## SPI driver:
-
-
-### Examples:
-1. В данном примере реализовано использование функции SPI_SendData, также прикреплён тест через логический анализатор:
-[spitest](Src/examples/spi/spitest/README.md)
-2. В данном примере реализована связь STM32 с ESP32, также прикреплены скриншоты тестов приёма данных на ESP32, а также тесты при помощи логического анализатора:
-[spi_esp_communication](Src/examples/spi/spi_esp_communication/README.md)
-3. В данном примере реализована связь STM32 с ESP32, также реализованы отправка данных и приём, протестировано через логический анализатор и дебаггер STM32CubeIDE:
-[spi_esp_tx_rx_test](Src/examples/spi/spi_esp_tx_rx_test/README.md)
+* **MCU:** STM32F411CEU6 (Black Pill)
+* **Slave-MCU:** ESP32 DevKit v1
+* **Debugging:** Saleae Logic Analyzer, ST-Link v2
+* **IDE:** VS Code with STM32CubeIDE extension
