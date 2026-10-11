@@ -306,7 +306,10 @@ static inline uint8_t gpio_base_to_code(const GPIO_Reg_TypeDef *pGPIOx)
 #define IRQ_NO_EXTI3      9
 #define IRQ_NO_EXTI4      10
 #define IRQ_NO_EXTI9_5    23
-#define IRQ_NO_EXTI15_10  40   
+#define IRQ_NO_EXTI15_10  40
+
+#define IRQ_SPI1          35
+#define IRQ_SPI2          36
 
 /*
  * IRQ Priority numbers

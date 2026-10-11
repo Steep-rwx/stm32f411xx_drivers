@@ -229,7 +229,20 @@ void SPI_ReceiveData(SPI_Reg_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t length
  * @Note                - none
  *
  */
-void SPI_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi);
+void SPI_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi)
+{
+    if (IRQNumber >= 240) return;
+
+    uint8_t ipr_idx = IRQNumber / 32;
+    uint8_t bit_pos = IRQNumber % 32;
+    if (enOrDi)
+    {
+        NVIC->ISER[ipr_idx] |= (1UL << bit_pos);
+    } else 
+    {
+        NVIC->ICER[ipr_idx] |= (1UL << bit_pos);
+    }
+}
 
 /*******************************************************************
  * @fn                  - SPI_IRQPriority
@@ -244,7 +257,19 @@ void SPI_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi);
  * @Note                - none
  *
  */
-void SPI_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
+void SPI_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
+{
+    if (IRQNumber >= 240) return;
+
+    uint8_t ipr_idx = IRQNumber / 4;
+    uint8_t byte_shift = ((IRQNumber % 4) * 8);
+
+    uint8_t shift_amount = (byte_shift + (8 - NO_PR_BITS_IMPLEMENTED));
+
+    NVIC->IPR[ipr_idx] &= ~(0xFFUL << byte_shift);
+
+    NVIC->IPR[ipr_idx] |= ((uint32_t)IRQPriority << shift_amount);
+}
 
 /********************************************************************
  * @fn                  - SPI_IRQHandling
