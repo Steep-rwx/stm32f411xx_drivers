@@ -150,7 +150,7 @@ void SPI_DeInit(SPI_Reg_TypeDef *pSPIx);                /* Reset through RCC */
 void SPI_SendData(SPI_Reg_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t length);
 void SPI_ReceiveData(SPI_Reg_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t length);
 
-void SPI_SendDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pTxBuffer, uint32_t length);
+uint8_t SPI_SendDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pTxBuffer, uint32_t length);
 void SPI_ReceiveDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pRxBuffer, uint32_t length);
 
 /*

@@ -230,9 +230,22 @@ void SPI_ReceiveData(SPI_Reg_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t length
  * @Note                - This is non blocking call
  *
  */
-void SPI_SendDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pTxBuffer, uint32_t length)
+uint8_t SPI_SendDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pTxBuffer, uint32_t length)
 {
-    
+    uint8_t state = pSPIHandle->TxState;
+
+    if(state != SPI_BUSY_TX)
+    {
+        pSPIHandle->pTxBuffer = pTxBuffer; /* Saving TxBuffer */
+
+        pSPIHandle->TxLen = length; /* Saving length of buffer */
+
+        pSPIHandle->TxState = SPI_BUSY_TX; /* Setting busy flag */
+
+        pSPIHandle->pSPIx->CR2 |= (1U << SPI_CR2_TXEIE); /* Setting TXEIE */
+    }
+
+    return state;
 }
 
 /********************************************************************
