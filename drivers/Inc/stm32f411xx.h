@@ -293,6 +293,8 @@ static inline uint8_t gpio_base_to_code(const GPIO_Reg_TypeDef *pGPIOx)
   if (pGPIOx == GPIOD) return 3;
   if (pGPIOx == GPIOE) return 4;
   if (pGPIOx == GPIOH) return 7;
+
+  return 0;
 }
 
 

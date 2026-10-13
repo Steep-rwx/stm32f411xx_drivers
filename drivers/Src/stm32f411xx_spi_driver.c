@@ -348,7 +348,33 @@ void SPI_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
  * @Note                - none
  *
  */
-void SPI_IRQHandling(SPI_Handle_TypeDef *pSPIHandle);
+void SPI_IRQHandling(SPI_Handle_TypeDef *pSPIHandle)
+{
+    uint8_t txe_status = pSPIHandle->pSPIx->SR & (1U << SPI_SR_TXE);
+    uint8_t txeie_status = pSPIHandle->pSPIx->CR2 & (1U << SPI_CR2_TXEIE);
+
+    if (txe_status && txeie_status)
+    {
+        
+    }
+
+    uint8_t rxne_status = pSPIHandle->pSPIx->SR & (1U << SPI_SR_RXNE);
+    uint8_t rxneie_status = pSPIHandle->pSPIx->CR2 & (1U << SPI_CR2_RXNEIE);
+
+    if (rxne_status && rxneie_status)
+    {
+
+    }
+
+    uint8_t ovr_status = pSPIHandle->pSPIx->SR & (1U << SPI_SR_OVR);
+    uint8_t errie_status = pSPIHandle->pSPIx->CR2 & (1U << SPI_CR2_ERRIE);
+
+    if (ovr_status && errie_status)
+    {
+        
+    }
+    
+}
 
 /********************************************************************
  * @fn                  - SPI_PeripheralControl
