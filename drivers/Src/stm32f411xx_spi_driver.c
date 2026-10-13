@@ -262,9 +262,22 @@ uint8_t SPI_SendDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pTxBuffer, uint3
  * @Note                - None blocking
  *
  */
-void SPI_ReceiveDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pRxBuffer, uint32_t length)
+uint8_t SPI_ReceiveDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pRxBuffer, uint32_t length)
 {
-    
+    uint8_t state = pSPIHandle->RxState;
+
+    if(state != SPI_BUSY_RX)
+    {
+        pSPIHandle->pRxBuffer = pRxBuffer; /* Saving RxBuffer */
+
+        pSPIHandle->RxLen = length; /* Saving length of buffer */
+
+        pSPIHandle->RxState = SPI_BUSY_RX; /* Setting busy flag */
+
+        pSPIHandle->pSPIx->CR2 |= (1U << SPI_CR2_RXNEIE); /* Setting RXNEIE */
+    }
+
+    return state;
 }
 
 
