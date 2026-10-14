@@ -457,8 +457,7 @@ static void spi_ovr_interrupt_handle(SPI_Handle_TypeDef *pSPIHandle)
     volatile uint8_t ovr_status;
     if (pSPIHandle->TxState != SPI_BUSY_TX)
     {
-        ovr_status = pSPIHandle->pSPIx->DR;
-        ovr_status = pSPIHandle->pSPIx->SR;
+        SPI_ClearOVRFlag(pSPIHandle->pSPIx);
     }
     (void) ovr_status;
     SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_OVR_ERR);
