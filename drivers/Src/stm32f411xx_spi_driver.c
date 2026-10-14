@@ -375,7 +375,7 @@ void SPI_IRQHandling(SPI_Handle_TypeDef *pSPIHandle)
 
     if (ovr_status && errie_status)
     {
-
+        spi_ovr_interrupt_handle(pSPIHandle);
     }
     
 }
@@ -423,11 +423,8 @@ static void spi_txe_interrupt_handle(SPI_Handle_TypeDef *pSPIHandle)
     }
     else
     {
-        pSPIHandle->pSPIx->CR2 &= ~(1U << SPI_CR2_TXEIE);
-        pSPIHandle->pTxBuffer = NULL;
-        pSPIHandle->TxLen = 0;
-        pSPIHandle->TxState = SPI_READY;
-        //TODO
+        SPI_CloseTransmission(pSPIHandle);
+        SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_TX_CMPLT);
     }
 }
 
@@ -450,10 +447,49 @@ static void spi_rxne_interrupt_handle(SPI_Handle_TypeDef *pSPIHandle)
         }
     } else
     {
-        pSPIHandle->pSPIx->CR2 &= ~(1U << SPI_CR2_RXNEIE);
-        pSPIHandle->pRxBuffer = NULL;
-        pSPIHandle->RxLen = 0;
-        pSPIHandle->RxState = SPI_READY;
-        //TODO
+        SPI_CloseReception(pSPIHandle);
+        SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_RX_CMPLT);
     }
+}
+
+static void spi_ovr_interrupt_handle(SPI_Handle_TypeDef *pSPIHandle)
+{
+    volatile uint8_t ovr_status;
+    if (pSPIHandle->TxState != SPI_BUSY_TX)
+    {
+        ovr_status = pSPIHandle->pSPIx->DR;
+        ovr_status = pSPIHandle->pSPIx->SR;
+    }
+    (void) ovr_status;
+    SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_OVR_ERR);
+}
+
+void SPI_ClearOVRFlag(SPI_Reg_TypeDef *pSPIx)
+{
+    uint8_t ovr_status;
+    ovr_status = pSPIx->DR;
+    ovr_status = pSPIx->SR;
+    (void) ovr_status;
+}
+
+void SPI_CloseTransmission(SPI_Handle_TypeDef *pSPIHandle)
+{
+    pSPIHandle->pSPIx->CR2 &= ~(1U << SPI_CR2_TXEIE);
+    pSPIHandle->pTxBuffer = NULL;
+    pSPIHandle->TxLen = 0;
+    pSPIHandle->TxState = SPI_READY;
+}
+
+void SPI_CloseReception(SPI_Handle_TypeDef *pSPIHandle)
+{
+    pSPIHandle->pSPIx->CR2 &= ~(1U << SPI_CR2_RXNEIE);
+    pSPIHandle->pRxBuffer = NULL;
+    pSPIHandle->RxLen = 0;
+    pSPIHandle->RxState = SPI_READY;
+}
+
+
+__attribute__((weak)) void SPI_ApplicationEventCallback(SPI_Handle_TypeDef *pSPIHandle, uint8_t ApplicationEvent)
+{
+
 }

@@ -113,6 +113,14 @@ typedef struct
 #define SPI_BUSY_RX     1
 #define SPI_BUSY_TX     2
 
+/*
+ * SPI Application events
+ */
+#define SPI_EVENT_TX_CMPLT  1
+#define SPI_EVENT_RX_CMPLT  2
+#define SPI_EVENT_OVR_ERR   3
+#define SPI_EVENT_CRC_ERR   4
+
 /*************************utility functions*******************************/
 
 static inline void SPI_WaitTxEmpty(SPI_Reg_TypeDef *pSPIx)
@@ -164,5 +172,13 @@ void SPI_IRQHandling(SPI_Handle_TypeDef *pSPIHandle);
  * Other Peripheral Control
  */
 void SPI_PeripheralControl(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi);
+void SPI_ClearOVRFlag(SPI_Reg_TypeDef *pSPIx);
+void SPI_CloseTransmission(SPI_Handle_TypeDef *pSPIHandle);
+void SPI_CloseReception(SPI_Handle_TypeDef *pSPIHandle);
+
+/*
+ * Application callback
+ */
+void SPI_ApplicationEventCallback(SPI_Handle_TypeDef *pSPIHandle, uint8_t ApplicationEvent);
 
 #endif /* INC_STM32F411XX_SPI_DRIVER_H_ */
