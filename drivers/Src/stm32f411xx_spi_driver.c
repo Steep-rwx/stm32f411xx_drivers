@@ -6,6 +6,10 @@
 #include <stddef.h>
 
 
+static void spi_txe_interrupt_handle(SPI_Handle_TypeDef *pSPIHandle);
+static void spi_rxne_interrupt_handle(SPI_Handle_TypeDef *pSPIHandle);
+static void spi_ovr_interrupt_handle(SPI_Handle_TypeDef *pSPIHandle);
+
 /********************************************************************
  * @fn                  - SPI_PeriClockControl
  *
@@ -355,7 +359,7 @@ void SPI_IRQHandling(SPI_Handle_TypeDef *pSPIHandle)
 
     if (txe_status && txeie_status)
     {
-        
+        spi_txe_interrupt_handle(pSPIHandle);
     }
 
     uint8_t rxne_status = pSPIHandle->pSPIx->SR & (1U << SPI_SR_RXNE);
@@ -363,7 +367,7 @@ void SPI_IRQHandling(SPI_Handle_TypeDef *pSPIHandle)
 
     if (rxne_status && rxneie_status)
     {
-
+        spi_rxne_interrupt_handle(pSPIHandle);
     }
 
     uint8_t ovr_status = pSPIHandle->pSPIx->SR & (1U << SPI_SR_OVR);
@@ -371,7 +375,7 @@ void SPI_IRQHandling(SPI_Handle_TypeDef *pSPIHandle)
 
     if (ovr_status && errie_status)
     {
-        
+
     }
     
 }
@@ -397,5 +401,59 @@ void SPI_PeripheralControl(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi)
     } else
     {
         pSPIx->CR1 &= ~(1U << SPI_CR1_SPE);
+    }
+}
+
+static void spi_txe_interrupt_handle(SPI_Handle_TypeDef *pSPIHandle)
+{
+    if (pSPIHandle->TxLen > 0)
+    {
+        if ((pSPIHandle->pSPIx->CR1 >> SPI_CR1_DFF) & 0x1)
+        {
+            pSPIHandle->pSPIx->DR = *((uint16_t*)pSPIHandle->pTxBuffer);
+            pSPIHandle->pTxBuffer += 2;
+            pSPIHandle->TxLen -= 2;
+        }
+        else
+        {
+            pSPIHandle->pSPIx->DR = *pSPIHandle->pTxBuffer;
+            pSPIHandle->pTxBuffer++;
+            pSPIHandle->TxLen--;
+        }
+    }
+    else
+    {
+        pSPIHandle->pSPIx->CR2 &= ~(1U << SPI_CR2_TXEIE);
+        pSPIHandle->pTxBuffer = NULL;
+        pSPIHandle->TxLen = 0;
+        pSPIHandle->TxState = SPI_READY;
+        //TODO
+    }
+}
+
+static void spi_rxne_interrupt_handle(SPI_Handle_TypeDef *pSPIHandle)
+{
+    if (pSPIHandle->RxLen > 0)
+    {
+        if ((pSPIHandle->pSPIx->CR1 >> SPI_CR1_DFF) & 0x1)
+        {
+            pSPIHandle->pSPIx->DR = 0xFFFF;
+            *((uint16_t*)pSPIHandle->pRxBuffer) = (uint16_t) pSPIHandle->pSPIx->DR;
+            pSPIHandle->pRxBuffer += 2;
+            pSPIHandle->RxLen -= 2;
+        } else
+        {
+            pSPIHandle->pSPIx->DR = 0xFF;
+            *pSPIHandle->pRxBuffer = (uint8_t) pSPIHandle->pSPIx->DR;
+            pSPIHandle->pRxBuffer++;
+            pSPIHandle->RxLen--;
+        }
+    } else
+    {
+        pSPIHandle->pSPIx->CR2 &= ~(1U << SPI_CR2_RXNEIE);
+        pSPIHandle->pRxBuffer = NULL;
+        pSPIHandle->RxLen = 0;
+        pSPIHandle->RxState = SPI_READY;
+        //TODO
     }
 }
