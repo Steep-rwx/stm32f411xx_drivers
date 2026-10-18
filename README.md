@@ -26,7 +26,7 @@
 1. **[SPI Tx Test](Src/examples/spi/spitest/README.md)** — Базовая проверка передачи данных (`SPI_SendData`) и сигналов на логическом анализаторе.
 2. **[STM32 to ESP32 Tx](Src/examples/spi/spi_esp_communication/README.md)** — Однонаправленная передача данных с STM32 на ESP32.
 3. **[STM32 to ESP32 Full-Duplex (Tx/Rx)](Src/examples/spi/spi_esp_tx_rx_test/README.md)** — Полнодуплексный обмен данными (Tx/Rx) с проверкой в STM32CubeIDE debugger и Saleae.
-4. **[SPI TX and RX interrupt functions tests](Src/examples/spi/spi_tx_rx_interrupt/README.md) - Тестирование функций прерываний обмена данными с проверкой в STM32CubeIDE и Saleae.
+4. **[SPI TX and RX interrupt functions tests](Src/examples/spi/spi_tx_rx_interrupt/README.md)** - Тестирование функций прерываний обмена данными с проверкой в STM32CubeIDE и Saleae.
 
 
 ## HARDWARE & SOFTWARE
