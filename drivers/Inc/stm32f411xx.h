@@ -194,7 +194,7 @@ typedef struct
   volatile uint32_t CCR;          /*!< I2C clock control register,            address offset: 0x1C */
   volatile uint32_t TRISE;        /*!< I2C TRISE register,                    address offset: 0x20 */
   volatile uint32_t FLTR;         /*!< I2C FLTR register,                     address offset: 0x24 */
-} I2C_Reg_Typedef;
+} I2C_Reg_TypeDef;
 
 
 /********************************peripheral definitions*****************************************************************/
