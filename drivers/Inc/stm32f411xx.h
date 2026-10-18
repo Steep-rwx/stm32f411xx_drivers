@@ -64,16 +64,20 @@ typedef struct
 #define I2C1_BASEADDR                       (APB1PERIPH_BASEADDR + 0x5400U)
 #define I2C2_BASEADDR                       (APB1PERIPH_BASEADDR + 0x5800U)
 #define I2C3_BASEADDR                       (APB1PERIPH_BASEADDR + 0x5C00U)
+
 #define SPI2_BASEADDR                       (APB1PERIPH_BASEADDR + 0x3800U)
 #define SPI3_BASEADDR                       (APB1PERIPH_BASEADDR + 0x3C00U)
+
 #define USART2_BASEADDR                     (APB1PERIPH_BASEADDR + 0x4400U)
 
 /**
   * Base addresses of APB2 bus
   */
 #define SPI1_BASEADDR                       (APB2PERIPH_BASEADDR + 0x3000U)
+
 #define USART1_BASEADDR                     (APB2PERIPH_BASEADDR + 0x1000U)
 #define USART6_BASEADDR                     (APB2PERIPH_BASEADDR + 0x1400U)
+
 #define EXTI_BASEADDR                       (APB2PERIPH_BASEADDR + 0x3C00U)
 #define SYSCFG_BASEADDR                     (APB2PERIPH_BASEADDR + 0x3800U)    
 
@@ -178,6 +182,20 @@ typedef struct
   volatile uint32_t I2SPR;        /*!< SPI_I2S prescaler register,            address offset: 0x20 */
 } SPI_Reg_TypeDef;
 
+typedef struct
+{
+  volatile uint32_t CR1;          /*!< I2C control register 1,                address offset: 0x00 */
+  volatile uint32_t CR2;          /*!< I2C control register 2,                address offset: 0x04 */
+  volatile uint32_t OAR1;         /*!< I2C own address register 1,            address offset: 0x08 */
+  volatile uint32_t OAR2;         /*!< I2C own address register 2,            address offset: 0x0C */
+  volatile uint32_t DR;           /*!< I2C data register,                     address offset: 0x10 */
+  volatile uint32_t SR1;          /*!< I2C status register 1,                 address offset: 0x14 */
+  volatile uint32_t SR2;          /*!< I2C status register 2,                 address offset: 0x18 */
+  volatile uint32_t CCR;          /*!< I2C clock control register,            address offset: 0x1C */
+  volatile uint32_t TRISE;        /*!< I2C TRISE register,                    address offset: 0x20 */
+  volatile uint32_t FLTR;         /*!< I2C FLTR register,                     address offset: 0x24 */
+} I2C_Reg_Typedef;
+
 
 /********************************peripheral definitions*****************************************************************/
 
@@ -207,6 +225,12 @@ typedef struct
 #define SPI2          ((SPI_Reg_TypeDef*) SPI2_BASEADDR)
 #define SPI3          ((SPI_Reg_TypeDef*) SPI3_BASEADDR)
 
+/*
+ * I2C definition
+ */
+#define I2C1          ((I2C_Reg_TypeDef*) I2C1_BASEADDR)
+#define I2C2          ((I2C_Reg_TypeDef*) I2C2_BASEADDR)
+#define I2C3          ((I2C_Reg_TypeDef*) I2C3_BASEADDR)
 
 /**
   * Clock enable GPIO peripherals
@@ -381,5 +405,47 @@ static inline uint8_t gpio_base_to_code(const GPIO_Reg_TypeDef *pGPIOx)
 #define SPI_SR_OVR              6
 #define SPI_SR_BSY              7
 #define SPI_SR_FRE              8
+
+/********************bit positions of I2C peripheral**********************************/
+#define I2C_CR1_PE              0
+#define I2C_CR1_NOSTRETCH       7
+#define I2C_CR1_START           8
+#define I2C_CR1_STOP            9
+#define I2C_CR1_ACK             10
+#define I2C_CR1_SWRST           15
+
+#define I2C_CR2_FREQ            0
+#define I2C_CR2_ITERREN         8
+#define I2C_CR2_ITEVTEN         9
+#define I2C_CR2_ITBUFEN         10
+
+#define I2C_OAR1_ADD0           0
+#define I2C_OAR1_ADD71          1
+#define I2C_OAR1_ADD98          8
+#define I2C_OAR1_ADDMODE        15
+
+#define I2C_SR1_SB              0
+#define I2C_SR1_ADDR            1
+#define I2C_SR1_BTF             2
+#define I2C_SR1_ADD10           3
+#define I2C_SR1_STOPF           4
+#define I2C_SR1_RXNE            6
+#define I2C_SR1_TXE             7
+#define I2C_SR1_BERR            8
+#define I2C_SR1_ARLO            9
+#define I2C_SR1_AF              10
+#define I2C_SR1_OVR             11
+#define I2C_SR1_TIMEOUT         14
+
+#define I2C_SR2_MSL             0
+#define I2C_SR2_BUSY            1
+#define I2C_SR2_TRA             2
+#define I2C_SR2_GENCALL         4
+#define I2C_SR2_DUALF           7
+
+#define I2C_CCR_CCR             0
+#define I2C_CCR_DUTY            14
+#define I2C_CCR_FS              15
+
 
 #endif /* INC_STM32F411XX_H_ */
