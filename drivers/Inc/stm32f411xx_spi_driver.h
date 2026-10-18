@@ -18,7 +18,6 @@ typedef struct
     uint8_t SPI_CPOL;
     uint8_t SPI_CPHA;
     uint8_t SPI_SSM;
-    uint8_t SPI_SSI;
     uint8_t SPI_SSOE;
 } SPI_Config_TypeDef;
 
@@ -172,6 +171,7 @@ void SPI_IRQHandling(SPI_Handle_TypeDef *pSPIHandle);
  * Other Peripheral Control
  */
 void SPI_PeripheralControl(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi);
+void SPI_SSISet(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi);
 void SPI_ClearOVRFlag(SPI_Reg_TypeDef *pSPIx);
 void SPI_CloseTransmission(SPI_Handle_TypeDef *pSPIHandle);
 void SPI_CloseReception(SPI_Handle_TypeDef *pSPIHandle);

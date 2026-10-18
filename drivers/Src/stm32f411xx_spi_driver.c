@@ -93,9 +93,6 @@ void SPI_Init(SPI_Handle_TypeDef *pSPIHandle)
     //configuring SSM
     tempreg |= (pSPIHandle->SPIConfig.SPI_SSM << SPI_CR1_SSM);
 
-    //configuring SSI
-    tempreg |= (pSPIHandle->SPIConfig.SPI_SSI << SPI_CR1_SSI);
-
     //configuring SSOE
     tempreg2 |= (pSPIHandle->SPIConfig.SPI_SSOE << SPI_CR2_SSOE);
 
@@ -462,6 +459,20 @@ static void spi_ovr_interrupt_handle(SPI_Handle_TypeDef *pSPIHandle)
     (void) ovr_status;
     SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_OVR_ERR);
 }
+
+
+void SPI_SSISet(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi)
+{
+    if (enOrDi)
+    {
+        pSPIx->CR1 |= (1U << SPI_CR1_SSI);
+    }
+    else
+    {
+        pSPIx->CR1 &= ~(1U << SPI_CR1_SSI);
+    }
+}
+
 
 void SPI_ClearOVRFlag(SPI_Reg_TypeDef *pSPIx)
 {
