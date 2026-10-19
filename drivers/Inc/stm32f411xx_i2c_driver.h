@@ -43,4 +43,44 @@ typedef struct
 #define I2C_FM_DUTY_2       0
 #define I2C_FM_DUTY_16_9    1
 
+/*************************utility functions*******************************/
+
+static inline uint8_t SPI_GetFlagStatus(SPI_Reg_TypeDef *pSPIx, uint32_t FlagName)
+{
+    return (pSPIx->SR & FlagName) ? FLAG_SET : FLAG_RESET;
+}
+
+/******************APIs supported by this driver**********************/
+
+/*
+ * Peripheral Clock setup
+ */
+void I2C_PeriClockControl(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi);       /* enOrDi - enable or disable value */
+
+/*
+ * Init and De-init
+ */
+void I2C_Init(I2C_Handle_TypeDef *pI2CHandle);          /* Initialise I2C through I2C reg + I2C settings struct */
+void I2C_DeInit(I2C_Reg_TypeDef *pI2Cx);                /* Reset through RCC */
+
+/*
+ * Data send and receive
+ */
+
+/*
+ * IRQ Configuration and ISR handling
+ */
+void I2C_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi);
+void I2C_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
+
+/*
+ * Other Peripheral Control
+ */
+void I2C_PeripheralControl(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi);
+
+/*
+ * Application callback
+ */
+void I2C_ApplicationEventCallback(I2C_Handle_TypeDef *pI2CHandle, uint8_t ApplicationEvent);
+
 #endif /* INC_STM32F411XX_I2C_DRIVER_H_ */
