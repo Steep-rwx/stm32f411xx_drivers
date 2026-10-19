@@ -40,7 +40,7 @@ void SPI_PeriClockControl(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi)
 
 
 /********************************************************************
- * @fn                  - SPI_Handler_TypeDef
+ * @fn                  - SPI_Init
  *
  * @brief               - Initializes the specifies SPI
  *
