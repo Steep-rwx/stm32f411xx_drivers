@@ -124,7 +124,16 @@ void I2C_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi)
  */
 void I2C_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
 {
+    if (IRQNumber >= 240) return;
 
+    uint8_t ipr_idx = IRQNumber / 4;
+    uint8_t byte_shift = ((IRQNumber % 4) * 8);
+
+    uint8_t shift_amount = (byte_shift + (8 - NO_PR_BITS_IMPLEMENTED));
+
+    NVIC->IPR[ipr_idx] &= ~(0xFFUL << byte_shift);
+
+    NVIC->IPR[ipr_idx] |= ((uint32_t)IRQPriority << shift_amount);
 }
 
 /********************************************************************
