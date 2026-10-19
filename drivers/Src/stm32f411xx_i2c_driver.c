@@ -151,7 +151,13 @@ void I2C_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
  */
  void I2C_PeripheralControl(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi)
  {
-
+    if (enOrDi)
+    {
+        pI2Cx->CR1 |= (1U << I2C_CR1_PE);
+    } else
+    {
+        pI2Cx->CR1 &= ~(1U << I2C_CR1_PE);
+    }
  }
 
 
