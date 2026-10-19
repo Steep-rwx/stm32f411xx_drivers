@@ -96,7 +96,17 @@ void I2C_DeInit(I2C_Reg_TypeDef *pI2Cx)
  */
 void I2C_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi)
 {
+    if (IRQNumber >= 240) return;
 
+    uint8_t ipr_idx = IRQNumber / 32;
+    uint8_t bit_pos = IRQNumber % 32;
+    if (enOrDi)
+    {
+        NVIC->ISER[ipr_idx] |= (1UL << bit_pos);
+    } else 
+    {
+        NVIC->ICER[ipr_idx] |= (1UL << bit_pos);
+    }
 }
 
 /*******************************************************************
