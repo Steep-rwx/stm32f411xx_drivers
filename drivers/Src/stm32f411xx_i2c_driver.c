@@ -66,7 +66,19 @@ void I2C_Init(I2C_Handle_TypeDef *pI2CHandle)
  */
 void I2C_DeInit(I2C_Reg_TypeDef *pI2Cx)
 {
-
+    if (pI2Cx == I2C1)
+    {
+        RCC->APB1RSTR |= (1U << 21U);
+        RCC->APB1RSTR &= ~(1U << 21U);
+    } else if (pI2Cx == I2C2)
+    {
+        RCC->APB1RSTR |= (1U << 22U);
+        RCC->APB1RSTR &= ~(1U << 22U);
+    } else if (pI2Cx == I2C3)
+    {   
+        RCC->APB1RSTR |= (1U << 23U);
+        RCC->APB1RSTR &= ~(1U << 23U);
+    }
 }
 
 /*******************************************************************
