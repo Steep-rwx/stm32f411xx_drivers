@@ -43,11 +43,26 @@ typedef struct
 #define I2C_FM_DUTY_2       0
 #define I2C_FM_DUTY_16_9    1
 
+/*
+ * I2C flag definitions
+ */
+#define I2C_FLAG_TXE            (1 << I2C_SR1_TXE)
+#define I2C_FLAG_RXNE           (1 << I2C_SR1_RXNE)
+#define I2C_FLAG_SB             (1 << I2C_SR1_SB)
+#define I2C_FLAG_ADDR           (1 << I2C_SR1_ADDR)
+#define I2C_FLAG_BTF            (1 << I2C_SR1_BTF)
+#define I2C_FLAG_STOPF          (1 << I2C_SR1_STOPF)
+#define I2C_FLAG_BERR           (1 << I2C_SR1_BERR)
+#define I2C_FLAG_ARLO           (1 << I2C_SR1_ARLO)
+#define I2C_FLAG_AF             (1 << I2C_SR1_AF)
+#define I2C_FLAG_OVR            (1 << I2C_SR1_OVR)
+#define I2C_FLAG_TIMEOUT        (1 << I2C_SR1_TIMEOUT)
+
 /*************************utility functions*******************************/
 
-static inline uint8_t SPI_GetFlagStatus(SPI_Reg_TypeDef *pSPIx, uint32_t FlagName)
+static inline uint8_t I2C_GetFlagStatus(I2C_Reg_TypeDef *pI2Cx, uint32_t FlagName)
 {
-    return (pSPIx->SR & FlagName) ? FLAG_SET : FLAG_RESET;
+    return (pI2Cx->SR & FlagName) ? FLAG_SET : FLAG_RESET;
 }
 
 /******************APIs supported by this driver**********************/
@@ -66,7 +81,7 @@ void I2C_DeInit(I2C_Reg_TypeDef *pI2Cx);                /* Reset through RCC */
 /*
  * Data send and receive
  */
-
+void I2C_MasterSendData(I2C_Handle_TypeDef *pI2CHandle, uint8_t *pTxBuffer, uint32_t length, uint8_t slaveAddr);
 /*
  * IRQ Configuration and ISR handling
  */
