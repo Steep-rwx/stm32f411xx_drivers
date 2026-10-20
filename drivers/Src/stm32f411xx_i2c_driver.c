@@ -4,6 +4,64 @@
 #include <stdint.h>
 
 
+/************************Private functions prototypes*********************************/
+static uint32_t RCC_GetPLLOutputClock(void);
+static uint32_t RCC_GetPCLK1Value(void);
+
+
+/************************API's implementations****************************/
+
+
+static uint32_t RCC_GetPLLOutputClock(void)
+{
+
+}
+
+static uint32_t RCC_GetPCLK1Value(void)
+{
+    static const AHB_Prescaler[8]  = {2, 4, 8, 16, 64, 128, 256, 512};
+    static const APB1_Prescaler[4] = {2, 4, 8, 16};
+
+    uint32_t pclk1, system_clk;
+    uint16_t ahbprescl_value, apb1prescl_value;
+    uint8_t clksrc, prescl_val_binary;
+
+    clksrc = ((RCC->CFGR >> 2U) & 0x3);
+    if (clksrc == 0)
+    {
+        system_clk = 16000000;
+    } else if (clksrc == 1)
+    {
+        system_clk = 25000000;
+    } else if (clksrc == 2)
+    {
+        system_clk = RCC_GetPLLOutputClock();
+    }
+
+    //ahb
+    prescl_val_binary = ((RCC->CFGR >> 4) & 0xF);
+    if (prescl_val_binary < 8)
+    {
+        ahbprescl_value = 1;
+    } else
+    {
+        ahbprescl_value = AHB_Prescaler[prescl_val_binary - 8];
+    }
+    
+    //apb1
+    prescl_val_binary = ((RCC->CFGR >> 10) & 0x7);
+    if (prescl_val_binary < 4)
+    {
+        apb1prescl_value = 1;
+    } else
+    {
+        apb1prescl_value = APB1_Prescaler[prescl_val_binary - 4];
+    }
+
+    pclk1 = (system_clk / ahbprescl_value / apb1prescl_value);
+
+    return pclk1;
+}
 
 /********************************************************************
  * @fn                  - I2C_PeriClockControl
@@ -49,6 +107,45 @@ void I2C_PeriClockControl(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi)
  */
 void I2C_Init(I2C_Handle_TypeDef *pI2CHandle)
 {
+    uint32_t tempreg = 0;
+
+    // ack control bit
+    tempreg |= (pI2CHandle->I2C_Config.I2C_ACKControl << I2C_CR1_ACK);
+    pI2CHandle->pI2Cx->CR1 = tempreg;
+
+    // freq control bits
+    tempreg = 0;
+    tempreg |= RCC_GetPCLK1Value() / 1000000U;
+    pI2CHandle->pI2Cx->CR2 = (tempreg & 0x3F);
+
+    // address config
+    tempreg = 0;
+    tempreg |= pI2CHandle->I2C_Config.I2C_DeviceAddress << I2C_OAR1_ADD71;
+    tempreg |= (1U << 14U); //Always high bit, more info in docs
+    pI2CHandle->pI2Cx->OAR1 = tempreg;
+
+    // CCR config & calculations
+    uint16_t ccr_value = 0;
+    tempreg = 0;
+    if (pI2CHandle->I2C_Config.I2C_SCLSpeed <= I2C_SCL_SPEED_SM)
+    {
+        ccr_value = (RCC_GetPCLK1Value() / (2 * pI2CHandle->I2C_Config.I2C_SCLSpeed));
+        tempreg |= (ccr_value & 0xFFF);
+    }
+    else
+    {
+        tempreg |= (1U << I2C_CCR_FS);
+        tempreg |= (pI2CHandle->I2C_Config.I2C_FMDutyCycle << I2C_CCR_DUTY);
+        if (pI2CHandle->I2C_Config.I2C_FMDutyCycle == I2C_FM_DUTY_2)
+        {
+            ccr_value = (RCC_GetPCLK1Value() / (3 * pI2CHandle->I2C_Config.I2C_SCLSpeed));
+        } else
+        {
+            ccr_value = (RCC_GetPCLK1Value() / (25 * pI2CHandle->I2C_Config.I2C_SCLSpeed));
+        }
+        tempreg |= (ccr_value & 0xFFF);
+    }
+    pI2CHandle->pI2Cx->CCR = tempreg;
 
 }
 
