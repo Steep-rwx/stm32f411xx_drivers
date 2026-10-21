@@ -100,17 +100,17 @@ void I2C_Init(I2C_Handle_TypeDef *pI2CHandle)
     }
     pI2CHandle->pI2Cx->CCR = tempreg;
 
-
+    tempreg = 0;
     //TRISE config
     if (pI2CHandle->I2C_Config.I2C_SCLSpeed == I2C_SCL_SPEED_SM)
     {
-        uint8_t trise;
-        trise = (RCC_GetPCLK1Value() / 1000000U) + 1;
+        tempreg = (RCC_GetPCLK1Value() / 1000000U) + 1;
     } else
     {
-        uint8_t trise;
-        tries = (RCC_GetPCLK1Value() / 1000000U * 0.3) + 1;
+        tempreg = ((RCC_GetPCLK1Value() * 300) / 1000000000U) + 1;
     }
+
+    pI2CHandle->pI2Cx->TRISE = (tempreg & 0x3F);
 }
 
 /********************************************************************
