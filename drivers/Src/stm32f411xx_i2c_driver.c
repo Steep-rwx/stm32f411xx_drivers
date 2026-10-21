@@ -60,6 +60,9 @@ void I2C_PeriClockControl(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi)
  */
 void I2C_Init(I2C_Handle_TypeDef *pI2CHandle)
 {
+
+    I2C_PeriClockControl(pI2CHandle->pI2Cx, ENABLE);
+
     uint32_t tempreg = 0;
 
     // ack control bit
@@ -163,7 +166,7 @@ void I2C_MasterSendData(I2C_Handle_TypeDef *pI2CHandle, uint8_t *pTxBuffer, uint
 
     while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_SB)));
 
-    I2C_ExecuteAddressPhase(pI2CHandle->pI2Cx, uint8_t slaveAddr);
+    I2C_ExecuteAddressPhase(pI2CHandle->pI2Cx, slaveAddr);
 
     while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_ADDR)));
 
@@ -278,7 +281,7 @@ void I2C_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
  * @Note                - You can rewrite this function in your code
  *
  */
- __attribute__((weak)) void I2C_ApplicationEventCallback(SPI_Handle_TypeDef *pI2CHandle, uint8_t ApplicationEvent)
+ __attribute__((weak)) void I2C_ApplicationEventCallback(I2C_Handle_TypeDef *pI2CHandle, uint8_t ApplicationEvent)
 {
 
 }
@@ -300,8 +303,8 @@ static uint32_t RCC_GetPLLOutputClock(void)
  */
 static uint32_t RCC_GetPCLK1Value(void)
 {
-    static const AHB_Prescaler[8]  = {2, 4, 8, 16, 64, 128, 256, 512};
-    static const APB1_Prescaler[4] = {2, 4, 8, 16};
+    static const uint32_t AHB_Prescaler[8]  = {2, 4, 8, 16, 64, 128, 256, 512};
+    static const uint32_t APB1_Prescaler[4] = {2, 4, 8, 16};
 
     uint32_t pclk1, system_clk;
     uint16_t ahbprescl_value, apb1prescl_value;

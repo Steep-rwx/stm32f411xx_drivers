@@ -62,7 +62,7 @@ typedef struct
 
 static inline uint8_t I2C_GetFlagStatus(I2C_Reg_TypeDef *pI2Cx, uint32_t FlagName)
 {
-    return (pI2Cx->SR & FlagName) ? FLAG_SET : FLAG_RESET;
+    return (pI2Cx->SR1 & FlagName) ? FLAG_SET : FLAG_RESET;
 }
 
 /******************APIs supported by this driver**********************/
