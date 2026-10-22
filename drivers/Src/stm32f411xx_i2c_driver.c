@@ -160,7 +160,11 @@ void I2C_DeInit(I2C_Reg_TypeDef *pI2Cx)
  * @Note                - This is blocking call
  *
  */
-void I2C_MasterSendData(I2C_Handle_TypeDef *pI2CHandle, uint8_t *pTxBuffer, uint32_t length, uint8_t slaveAddr)
+void I2C_MasterSendData(I2C_Handle_TypeDef *pI2CHandle, 
+                        uint8_t *pTxBuffer, 
+                        uint32_t length, 
+                        uint8_t slaveAddr, 
+                        uint8_t repeatedStart)
 {
     I2C_GenerateStartCondition(pI2CHandle->pI2Cx);
 
@@ -182,8 +186,10 @@ void I2C_MasterSendData(I2C_Handle_TypeDef *pI2CHandle, uint8_t *pTxBuffer, uint
 
     while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_TXE)));
     while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_BTF)));
-
-    I2C_GenerateStopCondition(pI2CHandle->pI2Cx);
+    if(repeatedStart == REPEATED_START_DISABLE)
+    {
+        I2C_GenerateStopCondition(pI2CHandle->pI2Cx);
+    }
 }
 
 /********************************************************************
@@ -201,7 +207,11 @@ void I2C_MasterSendData(I2C_Handle_TypeDef *pI2CHandle, uint8_t *pTxBuffer, uint
  * @Note                - This is blocking call
  *
  */
-void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle, uint8_t *pRxBuffer, uint32_t length, uint8_t slaveAddr)
+void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle, 
+                           uint8_t *pRxBuffer, 
+                           uint32_t length, 
+                           uint8_t slaveAddr,
+                           uint8_t repeatedStart)
 {
     I2C_GenerateStartCondition(pI2CHandle->pI2Cx);
 
@@ -219,7 +229,10 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle, uint8_t *pRxBuffer, u
 
         while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_RXNE)));
 
-        I2C_GenerateStopCondition(pI2CHandle->pI2Cx);
+        if(repeatedStart == REPEATED_START_DISABLE)
+        {
+            I2C_GenerateStopCondition(pI2CHandle->pI2Cx);
+        }
 
         *pRxBuffer = pI2CHandle->pI2Cx->DR;
     }
@@ -235,7 +248,10 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle, uint8_t *pRxBuffer, u
             if (i == 2)
             {
                 I2C_ACKToggle(pI2CHandle->pI2Cx, I2C_ACK_DISABLE);
-                I2C_GenerateStopCondition(pI2CHandle->pI2Cx);
+                if(repeatedStart == REPEATED_START_DISABLE)
+                {
+                    I2C_GenerateStopCondition(pI2CHandle->pI2Cx);
+                }
             }
             *pRxBuffer = pI2CHandle->pI2Cx->DR;
             pRxBuffer++;
@@ -330,10 +346,10 @@ void I2C_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
  {
     if (enOrDi)
     {
-        pI2CHandle->pI2Cx->CR1 |= (1U << I2C_CR1_ACK);
+        pI2Cx->CR1 |= (1U << I2C_CR1_ACK);
     } else
     {
-        pI2CHandle->pI2Cx->CR1 &= ~(1U << I2C_CR1_ACK);
+        pI2Cx->CR1 &= ~(1U << I2C_CR1_ACK);
     }
  }
 
