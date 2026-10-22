@@ -5,7 +5,6 @@
 ---
 
 ## Tests:
+
 Тест в логическом анализаторе:
-
-
 ![logic_analyzer](screenshots/logic_analyzer.png)

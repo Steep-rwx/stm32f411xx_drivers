@@ -76,7 +76,7 @@ int main(void)
 
         I2C_PeripheralControl(I2C1, ENABLE); 
 
-        I2C_MasterSendData(&I2C1Handle, user_data, strlen((char*) user_data), I2C1Handle.I2C_Config.I2C_DeviceAddress);
+        I2C_MasterSendData(&I2C1Handle, user_data, strlen((char*) user_data), I2C1Handle.I2C_Config.I2C_DeviceAddress, REPEATED_START_DISABLE);
 
     }
     return 0;
