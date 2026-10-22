@@ -37,7 +37,7 @@ void I2C1_Inits(void)
     I2C1Handle.I2C_Config.I2C_ACKControl = I2C_ACK_ENABLE;
     I2C1Handle.I2C_Config.I2C_FMDutyCycle = I2C_FM_DUTY_2;
     I2C1Handle.I2C_Config.I2C_SCLSpeed = I2C_SCL_SPEED_SM;
-    I2C1Handle.I2C_Config.I2C_DeviceAddress = 0x28;
+    I2C1Handle.I2C_Config.I2C_DeviceAddress = 0xF;
     
 
     I2C_Init(&I2C1Handle);
@@ -76,7 +76,11 @@ int main(void)
 
         I2C_PeripheralControl(I2C1, ENABLE); 
 
-        I2C_MasterSendData(&I2C1Handle, user_data, strlen((char*) user_data), I2C1Handle.I2C_Config.I2C_DeviceAddress, REPEATED_START_DISABLE);
+        I2C_MasterSendData(&I2C1Handle, 
+                           user_data, 
+                           strlen((char*) user_data), 
+                           0x28, 
+                           REPEATED_START_DISABLE);
 
     }
     return 0;
