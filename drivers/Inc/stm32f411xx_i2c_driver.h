@@ -58,6 +58,18 @@ typedef struct
 #define I2C_FLAG_OVR            (1 << I2C_SR1_OVR)
 #define I2C_FLAG_TIMEOUT        (1 << I2C_SR1_TIMEOUT)
 
+/*
+ * I2C Read or write definitions
+ */
+#define I2C_WRITE           0
+#define I2C_READ            1
+
+/*
+ * Repeated start definitions
+ */
+#define REPEATED_START_ENABLE           1
+#define REPEATED_START_DISABLE          0
+
 /*************************utility functions*******************************/
 
 static inline uint8_t I2C_GetFlagStatus(I2C_Reg_TypeDef *pI2Cx, uint32_t FlagName)
@@ -81,7 +93,9 @@ void I2C_DeInit(I2C_Reg_TypeDef *pI2Cx);                /* Reset through RCC */
 /*
  * Data send and receive
  */
-void I2C_MasterSendData(I2C_Handle_TypeDef *pI2CHandle, uint8_t *pTxBuffer, uint32_t length, uint8_t slaveAddr);
+void I2C_MasterSendData(I2C_Handle_TypeDef *pI2CHandle, uint8_t *pTxBuffer, uint32_t length, uint8_t slaveAddr, uint8_t repeatedStart);
+void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle, uint8_t *pRxBuffer, uint32_t length, uint8_t slaveAddr, uint8_t repeatedStart);
+
 /*
  * IRQ Configuration and ISR handling
  */
@@ -92,6 +106,7 @@ void I2C_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
  * Other Peripheral Control
  */
 void I2C_PeripheralControl(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi);
+void I2C_ACKToggle(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi);
 
 /*
  * Application callback
