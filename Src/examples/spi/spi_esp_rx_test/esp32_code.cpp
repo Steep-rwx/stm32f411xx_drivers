@@ -6,8 +6,8 @@
 #define SPI_MOSI  23
 #define SPI_SS     5
 
-#define SPI_HOST_ID  SPI3_HOST   // VSPI
-#define BUF_SIZE     32          // кратно 4 для DMA
+#define SPI_HOST_ID  SPI3_HOST
+#define BUF_SIZE     32
 
 WORD_ALIGNED_ATTR uint8_t rxBuf[BUF_SIZE];
 WORD_ALIGNED_ATTR uint8_t txBuf[BUF_SIZE];
@@ -41,12 +41,10 @@ void setup()
 {
   Serial.begin(9600);
 
-  // Строка, которую слейв отдаёт на MISO в каждой транзакции
   memset(txBuf, 0, BUF_SIZE);
-  memcpy(txBuf, "Hello world!", 12);
+  memcpy(txBuf, "Hello world!", 12); // To MISO
 
   SPI_SlaveInit();
-  Serial.println("Slave Initialized");
 }
 
 void loop()
@@ -55,7 +53,7 @@ void loop()
 
   spi_slave_transaction_t t = {};
   t.length    = BUF_SIZE * 8;
-  t.tx_buffer = txBuf;          // не меняется между транзакциями
+  t.tx_buffer = txBuf;
   t.rx_buffer = rxBuf;
 
   esp_err_t ret = spi_slave_transmit(SPI_HOST_ID, &t, portMAX_DELAY);
@@ -64,5 +62,5 @@ void loop()
     return;
   }
 
-  Serial.printf("transaction done, trans_len=%u bits\n", (unsigned)t.trans_len);
+  Serial.printf("trans_len=%u bits\n", (unsigned)t.trans_len);
 }
