@@ -65,10 +65,6 @@ void I2C_Init(I2C_Handle_TypeDef *pI2CHandle)
 
     uint32_t tempreg = 0;
 
-    // ack control bit
-    tempreg |= (pI2CHandle->I2C_Config.I2C_ACKControl << I2C_CR1_ACK);
-    pI2CHandle->pI2Cx->CR1 = tempreg;
-
     // freq control bits
     tempreg = 0;
     tempreg |= RCC_GetPCLK1Value() / 1000000U;
@@ -114,6 +110,12 @@ void I2C_Init(I2C_Handle_TypeDef *pI2CHandle)
     }
 
     pI2CHandle->pI2Cx->TRISE = (tempreg & 0x3F);
+
+    I2C_PeripheralControl(pI2CHandle->pI2Cx, ENABLE);
+
+    // ack control bit
+    tempreg |= (pI2CHandle->I2C_Config.I2C_ACKControl << I2C_CR1_ACK);
+    pI2CHandle->pI2Cx->CR1 = tempreg;
 }
 
 /********************************************************************
@@ -227,53 +229,58 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
 
         I2C_ClearADDRFlag(pI2CHandle->pI2Cx);
 
-        while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_RXNE)));
-
         if(repeatedStart == REPEATED_START_DISABLE)
         {
             I2C_GenerateStopCondition(pI2CHandle->pI2Cx);
         }
 
+        while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_RXNE)));
         *pRxBuffer = pI2CHandle->pI2Cx->DR;
     } else if (length == 2)
     {
+        while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_ADDR)));
+        
         I2C_ACKToggle(pI2CHandle->pI2Cx, DISABLE);
+
+        pI2CHandle->pI2Cx->CR1 |= (1U << I2C_CR1_POS);
 
         I2C_ClearADDRFlag(pI2CHandle->pI2Cx);
 
-        pI2CHandle->pI2Cx->CR1 |= (1U << I2C_CR1_POS);
+        while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_BTF)));
 
         if(repeatedStart == REPEATED_START_DISABLE)
         {
             I2C_GenerateStopCondition(pI2CHandle->pI2Cx);
         }
 
-        while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_BTF)));
-
+        while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_RXNE)));
         *pRxBuffer = pI2CHandle->pI2Cx->DR;
         pRxBuffer++;
+
+        while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_RXNE)));
         *pRxBuffer = pI2CHandle->pI2Cx->DR;
 
         pI2CHandle->pI2Cx->CR1 &= ~(1U << I2C_CR1_POS);
     } else
     {
         I2C_ClearADDRFlag(pI2CHandle->pI2Cx);
-
-        for (uint32_t i = length; i > 0; i--)
+        for (uint32_t i = length; i > 3; i--)
         {
             while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_RXNE)));
-
-            if (i == 3)
-            {
-                I2C_ACKToggle(pI2CHandle->pI2Cx, I2C_ACK_DISABLE);
-                if(repeatedStart == REPEATED_START_DISABLE)
-                {
-                    I2C_GenerateStopCondition(pI2CHandle->pI2Cx);
-                }
-            }
-            *pRxBuffer = pI2CHandle->pI2Cx->DR;
-            pRxBuffer++;
+            *pRxBuffer++ = pI2CHandle->pI2Cx->DR;
         }
+
+        while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_BTF)));
+        I2C_ACKToggle(pI2CHandle->pI2Cx, I2C_ACK_DISABLE);
+        *pRxBuffer++ = pI2CHandle->pI2Cx->DR;
+
+        while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_BTF)));
+        if (repeatedStart == REPEATED_START_DISABLE)
+            I2C_GenerateStopCondition(pI2CHandle->pI2Cx);
+        *pRxBuffer++ = pI2CHandle->pI2Cx->DR;
+
+        while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_RXNE)));
+        *pRxBuffer = pI2CHandle->pI2Cx->DR;
     }
 
     if(pI2CHandle->I2C_Config.I2C_ACKControl == I2C_ACK_ENABLE)
