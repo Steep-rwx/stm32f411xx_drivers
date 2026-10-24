@@ -235,9 +235,27 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
         }
 
         *pRxBuffer = pI2CHandle->pI2Cx->DR;
-    }
+    } else if (length == 2)
+    {
+        I2C_ACKToggle(pI2CHandle->pI2Cx, DISABLE);
 
-    if (length > 1)
+        I2C_ClearADDRFlag(pI2CHandle->pI2Cx);
+
+        pI2CHandle->pI2Cx->CR1 |= (1U << I2C_CR1_POS);
+
+        if(repeatedStart == REPEATED_START_DISABLE)
+        {
+            I2C_GenerateStopCondition(pI2CHandle->pI2Cx);
+        }
+
+        while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_BTF)));
+
+        *pRxBuffer = pI2CHandle->pI2Cx->DR;
+        pRxBuffer++;
+        *pRxBuffer = pI2CHandle->pI2Cx->DR;
+
+        pI2CHandle->pI2Cx->CR1 &= ~(1U << I2C_CR1_POS);
+    } else
     {
         I2C_ClearADDRFlag(pI2CHandle->pI2Cx);
 
@@ -245,7 +263,7 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
         {
             while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_RXNE)));
 
-            if (i == 2)
+            if (i == 3)
             {
                 I2C_ACKToggle(pI2CHandle->pI2Cx, I2C_ACK_DISABLE);
                 if(repeatedStart == REPEATED_START_DISABLE)
@@ -257,6 +275,7 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
             pRxBuffer++;
         }
     }
+
     if(pI2CHandle->I2C_Config.I2C_ACKControl == I2C_ACK_ENABLE)
     {
         I2C_ACKToggle(pI2CHandle->pI2Cx, I2C_ACK_ENABLE);

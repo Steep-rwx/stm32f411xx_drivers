@@ -412,6 +412,7 @@ static inline uint8_t gpio_base_to_code(const GPIO_Reg_TypeDef *pGPIOx)
 #define I2C_CR1_START           8
 #define I2C_CR1_STOP            9
 #define I2C_CR1_ACK             10
+#define I2C_CR1_POS             11
 #define I2C_CR1_SWRST           15
 
 #define I2C_CR2_FREQ            0
