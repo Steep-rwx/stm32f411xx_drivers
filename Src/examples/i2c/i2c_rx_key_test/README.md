@@ -4,6 +4,8 @@
 
 ---
 ## Tests:
-Из логического анализатора
+Из логического анализатора:
+![logic_analyzer](screenshots/logic_analyzer.png)
 
-Из serial monitor ESP32:
+Из ST-Link debugger:
+![ST-Link_debugger](screenshots/st-link_debugger.png)
