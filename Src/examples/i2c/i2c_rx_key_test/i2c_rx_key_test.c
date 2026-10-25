@@ -78,7 +78,7 @@ int main(void)
                               user_data, 
                               11, 
                               0x08, 
-                              REPEATED_START_DISABLE);
+                              I2C_REPEATED_START_DISABLE);
 
     }
     return 0;

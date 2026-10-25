@@ -80,7 +80,7 @@ int main(void)
                            user_data, 
                            strlen((char*) user_data), 
                            0x28, 
-                           REPEATED_START_DISABLE);
+                           I2C_REPEATED_START_DISABLE);
 
     }
     return 0;

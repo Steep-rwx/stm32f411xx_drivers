@@ -75,8 +75,8 @@ typedef struct
 /*
  * Repeated start definitions
  */
-#define REPEATED_START_ENABLE           1
-#define REPEATED_START_DISABLE          0
+#define I2C_REPEATED_START_ENABLE           1
+#define I2C_REPEATED_START_DISABLE          0
 
 /*
  * I2C states
@@ -84,6 +84,12 @@ typedef struct
 #define I2C_READY           0
 #define I2C_BUSY_RX         1
 #define I2C_BUSY_TX         2
+
+/*
+ * I2C Application events
+ */
+#define I2C_EVENT_TX_CMPLT  1
+#define I2C_EVENT_RX_CMPLT  2
 
 /*************************utility functions*******************************/
 
@@ -138,6 +144,8 @@ uint8_t I2C_MasterReceiveDataIT(I2C_Handle_TypeDef *pI2CHandle,
  */
 void I2C_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi);
 void I2C_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
+void I2C_EV_IRQHandling(I2C_Handle_TypeDef *pI2CHandle);
+void I2C_ER_IRQHandling(I2C_Handle_TypeDef *pI2CHandle);
 
 /*
  * Other Peripheral Control
