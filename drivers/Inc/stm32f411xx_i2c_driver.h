@@ -23,6 +23,14 @@ typedef struct
 {
     I2C_Reg_TypeDef     *pI2Cx;
     I2C_Config_TypeDef  I2C_Config;
+    uint8_t             *pTxBuffer;
+    uint8_t             *pRxBuffer;
+    uint32_t            TxLen;
+    uint32_t            RxLen;
+    uint8_t             TxRxState;
+    uint8_t             DevAddr;
+    uint32_t            RxSize;
+    uint8_t             RepeatedStart;
 } I2C_Handle_TypeDef;
 
 /*
@@ -70,6 +78,13 @@ typedef struct
 #define REPEATED_START_ENABLE           1
 #define REPEATED_START_DISABLE          0
 
+/*
+ * I2C states
+ */
+#define I2C_READY           0
+#define I2C_BUSY_RX         1
+#define I2C_BUSY_TX         2
+
 /*************************utility functions*******************************/
 
 static inline uint8_t I2C_GetFlagStatus(I2C_Reg_TypeDef *pI2Cx, uint32_t FlagName)
@@ -103,6 +118,20 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
                            uint32_t length, 
                            uint8_t slaveAddr, 
                            uint8_t repeatedStart);
+
+/*
+ * Data send and receive with interrupts 
+ */
+void I2C_MasterSendDataIT(I2C_Handle_TypeDef *pI2CHandle, 
+                          uint8_t *pTxBuffer, 
+                          uint32_t length, 
+                          uint8_t slaveAddr, 
+                          uint8_t repeatedStart);
+void I2C_MasterReceiveDataIT(I2C_Handle_TypeDef *pI2CHandle, 
+                             uint8_t *pRxBuffer, 
+                             uint32_t length, 
+                             uint8_t slaveAddr, 
+                             uint8_t repeatedStart);
 
 /*
  * IRQ Configuration and ISR handling
