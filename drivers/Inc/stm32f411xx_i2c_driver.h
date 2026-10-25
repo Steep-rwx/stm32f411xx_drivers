@@ -122,12 +122,12 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
 /*
  * Data send and receive with interrupts 
  */
-void I2C_MasterSendDataIT(I2C_Handle_TypeDef *pI2CHandle, 
+uint8_t I2C_MasterSendDataIT(I2C_Handle_TypeDef *pI2CHandle, 
                           uint8_t *pTxBuffer, 
                           uint32_t length, 
                           uint8_t slaveAddr, 
                           uint8_t repeatedStart);
-void I2C_MasterReceiveDataIT(I2C_Handle_TypeDef *pI2CHandle, 
+uint8_t I2C_MasterReceiveDataIT(I2C_Handle_TypeDef *pI2CHandle, 
                              uint8_t *pRxBuffer, 
                              uint32_t length, 
                              uint8_t slaveAddr, 

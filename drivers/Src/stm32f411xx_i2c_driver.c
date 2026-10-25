@@ -156,6 +156,7 @@ void I2C_DeInit(I2C_Reg_TypeDef *pI2Cx)
  * @param[in]           - pTxBuffer: Tx buffer
  * @param[in]           - length: length of info
  * @param[in]           - slaveAddr: slave addres in 7-bit format
+ * @param[in]           - repeatedStart: enable or disable repeated start
  *
  * @return              - none
  *
@@ -203,6 +204,7 @@ void I2C_MasterSendData(I2C_Handle_TypeDef *pI2CHandle,
  * @param[in]           - pRxBuffer: Rx buffer
  * @param[in]           - length: length of info
  * @param[in]           - slaveAddr: slave addres in 7 bit format
+ * @param[in]           - repeatedStart: enable or disable repeated start
  *
  * @return              - none
  *
@@ -287,6 +289,104 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
     {
         I2C_ACKToggle(pI2CHandle->pI2Cx, I2C_ACK_ENABLE);
     }
+}
+
+/********************************************************************
+ * @fn                  - I2C_MasterSendDataIT
+ *
+ * @brief               - Send data through I2C
+ *
+ * @param[in]           - pSPIx: base address
+ * @param[in]           - pTxBuffer: Tx buffer
+ * @param[in]           - length: length of info
+ * @param[in]           - slaveAddr: slave addres in 7-bit format
+ * @param[in]           - repeatedStart: enable or disable repeated start
+ *
+ * @return              - none
+ *
+ * @Note                - This is blocking call
+ *
+ */
+uint8_t I2C_MasterSendDataIT(I2C_Handle_TypeDef *pI2CHandle, 
+                     uint8_t *pTxBuffer, 
+                     uint32_t length, 
+                     uint8_t slaveAddr, 
+                     uint8_t repeatedStart)
+{
+    /* Checking busy state, if line busy there nothing to do */
+    uint8_t busy_state = pI2CHandle->TxRxState;
+
+    if((busy_state != I2C_BUSY_TX) && (busy_state != I2C_BUSY_RX))
+    {
+        pI2CHandle->pTxBuffer = pTxBuffer;          /* saving Tx buffer addr */
+        pI2CHandle->TxLen = length;                 /* saving length of buffer */
+        pI2CHandle->TxRxState = I2C_BUSY_TX;        /* saving state */
+        pI2CHandle->DevAddr = slaveAddr;            /* saving slave addr */
+        pI2CHandle->RepeatedStart = repeatedStart;  /* saving repeated start condition */
+
+        /* Generating start condition */
+        I2C_GenerateStartCondition(pI2CHandle->pI2Cx);
+
+        /* Enabling buffer interrupts */
+        pI2CHandle->pI2Cx->CR2 |= (1U << I2C_CR2_ITBUFEN);
+
+        /* Enabling event interrupts */
+        pI2CHandle->pI2Cx->CR2 |= (1U << I2C_CR2_ITEVTEN);
+
+        /* Enabling error interrupts */
+        pI2CHandle->pI2Cx->CR2 |= (1U << I2C_CR2_ITERREN);
+    }
+    return busy_state;
+}
+
+/********************************************************************
+ * @fn                  - I2C_MasterReceiveDataIT
+ *
+ * @brief               - Receive data through I2C
+ *
+ * @param[in]           - pSPIx: base address
+ * @param[in]           - pRxBuffer: Rx buffer
+ * @param[in]           - length: length of info
+ * @param[in]           - slaveAddr: slave addres in 7 bit format
+ * @param[in]           - repeatedStart: enable or disable repeated start
+ *
+ * @return              - none
+ *
+ * @Note                - This is blocking call
+ *
+ */
+uint8_t I2C_MasterReceiveDataIT(I2C_Handle_TypeDef *pI2CHandle, 
+                        uint8_t *pRxBuffer, 
+                        uint32_t length, 
+                        uint8_t slaveAddr, 
+                        uint8_t repeatedStart)
+{
+    /* Checking busy state, if busy there nothing to do */
+    uint8_t busy_state = pI2CHandle->TxRxState;
+
+    if ((busy_state != I2C_BUSY_TX) && (busy_state != I2C_BUSY_RX))
+    {
+        pI2CHandle->pRxBuffer = pRxBuffer;
+        pI2CHandle->RxLen = length;
+        pI2CHandle->DevAddr = slaveAddr;
+        pI2CHandle->RxSize = length;
+        pI2CHandle->DevAddr = slaveAddr;
+        pI2CHandle->RepeatedStart = repeatedStart;
+
+        /* Generating start condition */
+        I2C_GenerateStartCondition(pI2CHandle->pI2Cx);
+
+        /* Enabling buffer interrupts */
+        pI2CHandle->pI2Cx->CR2 |= (1U << I2C_CR2_ITBUFEN);
+
+        /* Enabling event interrupts */
+        pI2CHandle->pI2Cx->CR2 |= (1U << I2C_CR2_ITEVTEN);
+
+        /* Enabling error interrupts */
+        pI2CHandle->pI2Cx->CR2 |= (1U << I2C_CR2_ITERREN);
+    }
+
+    return busy_state;
 }
 
 /*******************************************************************
@@ -409,7 +509,7 @@ void I2C_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
  */
 static uint32_t RCC_GetPLLOutputClock(void)
 {
-
+    return 0;
 }
 
 /*

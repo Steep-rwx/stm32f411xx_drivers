@@ -334,6 +334,9 @@ static inline uint8_t gpio_base_to_code(const GPIO_Reg_TypeDef *pGPIOx)
 #define IRQ_NO_EXTI9_5    23
 #define IRQ_NO_EXTI15_10  40
 
+#define IRQ_NO_I2C1_EV    31
+#define IRQ_NO_I2C1_ER    32
+
 #define IRQ_SPI1          35
 #define IRQ_SPI2          36
 
