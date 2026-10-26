@@ -14,6 +14,8 @@ static void I2C_ClearADDRFlag(I2C_Handle_TypeDef *pI2CHandle);
 static void I2C_GenerateStopCondition(I2C_Reg_TypeDef *pI2Cx);
 static void I2C_MasterHandleRXInterrupt(I2C_Handle_TypeDef *pI2CHandle);
 static void I2C_MasterHandleTXInterrupt(I2C_Handle_TypeDef *pI2CHandle);
+static void I2C_CloseSendData(I2C_Handle_TypeDef *pI2CHandle);
+static void I2C_CloseReceiveData(I2C_Handle_TypeDef *pI2CHandle);
 
 /************************API's implementations****************************/
 
@@ -501,14 +503,14 @@ void I2C_EV_IRQHandling(I2C_Handle_TypeDef *pI2CHandle)
                     if (pI2CHandle->RepeatedStart == I2C_REPEATED_START_DISABLE)
                         I2C_GenerateStopCondition(pI2CHandle->pI2Cx);
 
-                    //I2C_CloseSendData;
+                    I2C_CloseSendData(pI2CHandle);
 
                     I2C_ApplicationEventCallback(pI2CHandle, I2C_EVENT_TX_CMPLT);
                 }
             }
         } else if (pI2CHandle->TxRxState == I2C_BUSY_RX)
         {
-            if (pI2CHandle->pI2Cx->SR1 & (1U << I2C_SR1_RXNE));
+            if (pI2CHandle->pI2Cx->SR1 & (1U << I2C_SR1_RXNE))
             {
                 ;
             }
@@ -785,8 +787,35 @@ static void I2C_MasterHandleRXInterrupt(I2C_Handle_TypeDef *pI2CHandle)
             I2C_GenerateStopCondition(pI2CHandle->pI2Cx);
         }
     
-        //I2C_CloseReceiveData();
+        I2C_CloseReceiveData(pI2CHandle);
     
         I2C_ApplicationEventCallback(pI2CHandle, I2C_EVENT_RX_CMPLT);
+    }
+}
+
+static void I2C_CloseSendData(I2C_Handle_TypeDef *pI2CHandle)
+{
+    pI2CHandle->pI2Cx->CR2 &= ~(1U << I2C_CR2_ITBUFEN);
+
+    pI2CHandle->pI2Cx->CR2 &= ~(1U << I2C_CR2_ITEVTEN);
+
+    pI2CHandle->TxRxState = I2C_READY;
+    pI2CHandle->pTxBuffer = NULL;
+    pI2CHandle->TxLen = 0;
+}
+
+static void I2C_CloseReceiveData(I2C_Handle_TypeDef *pI2CHandle)
+{
+    pI2CHandle->pI2Cx->CR2 &= ~(1U << I2C_CR2_ITBUFEN);
+
+    pI2CHandle->pI2Cx->CR2 &= ~(1U << I2C_CR2_ITEVTEN);
+
+    pI2CHandle->TxRxState = I2C_READY;
+    pI2CHandle->pRxBuffer = NULL;
+    pI2CHandle->RxLen = 0;
+    pI2CHandle->RxSize = 0;
+    if (pI2CHandle->I2C_Config.I2C_ACKControl == I2C_ACK_ENABLE)
+    {
+        I2C_ACKToggle(pI2CHandle->pI2Cx, ENABLE);
     }
 }
