@@ -90,6 +90,7 @@ typedef struct
  */
 #define I2C_EVENT_TX_CMPLT  1
 #define I2C_EVENT_RX_CMPLT  2
+#define I2C_EVENT_STOP      3
 
 /*************************utility functions*******************************/
 
