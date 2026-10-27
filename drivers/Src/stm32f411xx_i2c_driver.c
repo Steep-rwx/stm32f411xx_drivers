@@ -570,7 +570,55 @@ void I2C_EV_IRQHandling(I2C_Handle_TypeDef *pI2CHandle)
  * @Note                - none
  *
  */
-void I2C_ER_IRQHandling(I2C_Handle_TypeDef *pI2CHandle);
+void I2C_ER_IRQHandling(I2C_Handle_TypeDef *pI2CHandle)
+{
+    uint32_t iterren_status = pI2CHandle->pI2Cx->CR2 & (1U << I2C_CR2_ITERREN);
+
+    uint32_t berr_status = pI2CHandle->pI2Cx->SR1 & (1U << I2C_SR1_BERR);
+
+    if (iterren_status && berr_status)
+    {
+        pI2CHandle->pI2Cx->SR1 &= ~(1U << I2C_SR1_BERR);
+
+        I2C_ApplicationEventCallback(pI2CHandle, I2C_ERROR_BERR);
+    }
+
+    uint32_t arlo_status = pI2CHandle->pI2Cx->SR1 & (1U << I2C_SR1_ARLO);
+
+    if (iterren_status && arlo_status)
+    {
+        pI2CHandle->pI2Cx->SR1 &= ~(1U << I2C_SR1_ARLO);
+
+        I2C_ApplicationEventCallback(pI2CHandle, I2C_ERROR_ARLO);
+    }
+
+    uint32_t af_status = pI2CHandle->pI2Cx->SR1 & (1U << I2C_SR1_AF);
+
+    if (iterren_status && af_status)
+    {
+        pI2CHandle->pI2Cx->SR1 &= ~(1U << I2C_SR1_AF);
+
+        I2C_ApplicationEventCallback(pI2CHandle, I2C_ERROR_AF);
+    }
+
+    uint32_t ovr_status = pI2CHandle->pI2Cx->SR1 & (1U << I2C_SR1_OVR);
+
+    if (iterren_status && ovr_status)
+    {
+        pI2CHandle->pI2Cx->SR1 &= ~(1U << I2C_SR1_OVR);
+
+        I2C_ApplicationEventCallback(pI2CHandle, I2C_ERROR_OVR);
+    }
+
+    uint32_t timeout_status = pI2CHandle->pI2Cx->SR1 & (1U << I2C_SR1_TIMEOUT);
+
+    if (iterren_status && timeout_status)
+    {
+        pI2CHandle->pI2Cx->SR1 &= ~(1U << I2C_SR1_TIMEOUT);
+
+        I2C_ApplicationEventCallback(pI2CHandle, I2C_ERROR_TIMEOUT);
+    }
+}
 
 /********************************************************************
  * @fn                  - I2C_PeripheralControl

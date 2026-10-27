@@ -92,6 +92,15 @@ typedef struct
 #define I2C_EVENT_RX_CMPLT  2
 #define I2C_EVENT_STOP      3
 
+/*
+ * I2C Application events errors
+ */
+#define I2C_ERROR_BERR      4
+#define I2C_ERROR_ARLO      5
+#define I2C_ERROR_AF        6
+#define I2C_ERROR_OVR       7
+#define I2C_ERROR_TIMEOUT   8
+
 /*************************utility functions*******************************/
 
 static inline uint8_t I2C_GetFlagStatus(I2C_Reg_TypeDef *pI2Cx, uint32_t FlagName)
