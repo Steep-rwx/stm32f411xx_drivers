@@ -163,6 +163,8 @@ void I2C_ER_IRQHandling(I2C_Handle_TypeDef *pI2CHandle);
 void I2C_PeripheralControl(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi);
 void I2C_ACKToggle(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi);
 
+void I2C_GenerateStopCondition(I2C_Reg_TypeDef *pI2Cx);
+
 /*
  * Application callback
  */

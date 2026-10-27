@@ -11,7 +11,6 @@ static uint32_t RCC_GetPCLK1Value(void);
 static void I2C_GenerateStartCondition(I2C_Reg_TypeDef *pI2Cx);
 static void I2C_ExecuteAddressPhase(I2C_Reg_TypeDef *pI2Cx, uint8_t slaveAddr, uint8_t rw_condition);
 static void I2C_ClearADDRFlag(I2C_Handle_TypeDef *pI2CHandle);
-static void I2C_GenerateStopCondition(I2C_Reg_TypeDef *pI2Cx);
 static void I2C_MasterHandleRXInterrupt(I2C_Handle_TypeDef *pI2CHandle);
 static void I2C_MasterHandleTXInterrupt(I2C_Handle_TypeDef *pI2CHandle);
 static void I2C_CloseSendData(I2C_Handle_TypeDef *pI2CHandle);
@@ -745,7 +744,7 @@ static void I2C_GenerateStartCondition(I2C_Reg_TypeDef *pI2Cx)
     pI2Cx->CR1 |= (1U << I2C_CR1_START);
 }
 
-static void I2C_GenerateStopCondition(I2C_Reg_TypeDef *pI2Cx)
+void I2C_GenerateStopCondition(I2C_Reg_TypeDef *pI2Cx)
 {
     pI2Cx->CR1 |= (1U << I2C_CR1_STOP);
 }
