@@ -1,4 +1,4 @@
-# ESP32 to STM32 by I2C receive
+# ESP32(slave) to STM32(master) by I2C receive
 
 В данном примере было реализовано получение при помощи драйвера данных через I2C от STM32 к ESP32.
 
