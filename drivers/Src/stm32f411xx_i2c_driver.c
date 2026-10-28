@@ -575,6 +575,13 @@ void I2C_EV_IRQHandling(I2C_Handle_TypeDef *pI2CHandle)
                 I2C_MasterHandleTXInterrupt(pI2CHandle);
             }
         }
+        else
+        {
+            if (pI2CHandle->pI2Cx->SR2 & (1U << I2C_SR2_TRA))
+            {
+                I2C_ApplicationEventCallback(pI2CHandle, I2C_EVENT_DATA_REQUEST);
+            }
+        }
     }
 
     uint32_t rxne_state;
@@ -587,6 +594,13 @@ void I2C_EV_IRQHandling(I2C_Handle_TypeDef *pI2CHandle)
             if (pI2CHandle->TxRxState == I2C_BUSY_RX)
             {
                 I2C_MasterHandleRXInterrupt(pI2CHandle);
+            }
+        }
+        else
+        {
+            if (pI2CHandle->pI2Cx->SR2 & (1U << I2C_SR2_TRA))
+            {
+                I2C_ApplicationEventCallback(pI2CHandle, I2C_EVENT_DATA_RECEIVE);
             }
         }
     }
@@ -667,27 +681,43 @@ void I2C_ER_IRQHandling(I2C_Handle_TypeDef *pI2CHandle)
  * @Note                - none
  *
  */
- void I2C_PeripheralControl(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi)
- {
-    if (enOrDi)
-    {
-        pI2Cx->CR1 |= (1U << I2C_CR1_PE);
-    } else
-    {
-        pI2Cx->CR1 &= ~(1U << I2C_CR1_PE);
-    }
- }
+void I2C_PeripheralControl(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi)
+{
+   if (enOrDi)
+   {
+       pI2Cx->CR1 |= (1U << I2C_CR1_PE);
+   } else
+   {
+       pI2Cx->CR1 &= ~(1U << I2C_CR1_PE);
+   }
+}
 
- void I2C_ACKToggle(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi)
- {
-    if (enOrDi)
+void I2C_ACKToggle(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi)
+{
+   if (enOrDi)
+   {
+       pI2Cx->CR1 |= (1U << I2C_CR1_ACK);
+   } else
+   {
+       pI2Cx->CR1 &= ~(1U << I2C_CR1_ACK);
+   }
+}
+
+void I2C_SlaveToggleInterrupts(I2C_Reg_TypeDef *pI2Cx, uint8_t EnOrDi)
+{
+    if (EnOrDi)
     {
-        pI2Cx->CR1 |= (1U << I2C_CR1_ACK);
-    } else
-    {
-        pI2Cx->CR1 &= ~(1U << I2C_CR1_ACK);
+        pI2Cx->CR2 |= (1U << I2C_CR2_ITBUFEN);
+        pI2Cx->CR2 |= (1U << I2C_CR2_ITEVTEN);
+        pI2Cx->CR2 |= (1U << I2C_CR2_ITERREN);
     }
- }
+    else
+    {
+        pI2Cx->CR2 &= ~(1U << I2C_CR2_ITBUFEN);
+        pI2Cx->CR2 &= ~(1U << I2C_CR2_ITEVTEN);
+        pI2Cx->CR2 &= ~(1U << I2C_CR2_ITERREN);
+    }
+}
 
 
 /********************************************************************
@@ -703,7 +733,7 @@ void I2C_ER_IRQHandling(I2C_Handle_TypeDef *pI2CHandle)
  * @Note                - You can rewrite this function in your code
  *
  */
- __attribute__((weak)) void I2C_ApplicationEventCallback(I2C_Handle_TypeDef *pI2CHandle, uint8_t ApplicationEvent)
+__attribute__((weak)) void I2C_ApplicationEventCallback(I2C_Handle_TypeDef *pI2CHandle, uint8_t ApplicationEvent)
 {
 
 }

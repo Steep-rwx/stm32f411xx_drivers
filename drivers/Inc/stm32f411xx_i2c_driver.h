@@ -88,18 +88,24 @@ typedef struct
 /*
  * I2C Application events
  */
-#define I2C_EVENT_TX_CMPLT  1
-#define I2C_EVENT_RX_CMPLT  2
-#define I2C_EVENT_STOP      3
+#define I2C_EVENT_TX_CMPLT      1
+#define I2C_EVENT_RX_CMPLT      2
+#define I2C_EVENT_STOP          3
 
 /*
  * I2C Application events errors
  */
-#define I2C_ERROR_BERR      4
-#define I2C_ERROR_ARLO      5
-#define I2C_ERROR_AF        6
-#define I2C_ERROR_OVR       7
-#define I2C_ERROR_TIMEOUT   8
+#define I2C_ERROR_BERR          4
+#define I2C_ERROR_ARLO          5
+#define I2C_ERROR_AF            6
+#define I2C_ERROR_OVR           7
+#define I2C_ERROR_TIMEOUT       8
+
+/*
+ * I2C Application slave events
+ */
+#define I2C_EVENT_DATA_REQUEST  9
+#define I2C_EVENT_DATA_RECEIVE  10
 
 /*************************utility functions*******************************/
 
@@ -162,6 +168,8 @@ void I2C_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi);
 void I2C_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
 void I2C_EV_IRQHandling(I2C_Handle_TypeDef *pI2CHandle);
 void I2C_ER_IRQHandling(I2C_Handle_TypeDef *pI2CHandle);
+
+void I2C_SlaveToggleInterrupts(I2C_Reg_TypeDef *pI2Cx, uint8_t EnOrDi);
 
 /*
  * Other Peripheral Control
