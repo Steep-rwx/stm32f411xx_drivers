@@ -150,6 +150,12 @@ uint8_t I2C_MasterReceiveDataIT(I2C_Handle_TypeDef *pI2CHandle,
                              uint8_t repeatedStart);
 
 /*
+ * Data send and receive slave versions
+ */
+void I2C_SlaveSendData(I2C_Reg_TypeDef *pI2Cx, uint8_t data);
+uint8_t I2C_SlaveReceiveData(I2C_Reg_TypeDef *pI2Cx);
+
+/*
  * IRQ Configuration and ISR handling
  */
 void I2C_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi);

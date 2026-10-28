@@ -393,6 +393,41 @@ uint8_t I2C_MasterReceiveDataIT(I2C_Handle_TypeDef *pI2CHandle,
 }
 
 /*******************************************************************
+ * @fn                  - I2C_SlaveSendData
+ *
+ * @brief               - Sending one byte to master
+ *
+ * @param[in]           - pI2Cx: address of I2Cx
+ * @param[in]           - data: data that need to send
+ *
+ * @return              - none
+ *
+ * @Note                - none
+ *
+ */
+void I2C_SlaveSendData(I2C_Reg_TypeDef *pI2Cx, uint8_t data)
+{
+    pI2Cx->DR = data;
+}
+
+/*******************************************************************
+ * @fn                  - I2C_SlaveReceiveData
+ *
+ * @brief               - Receiving one byte to master
+ *
+ * @param[in]           - pI2Cx: address of I2Cx
+ *
+ * @return              - Received data (one byte)
+ *
+ * @Note                - none
+ *
+ */
+uint8_t I2C_SlaveReceiveData(I2C_Reg_TypeDef *pI2Cx)
+{
+    return (uint8_t) pI2Cx->DR;
+}
+
+/*******************************************************************
  * @fn                  - I2C_IRQConfig
  *
  * @brief               - Configures IRQ from number
