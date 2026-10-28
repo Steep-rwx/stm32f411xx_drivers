@@ -372,8 +372,8 @@ uint8_t I2C_MasterReceiveDataIT(I2C_Handle_TypeDef *pI2CHandle,
         pI2CHandle->pRxBuffer = pRxBuffer;
         pI2CHandle->RxLen = length;
         pI2CHandle->DevAddr = slaveAddr;
+        pI2CHandle->TxRxState = I2C_BUSY_RX;
         pI2CHandle->RxSize = length;
-        pI2CHandle->DevAddr = slaveAddr;
         pI2CHandle->RepeatedStart = repeatedStart;
 
         /* Generating start condition */
