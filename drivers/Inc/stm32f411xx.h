@@ -196,6 +196,17 @@ typedef struct
   volatile uint32_t FLTR;         /*!< I2C FLTR register,                     address offset: 0x24 */
 } I2C_Reg_TypeDef;
 
+typedef struct
+{
+  volatile uint32_t SR;           /*!< USART status register,                     address offset: 0x00 */
+  volatile uint32_t DR;           /*!< USART data register,                       address offset: 0x04 */
+  volatile uint32_t BRR;          /*!< USART baud rate register,                  address offset: 0x08 */
+  volatile uint32_t CR1;          /*!< USART control register 1,                  address offset: 0x0C */
+  volatile uint32_t CR2;          /*!< USART control register 2,                  address offset: 0x10 */
+  volatile uint32_t CR3;          /*!< USART control register 3,                  address offset: 0x14 */
+  volatile uint32_t GTPR;         /*!< USART guard time and prescaler register,   address offset: 0x18 */
+} USART_Reg_TypeDef;
+
 
 /********************************peripheral definitions*****************************************************************/
 
