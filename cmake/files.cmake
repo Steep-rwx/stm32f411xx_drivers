@@ -8,6 +8,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/drivers/Src/stm32f411xx_gpio_driver.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/drivers/Src/stm32f411xx_spi_driver.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/drivers/Src/stm32f411xx_i2c_driver.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/drivers/Src/stm32f411xx_usart_driver.c"
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
