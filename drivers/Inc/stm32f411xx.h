@@ -243,6 +243,13 @@ typedef struct
 #define I2C2          ((I2C_Reg_TypeDef*) I2C2_BASEADDR)
 #define I2C3          ((I2C_Reg_TypeDef*) I2C3_BASEADDR)
 
+/*
+ * USART definition
+ */
+#define USART1          ((USART_Reg_TypeDef*) USART1_BASEADDR)
+#define USART2          ((USART_Reg_TypeDef*) USART2_BASEADDR)
+#define USART6          ((USART_Reg_TypeDef*) USART6_BASEADDR)
+
 /**
   * Clock enable GPIO peripherals
   */
