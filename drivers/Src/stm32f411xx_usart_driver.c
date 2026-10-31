@@ -44,7 +44,10 @@ void USART_PeriClockControl(USART_Reg_TypeDef *pUSARTx, uint8_t EnOrDi)
  * @Note                - none
  *
  */
-void USART_Init(USART_Handle_TypeDef *pUSARTHandle);
+void USART_Init(USART_Handle_TypeDef *pUSARTHandle)
+{
+
+}
 
 /********************************************************************
  * @fn                  - USART_DeInit
@@ -58,7 +61,22 @@ void USART_Init(USART_Handle_TypeDef *pUSARTHandle);
  * @Note                - none
  *
  */
-void USART_DeInit(USART_Reg_TypeDef *pUSARTx);
+void USART_DeInit(USART_Reg_TypeDef *pUSARTx)
+{
+    if (pUSARTx == USART1)
+    {
+        RCC->APB2RSTR |= (1U << 4U);
+        RCC->APB2RSTR &= ~(1U << 4U);
+    } else if (pUSARTx == USART2)
+    {
+        RCC->APB1RSTR |= (1U << 17U);
+        RCC->APB1RSTR &= ~(1U << 17U);
+    } else if (pUSARTx == USART6)
+    {
+        RCC->APB2RSTR |= (1U << 5U);
+        RCC->APB2RSTR &= ~(1U << 5U);
+    }
+}
 
 /********************************************************************
  * @fn                  - USART_SendData

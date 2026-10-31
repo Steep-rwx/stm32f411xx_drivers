@@ -21,7 +21,7 @@ typedef struct
 /*
  * @USART_Mode
  */
-#define USART_MODE_DUPLEX       0
+#define USART_MODE_TX_RX        0
 #define USART_MODE_TX_ONLY      1
 #define USART_MODE_RX_ONLY      2
 
@@ -56,13 +56,16 @@ typedef struct
  * @USART_ParityControl
  */
 #define USART_PARITY_CONTROL_DISABLED           0
-#define USART_PARITY_CONTROL_ENABLED            1
+#define USART_PARITY_CONTROL_ENABLED_EVEN       1
+#define USART_PARITY_CONTROL_ENABLED_ODD        2
 
 /*
  * @USART_HardwareFlowControl
  */
-#define USART_HARDWARE_FLOW_CONTROL_DISABLED    0
-#define USART_HARDWARE_FLOW_CONTROL_ENABLED     1
+#define USART_HARDWARE_FLOW_CONTROL_DISABLED            0
+#define USART_HARDWARE_FLOW_CONTROL_ENABLED_CTS         1
+#define USART_HARDWARE_FLOW_CONTROL_ENABLED_RTS         2
+#define USART_HARDWARE_FLOW_CONTROL_ENABLED_CTS_RTS     3
 
 /*
  * Handle structure for USARTx
