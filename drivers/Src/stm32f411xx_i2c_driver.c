@@ -39,7 +39,8 @@ void I2C_PeriClockControl(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi)
         if (pI2Cx == I2C1) { I2C1_PCLK_EN(); }
         if (pI2Cx == I2C2) { I2C2_PCLK_EN(); }
         if (pI2Cx == I2C3) { I2C3_PCLK_EN(); }
-    } else
+    } 
+    else
     {
         if (pI2Cx == I2C1) { I2C1_PCLK_DI(); }
         if (pI2Cx == I2C2) { I2C2_PCLK_DI(); }
@@ -93,7 +94,8 @@ void I2C_Init(I2C_Handle_TypeDef *pI2CHandle)
         if (pI2CHandle->I2C_Config.I2C_FMDutyCycle == I2C_FM_DUTY_2)
         {
             ccr_value = (RCC_GetPCLK1Value() / (3 * pI2CHandle->I2C_Config.I2C_SCLSpeed));
-        } else
+        } 
+        else
         {
             ccr_value = (RCC_GetPCLK1Value() / (25 * pI2CHandle->I2C_Config.I2C_SCLSpeed));
         }
@@ -106,7 +108,8 @@ void I2C_Init(I2C_Handle_TypeDef *pI2CHandle)
     if (pI2CHandle->I2C_Config.I2C_SCLSpeed == I2C_SCL_SPEED_SM)
     {
         tempreg = (RCC_GetPCLK1Value() / 1000000U) + 1;
-    } else
+    } 
+    else
     {
         tempreg = ((RCC_GetPCLK1Value() * 300) / 1000000000U) + 1;
     }
@@ -138,11 +141,13 @@ void I2C_DeInit(I2C_Reg_TypeDef *pI2Cx)
     {
         RCC->APB1RSTR |= (1U << 21U);
         RCC->APB1RSTR &= ~(1U << 21U);
-    } else if (pI2Cx == I2C2)
+    } 
+    else if (pI2Cx == I2C2)
     {
         RCC->APB1RSTR |= (1U << 22U);
         RCC->APB1RSTR &= ~(1U << 22U);
-    } else if (pI2Cx == I2C3)
+    } 
+    else if (pI2Cx == I2C3)
     {   
         RCC->APB1RSTR |= (1U << 23U);
         RCC->APB1RSTR &= ~(1U << 23U);
@@ -240,7 +245,8 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
 
         while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_RXNE)));
         *pRxBuffer = pI2CHandle->pI2Cx->DR;
-    } else if (length == 2)
+    } 
+    else if (length == 2)
     {
         while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_ADDR)));
         
@@ -265,7 +271,8 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
         *pRxBuffer = pI2CHandle->pI2Cx->DR;
 
         pI2CHandle->pI2Cx->CR1 &= ~(1U << I2C_CR1_POS);
-    } else
+    } 
+    else
     {
         I2C_ClearADDRFlag(pI2CHandle);
         for (uint32_t i = length; i > 3; i--)
@@ -448,7 +455,8 @@ void I2C_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi)
     if (enOrDi)
     {
         NVIC->ISER[ipr_idx] |= (1UL << bit_pos);
-    } else 
+    } 
+    else 
     {
         NVIC->ICER[ipr_idx] |= (1UL << bit_pos);
     }
@@ -507,7 +515,8 @@ void I2C_EV_IRQHandling(I2C_Handle_TypeDef *pI2CHandle)
         if(pI2CHandle->TxRxState == I2C_BUSY_TX)
         {
             I2C_ExecuteAddressPhase(pI2CHandle->pI2Cx, pI2CHandle->DevAddr, I2C_WRITE);
-        } else if (pI2CHandle->TxRxState == I2C_BUSY_RX)
+        } 
+        else if (pI2CHandle->TxRxState == I2C_BUSY_RX)
         {
             I2C_ExecuteAddressPhase(pI2CHandle->pI2Cx, pI2CHandle->DevAddr, I2C_READ);
         }
@@ -541,7 +550,8 @@ void I2C_EV_IRQHandling(I2C_Handle_TypeDef *pI2CHandle)
                     I2C_ApplicationEventCallback(pI2CHandle, I2C_EVENT_TX_CMPLT);
                 }
             }
-        } else if (pI2CHandle->TxRxState == I2C_BUSY_RX)
+        } 
+        else if (pI2CHandle->TxRxState == I2C_BUSY_RX)
         {
             if (pI2CHandle->pI2Cx->SR1 & (1U << I2C_SR1_RXNE))
             {
@@ -685,7 +695,8 @@ void I2C_PeripheralControl(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi)
    if (enOrDi)
    {
        pI2Cx->CR1 |= (1U << I2C_CR1_PE);
-   } else
+   } 
+   else
    {
        pI2Cx->CR1 &= ~(1U << I2C_CR1_PE);
    }
@@ -696,7 +707,8 @@ void I2C_ACKToggle(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi)
    if (enOrDi)
    {
        pI2Cx->CR1 |= (1U << I2C_CR1_ACK);
-   } else
+   } 
+   else
    {
        pI2Cx->CR1 &= ~(1U << I2C_CR1_ACK);
    }
@@ -741,8 +753,6 @@ __attribute__((weak)) void I2C_ApplicationEventCallback(I2C_Handle_TypeDef *pI2C
 
 
 /********************Private functions implementations*****************************/
-
-
 
 /*
  * For send function
