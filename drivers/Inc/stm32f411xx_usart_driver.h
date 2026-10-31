@@ -56,7 +56,7 @@ typedef struct
  * @USART_ParityControl
  */
 #define USART_PARITY_CONTROL_DISABLED           0
-#define USART_PARITY_CONTROL_DISABLED           1
+#define USART_PARITY_CONTROL_ENABLED            1
 
 /*
  * @USART_HardwareFlowControl
@@ -78,6 +78,11 @@ typedef struct
 static inline uint8_t USART_GetFlagStatus(USART_Reg_TypeDef *pUSARTx, uint32_t FlagName)
 {
     return (pUSARTx->SR & FlagName) ? FLAG_SET : FLAG_RESET;
+}
+
+static inline void USART_ClearFLag(USART_Reg_TypeDef *pUSARTx, uint32_t FlagName)
+{
+    pUSARTx->SR &= ~(FlagName);
 }
 
 /******************APIs supported by this driver**********************/
@@ -110,7 +115,6 @@ void USART_IRQHandling(USART_Handle_TypeDef *pUSARTHandle);
  * Other Peripheral Control
  */
 void USART_PeripheralControl(USART_Reg_TypeDef *pUSARTx, uint8_t EnOrDi);
-void USART_ClearFLag(USART_Reg_TypeDef *pUSARTx, uint16_t StatusFlagName);
 
 /*
  * Application callback
