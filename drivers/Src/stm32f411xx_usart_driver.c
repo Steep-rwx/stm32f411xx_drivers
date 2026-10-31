@@ -171,3 +171,20 @@ void USART_PeripheralControl(USART_Reg_TypeDef *pUSARTx, uint8_t EnOrDi)
     }
 }
 
+/********************************************************************
+ * @fn                  - USART_ApplicationEventCallback
+ *
+ * @brief               - Application callback function
+ *
+ * @param[in]           - pUSARTHandle: pointer to the handle of the USART peripheral
+ * @param[in]           - ApplicationEvent: event code
+ *
+ * @return              - none
+ *
+ * @Note                - none
+ *
+ */
+__attribute__((weak)) void USART_ApplicationEventCallback(USART_Handle_TypeDef *pUSARTHandle, uint8_t ApplicationEvent)
+{
+
+}
