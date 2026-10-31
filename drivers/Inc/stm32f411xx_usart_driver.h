@@ -73,5 +73,48 @@ typedef struct
     USART_Config_TypeDef    USART_Config;
 } USART_Handle_TypeDef;
 
+/*************************utility functions*******************************/
+
+static inline uint8_t USART_GetFlagStatus(USART_Reg_TypeDef *pUSARTx, uint32_t FlagName)
+{
+    return (pUSARTx->SR & FlagName) ? FLAG_SET : FLAG_RESET;
+}
+
+/******************APIs supported by this driver**********************/
+
+/*
+ * Peripheral Clock setup
+ */
+void USART_PeriClockControl(USART_Reg_TypeDef *pUSARTx, uint8_t EnOrDi);
+
+/*
+ * Init and De-init
+ */
+void USART_Init(USART_Handle_TypeDef *pUSARTHandle);
+void USART_DeInit(USART_Reg_TypeDef *pUSARTx);
+
+/*
+ * Data send and receive
+ */
+void USART_SendData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Length);
+void USART_ReceiveData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Length);
+
+/*
+ * IRQ Configuration and ISR handling
+ */
+void USART_IRQConfig(uint8_t IRQNumber, uint8_t EnOrDi);
+void USART_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
+void USART_IRQHandling(USART_Handle_TypeDef *pUSARTHandle);
+
+/*
+ * Other Peripheral Control
+ */
+void USART_PeripheralControl(USART_Reg_TypeDef *pUSARTx, uint8_t EnOrDi);
+void USART_ClearFLag(USART_Reg_TypeDef *pUSARTx, uint16_t StatusFlagName);
+
+/*
+ * Application callback
+ */
+void USART_ApplicationEventCallback(USART_Handle_TypeDef *pUSARTHandle, uint8_t ApplicationEvent);
 
 #endif /* INC_STM32F411XX_I2C_DRIVER_H_ */
