@@ -118,6 +118,7 @@ void USART_IRQHandling(USART_Handle_TypeDef *pUSARTHandle);
  * Other Peripheral Control
  */
 void USART_PeripheralControl(USART_Reg_TypeDef *pUSARTx, uint8_t EnOrDi);
+void USART_SetBaudRate(USART_Reg_TypeDef *pUSARTx, uint32_t);
 
 /*
  * Application callback

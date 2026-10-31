@@ -47,6 +47,68 @@ void USART_PeriClockControl(USART_Reg_TypeDef *pUSARTx, uint8_t EnOrDi)
 void USART_Init(USART_Handle_TypeDef *pUSARTHandle)
 {
 
+    uint32_t cr1, cr2, cr3;
+    cr1 = 0; cr2 = 0; cr3 = 0;
+
+    /*****************Configuring CR1 register*********************/
+
+    // Configuring a mode TX, RX, TX_RX
+    if (pUSARTHandle->USART_Config.USART_Mode == USART_MODE_TX_ONLY)
+    {
+        cr1 |= (1U << USART_CR1_TE);
+    } else if (pUSARTHandle->USART_Config.USART_Mode == USART_MODE_RX_ONLY)
+    {
+        cr1 |= (1U << USART_CR1_RE);
+    } else if (pUSARTHandle->USART_Config.USART_Mode == USART_MODE_TX_RX)
+    {
+        cr1 |= (1U << USART_CR1_TE);
+        cr1 |= (1U << USART_CR1_RE);
+    }
+
+    // Configuring word length
+    cr1 |= (pUSARTHandle->USART_Config.USART_WordLength << USART_CR1_M);
+
+    // Configuring parity control
+    if (pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_CONTROL_ENABLED_EVEN)
+    {
+        cr1 |= (1U << USART_CR1_PCE);
+    } else if (pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_CONTROL_ENABLED_ODD)
+    {
+        cr1 |= (1U << USART_CR1_PCE);
+        cr1 |= (1U << USART_CR1_PS);
+    }
+
+    pUSARTHandle->pUSARTx->CR1 = cr1;
+
+    /*****************Configuring CR2 register*********************/
+
+    // Configuring number of stop bits
+    cr2 |= (pUSARTHandle->USART_Config.USART_NumberOfStopBits << USART_CR2_STOP);
+
+    pUSARTHandle->pUSARTx->CR2 = cr2;
+
+    /*****************Configuring CR3 register*********************/
+
+    // Configuring hardware flow control
+
+    if (pUSARTHandle->USART_Config.USART_HardwareFlowControl == USART_HARDWARE_FLOW_CONTROL_ENABLED_CTS)
+    {
+        cr3 |= (1U << USART_CR3_CTSE);
+    } else if (pUSARTHandle->USART_Config.USART_HardwareFlowControl == USART_HARDWARE_FLOW_CONTROL_ENABLED_RTS)
+    {
+        cr3 |= (1U << USART_CR3_RTSE);
+    } else if (pUSARTHandle->USART_Config.USART_HardwareFlowControl == USART_HARDWARE_FLOW_CONTROL_ENABLED_CTS_RTS)
+    {
+        cr3 |= (1U << USART_CR3_CTSE);
+        cr3 |= (1U << USART_CR3_RTSE);
+    }
+
+    pUSARTHandle->pUSARTx->CR3 = cr3;
+
+    /*****************Configuring BRR register*********************/
+
+    USART_SetBaudRate(pUSARTHandle->pUSARTx, pUSARTHandle->USART_Config.USART_Baudrate);
+
 }
 
 /********************************************************************
