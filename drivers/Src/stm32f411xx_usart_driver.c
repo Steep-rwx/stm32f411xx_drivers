@@ -31,3 +31,118 @@ void USART_PeriClockControl(USART_Reg_TypeDef *pUSARTx, uint8_t EnOrDi)
         else if (pUSARTx == USART6) {USART6_PCLK_DI();}
     }
 }
+
+/********************************************************************
+ * @fn                  - USART_Init
+ *
+ * @brief               - Initializes the specifies USART
+ *
+ * @param[in]           - pUSARTHandle: A structure that contains pin base address and pin config
+ *
+ * @return              - none
+ *
+ * @Note                - none
+ *
+ */
+void USART_Init(USART_Handle_TypeDef *pUSARTHandle);
+
+/********************************************************************
+ * @fn                  - USART_DeInit
+ *
+ * @brief               - Deinitializes the specified pin
+ *
+ * @param[in]           - pUSARTx: A base address of USARTx
+ *
+ * @return              - none
+ *
+ * @Note                - none
+ *
+ */
+void USART_DeInit(USART_Reg_TypeDef *pUSARTx);
+
+/********************************************************************
+ * @fn                  - USART_SendData
+ *
+ * @brief               - Send data through USART
+ *
+ * @param[in]           - pUSARTx: base address
+ * @param[in]           - pTxBuffer: Tx buffer
+ * @param[in]           - Length: length of info
+ *
+ * @return              - none
+ *
+ * @Note                - This is blocking call
+ *
+ */
+void USART_SendData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Length);
+
+/********************************************************************
+ * @fn                  - USART_ReceiveData
+ *
+ * @brief               - Receive data through USART
+ *
+ * @param[in]           - pUSARTx: base address
+ * @param[in]           - pRxBuffer: Rx buffer
+ * @param[in]           - Length: length of info
+ *
+ * @return              - none
+ *
+ * @Note                - none
+ *
+ */
+void USART_ReceiveData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Length);
+
+/*******************************************************************
+ * @fn                  - USART_IRQConfig
+ *
+ * @brief               - Configures IRQ from number
+ *
+ * @param[in]           - IRQNumber: Number choosed IRQ
+ * @param[in]           - EnOrDi: ENABLE or DISABLE macro
+ *
+ * @return              - none
+ *
+ * @Note                - none
+ *
+ */
+void USART_IRQConfig(uint8_t IRQNumber, uint8_t EnOrDi)
+{
+    if (IRQNumber >= 240) return;
+
+    uint8_t ipr_idx = IRQNumber / 32;
+    uint8_t bit_pos = IRQNumber % 32;
+    if (EnOrDi)
+    {
+        NVIC->ISER[ipr_idx] |= (1UL << bit_pos);
+    } else 
+    {
+        NVIC->ICER[ipr_idx] |= (1UL << bit_pos);
+    }
+}
+
+/*******************************************************************
+ * @fn                  - USART_IRQPriority
+ *
+ * @brief               - Configures IRQ Priority
+ *
+ * @param[in]           - IRQNumber: Number choosed IRQ
+ * @param[in]           - IRQPriority: Choosed priority 0-15
+ *
+ * @return              - none
+ *
+ * @Note                - none
+ *
+ */
+void USART_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
+{
+    if (IRQNumber >= 240) return;
+
+    uint8_t ipr_idx = IRQNumber / 4;
+    uint8_t byte_shift = ((IRQNumber % 4) * 8);
+
+    uint8_t shift_amount = (byte_shift + (8 - NO_PR_BITS_IMPLEMENTED));
+
+    NVIC->IPR[ipr_idx] &= ~(0xFFUL << byte_shift);
+
+    NVIC->IPR[ipr_idx] |= ((uint32_t)IRQPriority << shift_amount);
+}
