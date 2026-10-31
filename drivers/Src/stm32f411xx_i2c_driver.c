@@ -155,7 +155,7 @@ void I2C_DeInit(I2C_Reg_TypeDef *pI2Cx)
  *
  * @brief               - Send data through I2C
  *
- * @param[in]           - pSPIx: base address
+ * @param[in]           - pI2CHandle: base address of I2C handle
  * @param[in]           - pTxBuffer: Tx buffer
  * @param[in]           - length: length of info
  * @param[in]           - slaveAddr: slave addres in 7-bit format
@@ -203,7 +203,7 @@ void I2C_MasterSendData(I2C_Handle_TypeDef *pI2CHandle,
  *
  * @brief               - Receive data through I2C
  *
- * @param[in]           - pSPIx: base address
+ * @param[in]           - pI2CHandle: base address of I2C handle
  * @param[in]           - pRxBuffer: Rx buffer
  * @param[in]           - length: length of info
  * @param[in]           - slaveAddr: slave addres in 7 bit format
@@ -299,7 +299,7 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
  *
  * @brief               - Send data through I2C
  *
- * @param[in]           - pSPIx: base address
+ * @param[in]           - pI2CHandle: base address
  * @param[in]           - pTxBuffer: Tx buffer
  * @param[in]           - length: length of info
  * @param[in]           - slaveAddr: slave addres in 7-bit format
@@ -307,7 +307,7 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
  *
  * @return              - none
  *
- * @Note                - This is blocking call
+ * @Note                - This is non blocking call
  *
  */
 uint8_t I2C_MasterSendDataIT(I2C_Handle_TypeDef *pI2CHandle, 
@@ -347,7 +347,7 @@ uint8_t I2C_MasterSendDataIT(I2C_Handle_TypeDef *pI2CHandle,
  *
  * @brief               - Receive data through I2C
  *
- * @param[in]           - pSPIx: base address
+ * @param[in]           - pI2CHandle: base address of I2C handle
  * @param[in]           - pRxBuffer: Rx buffer
  * @param[in]           - length: length of info
  * @param[in]           - slaveAddr: slave addres in 7 bit format
@@ -355,7 +355,7 @@ uint8_t I2C_MasterSendDataIT(I2C_Handle_TypeDef *pI2CHandle,
  *
  * @return              - none
  *
- * @Note                - This is blocking call
+ * @Note                - This is non blocking call
  *
  */
 uint8_t I2C_MasterReceiveDataIT(I2C_Handle_TypeDef *pI2CHandle, 
