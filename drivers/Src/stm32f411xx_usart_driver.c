@@ -146,3 +146,28 @@ void USART_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
 
     NVIC->IPR[ipr_idx] |= ((uint32_t)IRQPriority << shift_amount);
 }
+
+/********************************************************************
+ * @fn                  - USART_PeripheralControl
+ *
+ * @brief               - Enables USART choosen peripheral
+ *
+ * @param[in]           - pUSARTx: base address
+ * @param[in]           - EnOrDi: ENABLE or DISABLE
+ *
+ * @return              - none
+ *
+ * @Note                - none
+ *
+ */
+void USART_PeripheralControl(USART_Reg_TypeDef *pUSARTx, uint8_t EnOrDi)
+{
+    if (EnOrDi)
+    {
+        pUSARTx->CR1 |= (1U << USART_CR1_UE);
+    } else
+    {
+        pUSARTx->CR1 &= ~(1U << USART_CR1_UE);
+    }
+}
+
