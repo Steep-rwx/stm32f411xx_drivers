@@ -208,7 +208,41 @@ void USART_SendData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, uint
  * @Note                - none
  *
  */
-void USART_ReceiveData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Length);
+void USART_ReceiveData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Length)
+{
+    for (uint32_t i = 0; i < Length; i++)
+    {
+        while(!(USART_GetFlagStatus(pUSARTHandle->pUSARTx, USART_FLAG_RXNE)));
+
+        if (pUSARTHandle->USART_Config.USART_WordLength == USART_WORD_LENGTH_9_BITS)
+        {
+            if (pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_CONTROL_DISABLED)
+            {
+                *((uint16_t*) pRxBuffer) = (pUSARTHandle->pUSARTx->DR & (uint16_t) 0x01FF);
+
+                pRxBuffer++;
+                pRxBuffer++;
+            }
+            else
+            {
+                *pRxBuffer = (pUSARTHandle->pUSARTx->DR & (uint8_t) 0xFF); // 0xFF just for single-style code
+                pRxBuffer++;
+            }
+        }
+        else
+        {
+            if (pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_CONTROL_DISABLED)
+            {
+                *pRxBuffer = pUSARTHandle->pUSARTx->DR;
+            }
+            else
+            {
+                *pRxBuffer = (pUSARTHandle->pUSARTx->DR & (uint8_t) 0x7F)
+            }
+            pRxBuffer++;
+        }
+    }
+}
 
 /*******************************************************************
  * @fn                  - USART_IRQConfig
