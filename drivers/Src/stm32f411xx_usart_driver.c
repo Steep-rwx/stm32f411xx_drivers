@@ -203,7 +203,7 @@ void USART_SendData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, uint
  * @param[in]           - pRxBuffer: Rx buffer
  * @param[in]           - Length: length of info
  *
- * @return              - none
+ * @return              - This is blocking call
  *
  * @Note                - none
  *
@@ -243,6 +243,52 @@ void USART_ReceiveData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, u
         }
     }
 }
+
+/********************************************************************
+ * @fn                  - USART_SendDataIT
+ *
+ * @brief               - Send data through USART with interrupts
+ *
+ * @param[in]           - pUSARTx: base address
+ * @param[in]           - pTxBuffer: Tx buffer
+ * @param[in]           - Length: length of info
+ *
+ * @return              - none
+ *
+ * @Note                - This is non-blocking call
+ *
+ */
+void USART_SendDataIT(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Length)
+{
+    uint8_t tx_state = pUSARTHandle->TxState;
+
+    if (tx_state != USART_BUSY_TX)
+    {
+        pUSARTHandle->TxLength = Length;
+        pUSARTHandle->pTxBuffer = pTxBuffer;
+        pUSARTHandle->TxState = USART_BUSY_TX;
+        
+        pUSARTHandle->pUSARTx->CR1 |= (1U << USART_CR1_TXEIE);
+
+        pUSARTHandle->pUSARTx->CR1 |= (1U << USART_CR1_TCIE);
+    }
+}
+
+/********************************************************************
+ * @fn                  - USART_ReceiveDataIT
+ *
+ * @brief               - Receive data through USART with interrupts
+ *
+ * @param[in]           - pUSARTx: base address
+ * @param[in]           - pRxBuffer: Rx buffer
+ * @param[in]           - Length: length of info
+ *
+ * @return              - This is non-blocking call
+ *
+ * @Note                - none
+ *
+ */
+void USART_ReceiveDataIT(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Length);
 
 /*******************************************************************
  * @fn                  - USART_IRQConfig
