@@ -28,7 +28,8 @@ void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi)
     if(enOrDi == ENABLE) 
     {
         RCC->AHB1ENR |= (1UL << index);
-    } else
+    } 
+    else
     {
         RCC->AHB1ENR &= ~(1UL << index);
     }
@@ -65,17 +66,20 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
         temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
         pGPIOHandle->pGPIOx->MODER &= ~(0x3UL << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
         pGPIOHandle->pGPIOx->MODER |= temp;
-    } else
+    } 
+    else
     {
         if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_FT)
         {
             EXTI->FTSR |= (1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
             EXTI->RTSR &= ~(1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-        } else if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_RT)
+        } 
+        else if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_RT)
         {
             EXTI->RTSR |= (1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
             EXTI->FTSR &= ~(1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-        } else if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_RFT)
+        } 
+        else if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_RFT)
         {
             EXTI->FTSR |= (1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
             EXTI->RTSR |= (1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
@@ -207,7 +211,8 @@ void GPIO_WriteToOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber, uint8_t 
     if (value == GPIO_PIN_SET)
     {
         pGPIOx->ODR |= (1UL << pinNumber);
-    } else
+    } 
+    else
     {
         pGPIOx->ODR &= ~(1UL << pinNumber);
     }
@@ -279,7 +284,8 @@ void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi)
     if (enOrDi)
     {
         NVIC->ISER[ipr_idx] |= (1UL << bit_pos);
-    } else 
+    } 
+    else 
     {
         NVIC->ICER[ipr_idx] |= (1UL << bit_pos);
     }
