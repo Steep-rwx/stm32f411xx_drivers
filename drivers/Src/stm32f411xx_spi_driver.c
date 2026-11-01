@@ -30,7 +30,8 @@ void SPI_PeriClockControl(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi)
         if (pSPIx == SPI1)      { SPI1_PCLK_EN(); }
         else if (pSPIx == SPI2) { SPI2_PCLK_EN(); }
         else if (pSPIx == SPI3) { SPI3_PCLK_EN(); }
-    } else
+    } 
+    else
     {
         if (pSPIx == SPI1)      { SPI1_PCLK_DI(); }
         else if (pSPIx == SPI2) { SPI2_PCLK_DI(); }
@@ -69,10 +70,12 @@ void SPI_Init(SPI_Handle_TypeDef *pSPIHandle)
     if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_FULLDUPLEX)
     {
         tempreg &= ~(1U << SPI_CR1_BIDIMODE);
-    } else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_HALFDUPLEX)
+    } 
+    else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_HALFDUPLEX)
     {
         tempreg |= (1U << SPI_CR1_BIDIMODE);
-    } else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_SIMPLEX_RXONLY)
+    } 
+    else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_SIMPLEX_RXONLY)
     {
         tempreg &= ~(1U << SPI_CR1_BIDIMODE);
         tempreg |= (1U << SPI_CR1_RXONLY);
@@ -118,11 +121,13 @@ void SPI_DeInit(SPI_Reg_TypeDef *pSPIx)
     {
         RCC->APB2RSTR |= (1U << 12);
         RCC->APB2RSTR &= ~(1U << 12);
-    } else if (pSPIx == SPI2)
+    } 
+    else if (pSPIx == SPI2)
     {
         RCC->APB1RSTR |= (1U << 14);
         RCC->APB1RSTR &= ~(1U << 14);
-    } else if (pSPIx == SPI3)
+    } 
+    else if (pSPIx == SPI3)
     {
         RCC->APB1RSTR |= (1U << 15);
         RCC->APB1RSTR &= ~(1U << 15);
@@ -157,7 +162,8 @@ void SPI_SendData(SPI_Reg_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t length)
             pTxBuffer16++;
             count16--;        
         }
-    } else
+    } 
+    else
     {
         while (length > 0)
         {
@@ -201,7 +207,8 @@ void SPI_ReceiveData(SPI_Reg_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t length
             pRxBuffer16++;
             count16--;        
         }
-    } else
+    } 
+    else
     {
         while (length > 0)
         {
@@ -304,7 +311,8 @@ void SPI_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi)
     if (enOrDi)
     {
         NVIC->ISER[ipr_idx] |= (1UL << bit_pos);
-    } else 
+    } 
+    else 
     {
         NVIC->ICER[ipr_idx] |= (1UL << bit_pos);
     }
@@ -395,7 +403,8 @@ void SPI_PeripheralControl(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi)
     if (enOrDi)
     {
         pSPIx->CR1 |= (1U << SPI_CR1_SPE);
-    } else
+    } 
+    else
     {
         pSPIx->CR1 &= ~(1U << SPI_CR1_SPE);
     }
@@ -435,14 +444,16 @@ static void spi_rxne_interrupt_handle(SPI_Handle_TypeDef *pSPIHandle)
             *((uint16_t*)pSPIHandle->pRxBuffer) = (uint16_t) pSPIHandle->pSPIx->DR;
             pSPIHandle->pRxBuffer += 2;
             pSPIHandle->RxLen -= 2;
-        } else
+        } 
+        else
         {
             pSPIHandle->pSPIx->DR = 0xFF;
             *pSPIHandle->pRxBuffer = (uint8_t) pSPIHandle->pSPIx->DR;
             pSPIHandle->pRxBuffer++;
             pSPIHandle->RxLen--;
         }
-    } else
+    } 
+    else
     {
         SPI_CloseReception(pSPIHandle);
         SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_RX_CMPLT);
