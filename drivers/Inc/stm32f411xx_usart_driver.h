@@ -25,6 +25,12 @@ typedef struct
 {
     USART_Reg_TypeDef       *pUSARTx;
     USART_Config_TypeDef    USART_Config;
+    uint8_t                 *pTxBuffer;
+    uint8_t                 *pRxBuffer;
+    uint32_t                TxLength;
+    uint32_t                RxLength;
+    uint8_t                 TxState;
+    uint8_t                 RxState;
 } USART_Handle_TypeDef;
 
 /*

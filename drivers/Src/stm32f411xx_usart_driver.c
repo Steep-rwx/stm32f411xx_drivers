@@ -237,7 +237,7 @@ void USART_ReceiveData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, u
             }
             else
             {
-                *pRxBuffer = (pUSARTHandle->pUSARTx->DR & (uint8_t) 0x7F)
+                *pRxBuffer = (pUSARTHandle->pUSARTx->DR & (uint8_t) 0x7F);
             }
             pRxBuffer++;
         }
