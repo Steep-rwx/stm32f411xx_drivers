@@ -87,6 +87,19 @@ typedef struct
 #define USART_FLAG_TC               (1U << USART_SR_TC)
 #define USART_FLAG_RXNE             (1U << USART_SR_RXNE)
 
+/*
+ * USART status definitions
+ */
+#define USART_READY             0
+#define USART_BUSY_TX           1
+#define USART_BUSY_RX           2
+
+/*
+ * USART Application Events
+ */
+#define USART_EVENT_TX_COMPLETE     1
+#define USART_EVENT_RX_COMPLETE     2
+
 
 /*************************utility functions*******************************/
 
@@ -118,6 +131,9 @@ void USART_DeInit(USART_Reg_TypeDef *pUSARTx);
  */
 void USART_SendData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Length);
 void USART_ReceiveData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Length);
+
+void USART_SendDataIT(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Length);
+void USART_ReceiveDataIT(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Length);
 
 /*
  * IRQ Configuration and ISR handling
