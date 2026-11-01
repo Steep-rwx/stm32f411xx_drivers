@@ -1,5 +1,6 @@
 #include "stm32f411xx_usart_driver.h"
 #include "stm32f411xx.h"
+#include "stm32f411xx_rcc_driver.h"
 
 #include <stdint.h>
 
@@ -56,10 +57,12 @@ void USART_Init(USART_Handle_TypeDef *pUSARTHandle)
     if (pUSARTHandle->USART_Config.USART_Mode == USART_MODE_TX_ONLY)
     {
         cr1 |= (1U << USART_CR1_TE);
-    } else if (pUSARTHandle->USART_Config.USART_Mode == USART_MODE_RX_ONLY)
+    } 
+    else if (pUSARTHandle->USART_Config.USART_Mode == USART_MODE_RX_ONLY)
     {
         cr1 |= (1U << USART_CR1_RE);
-    } else if (pUSARTHandle->USART_Config.USART_Mode == USART_MODE_TX_RX)
+    } 
+    else if (pUSARTHandle->USART_Config.USART_Mode == USART_MODE_TX_RX)
     {
         cr1 |= (1U << USART_CR1_TE);
         cr1 |= (1U << USART_CR1_RE);
@@ -72,7 +75,8 @@ void USART_Init(USART_Handle_TypeDef *pUSARTHandle)
     if (pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_CONTROL_ENABLED_EVEN)
     {
         cr1 |= (1U << USART_CR1_PCE);
-    } else if (pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_CONTROL_ENABLED_ODD)
+    } 
+    else if (pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_CONTROL_ENABLED_ODD)
     {
         cr1 |= (1U << USART_CR1_PCE);
         cr1 |= (1U << USART_CR1_PS);
@@ -94,10 +98,12 @@ void USART_Init(USART_Handle_TypeDef *pUSARTHandle)
     if (pUSARTHandle->USART_Config.USART_HardwareFlowControl == USART_HARDWARE_FLOW_CONTROL_ENABLED_CTS)
     {
         cr3 |= (1U << USART_CR3_CTSE);
-    } else if (pUSARTHandle->USART_Config.USART_HardwareFlowControl == USART_HARDWARE_FLOW_CONTROL_ENABLED_RTS)
+    } 
+    else if (pUSARTHandle->USART_Config.USART_HardwareFlowControl == USART_HARDWARE_FLOW_CONTROL_ENABLED_RTS)
     {
         cr3 |= (1U << USART_CR3_RTSE);
-    } else if (pUSARTHandle->USART_Config.USART_HardwareFlowControl == USART_HARDWARE_FLOW_CONTROL_ENABLED_CTS_RTS)
+    } 
+    else if (pUSARTHandle->USART_Config.USART_HardwareFlowControl == USART_HARDWARE_FLOW_CONTROL_ENABLED_CTS_RTS)
     {
         cr3 |= (1U << USART_CR3_CTSE);
         cr3 |= (1U << USART_CR3_RTSE);
@@ -129,11 +135,13 @@ void USART_DeInit(USART_Reg_TypeDef *pUSARTx)
     {
         RCC->APB2RSTR |= (1U << 4U);
         RCC->APB2RSTR &= ~(1U << 4U);
-    } else if (pUSARTx == USART2)
+    } 
+    else if (pUSARTx == USART2)
     {
         RCC->APB1RSTR |= (1U << 17U);
         RCC->APB1RSTR &= ~(1U << 17U);
-    } else if (pUSARTx == USART6)
+    } 
+    else if (pUSARTx == USART6)
     {
         RCC->APB2RSTR |= (1U << 5U);
         RCC->APB2RSTR &= ~(1U << 5U);
@@ -194,7 +202,8 @@ void USART_IRQConfig(uint8_t IRQNumber, uint8_t EnOrDi)
     if (EnOrDi)
     {
         NVIC->ISER[ipr_idx] |= (1UL << bit_pos);
-    } else 
+    } 
+    else 
     {
         NVIC->ICER[ipr_idx] |= (1UL << bit_pos);
     }
@@ -245,10 +254,75 @@ void USART_PeripheralControl(USART_Reg_TypeDef *pUSARTx, uint8_t EnOrDi)
     if (EnOrDi)
     {
         pUSARTx->CR1 |= (1U << USART_CR1_UE);
-    } else
+    } 
+    else
     {
         pUSARTx->CR1 &= ~(1U << USART_CR1_UE);
     }
+}
+
+/********************************************************************
+ * @fn                  - USART_SetBaudRate
+ *
+ * @brief               - Sets the baudrate to BRR register
+ *
+ * @param[in]           - pUSARTx: base address
+ * @param[in]           - BaudRate: choosen baud rate
+ *
+ * @return              - none
+ *
+ * @Note                - none
+ *
+ */
+void USART_SetBaudRate(USART_Reg_TypeDef *pUSARTx, uint32_t BaudRate)
+{
+    // For APB clock
+    uint32_t PCLKx;
+
+    // coded number
+    uint32_t USARTDIV;
+
+    // For mantissa & fraction values
+    uint32_t mantissa, fraction;
+
+    uint32_t brr = 0;
+
+    if ((pUSARTx == USART1) || (pUSARTx == USART6))
+    {
+        PCLKx = RCC_GetPCLK2Value();
+    } 
+    else
+    {
+        PCLKx = RCC_GetPCLK1Value();
+    }
+
+    if (pUSARTx->CR1 & (1U << USART_CR1_OVER8))
+    {
+        USARTDIV = ((PCLKx / (8 * BaudRate)) * 100);
+    } 
+    else
+    {
+        USARTDIV = ((PCLKx / (16 * BaudRate)) * 100);
+    }
+
+    mantissa = USARTDIV / 100;
+
+    brr |= (mantissa << 4U);
+
+    fraction = USARTDIV % 100;
+
+    if (pUSARTx->CR1 & (1U << USART_CR1_OVER8))
+    {
+        fraction = (((fraction * 8) + 50) / 100) & ((uint8_t)0x07);
+    } 
+    else
+    {
+        fraction = (((fraction * 16) + 50) / 100) & ((uint8_t)0x0F);
+    }
+
+    brr |= fraction;
+    
+    pUSARTx->BRR = brr;
 }
 
 /********************************************************************
