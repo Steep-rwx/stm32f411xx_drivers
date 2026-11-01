@@ -19,13 +19,20 @@ typedef struct
 } USART_Config_TypeDef;
 
 /*
+ * Handle structure for USARTx
+ */
+typedef struct
+{
+    USART_Reg_TypeDef       *pUSARTx;
+    USART_Config_TypeDef    USART_Config;
+} USART_Handle_TypeDef;
+
+/*
  * @USART_Mode
  */
 #define USART_MODE_TX_RX        0
 #define USART_MODE_TX_ONLY      1
 #define USART_MODE_RX_ONLY      2
-
-
 
 /*
  * @USART_Baudrate
@@ -68,13 +75,12 @@ typedef struct
 #define USART_HARDWARE_FLOW_CONTROL_ENABLED_CTS_RTS     3
 
 /*
- * Handle structure for USARTx
+ * USART flag definitions
  */
-typedef struct
-{
-    USART_Reg_TypeDef       *pUSARTx;
-    USART_Config_TypeDef    USART_Config;
-} USART_Handle_TypeDef;
+#define USART_FLAG_TXE              (1U << USART_SR_TXE)
+#define USART_FLAG_TC               (1U << USART_SR_TC)
+#define USART_FLAG_RXNE             (1U << USART_SR_RXNE)
+
 
 /*************************utility functions*******************************/
 

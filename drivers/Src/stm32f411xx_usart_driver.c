@@ -162,7 +162,37 @@ void USART_DeInit(USART_Reg_TypeDef *pUSARTx)
  * @Note                - This is blocking call
  *
  */
-void USART_SendData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Length);
+void USART_SendData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Length)
+{
+    uint16_t *pdata;
+    for (uint32_t i = 0; i < Length; i++)
+    {
+        while (!(USART_GetFlagStatus(pUSARTHandle->pUSARTx, USART_FLAG_TXE)));
+
+        if (pUSARTHandle->USART_Config.USART_WordLength == USART_WORD_LENGTH_9_BITS)
+        {
+            pdata = (uint16_t*) pTxBuffer;
+            pUSARTHandle->pUSARTx->DR = (*pdata & (uint16_t) 0x01FF);
+
+            if (pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_CONTROL_DISABLED)
+            {
+                pTxBuffer++;
+                pTxBuffer++;
+            }
+            else
+            {
+                pTxBuffer++;
+            }
+        }
+        else
+        {
+            pUSARTHandle->pUSARTx->DR = (*pTxBuffer & 0xFF); // 0xFF just for single-style code
+            pTxBuffer++;
+        }
+    }
+
+    while(!(USART_GetFlagStatus(pUSARTHandle->pUSARTx, USART_FLAG_TC)));
+}
 
 /********************************************************************
  * @fn                  - USART_ReceiveData
