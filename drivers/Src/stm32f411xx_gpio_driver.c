@@ -50,14 +50,37 @@ void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi)
  */
 void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
 {
-
-    GPIO_PeriClockControl(pGPIOHandle->pGPIOx, ENABLE);
-    
     if (pGPIOHandle == NULL || pGPIOHandle->pGPIOx == NULL) return;
     if (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber > 15) return;
 
+    GPIO_PeriClockControl(pGPIOHandle->pGPIOx, ENABLE);
 
     uint32_t temp = 0;
+    
+    /* Setting speed */
+    temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
+    pGPIOHandle->pGPIOx->OSPEEDR &= ~(0x3UL << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
+    pGPIOHandle->pGPIOx->OSPEEDR |= temp;
+
+    /* Setting pupd */
+    temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinPuPdControl << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
+    pGPIOHandle->pGPIOx->PUPDR &= ~(0x3UL << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
+    pGPIOHandle->pGPIOx->PUPDR |= temp;
+
+    /* Setting output type*/
+    temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+    pGPIOHandle->pGPIOx->OTYPER &= ~(0x1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+    pGPIOHandle->pGPIOx->OTYPER |= temp;
+
+    /* Setting alternate function */
+    if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_AF)
+    {
+        uint8_t AFR_choose = (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 8);
+        uint8_t AFR_pin_pos = (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 8);
+        pGPIOHandle->pGPIOx->AFR[AFR_choose] &= ~(0xFUL << (4 * AFR_pin_pos));
+        pGPIOHandle->pGPIOx->AFR[AFR_choose] |= (pGPIOHandle->GPIO_PinConfig.GPIO_PinAltFunMode << (4 * AFR_pin_pos));
+    }
+    temp = 0;
 
     /* Setting mode */
 
@@ -89,36 +112,11 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
         uint8_t CRpos = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 4;
         uint8_t portcode = gpio_base_to_code(pGPIOHandle->pGPIOx);
         SYSCFG_PCLK_EN();
-        SYSCFG->EXTICR[CRx] = (portcode << (CRpos * 4));
+        SYSCFG->EXTICR[CRx] &= ~(0xFUL << (CRpos * 4));
+        SYSCFG->EXTICR[CRx] |=  ((uint32_t)portcode << (CRpos * 4));
 
         EXTI->IMR |= (1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     }
-    
-    /* Setting speed */
-    temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
-    pGPIOHandle->pGPIOx->OSPEEDR &= ~(0x3UL << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
-    pGPIOHandle->pGPIOx->OSPEEDR |= temp;
-
-    /* Setting pupd */
-    temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinPuPdControl << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
-    pGPIOHandle->pGPIOx->PUPDR &= ~(0x3UL << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
-    pGPIOHandle->pGPIOx->PUPDR |= temp;
-
-    /* Setting output type*/
-    temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle->pGPIOx->OTYPER &= ~(0x1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle->pGPIOx->OTYPER |= temp;
-
-    /* Setting alternate function */
-    if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_AF)
-    {
-        uint8_t AFR_choose = (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 8);
-        uint8_t AFR_pin_pos = (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 8);
-        pGPIOHandle->pGPIOx->AFR[AFR_choose] &= ~(0xFUL << (4 * AFR_pin_pos));
-        pGPIOHandle->pGPIOx->AFR[AFR_choose] |= (pGPIOHandle->GPIO_PinConfig.GPIO_PinAltFunMode << (4 * AFR_pin_pos));
-    }
-    temp = 0;
-
 }
 
 
