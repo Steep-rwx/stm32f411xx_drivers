@@ -47,6 +47,7 @@ void USART_PeriClockControl(USART_Reg_TypeDef *pUSARTx, uint8_t EnOrDi)
  */
 void USART_Init(USART_Handle_TypeDef *pUSARTHandle)
 {
+    USART_PeriClockControl(pUSARTHandle->pUSARTx, ENABLE);
 
     uint32_t cr1, cr2, cr3;
     cr1 = 0; cr2 = 0; cr3 = 0;
@@ -420,11 +421,11 @@ void USART_SetBaudRate(USART_Reg_TypeDef *pUSARTx, uint32_t BaudRate)
 
     if (pUSARTx->CR1 & (1U << USART_CR1_OVER8))
     {
-        USARTDIV = ((PCLKx / (8 * BaudRate)) * 100);
+        USARTDIV = ((25 * PCLKx) / (2 * BaudRate));
     } 
     else
     {
-        USARTDIV = ((PCLKx / (16 * BaudRate)) * 100);
+        USARTDIV = ((25 * PCLKx) / (4 * BaudRate));
     }
 
     mantissa = USARTDIV / 100;

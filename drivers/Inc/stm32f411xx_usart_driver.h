@@ -43,13 +43,13 @@ typedef struct
 /*
  * @USART_Baudrate
  */
-#define USART_BAUDRATE_1200         0
-#define USART_BAUDRATE_2400         1
-#define USART_BAUDRATE_9600         2
-#define USART_BAUDRATE_19200        3
-#define USART_BAUDRATE_38400        4
-#define USART_BAUDRATE_57600        5
-#define USART_BAUDRATE_115200       6
+#define USART_BAUDRATE_1200         1200
+#define USART_BAUDRATE_2400         2400
+#define USART_BAUDRATE_9600         9600
+#define USART_BAUDRATE_19200        19200
+#define USART_BAUDRATE_38400        38400
+#define USART_BAUDRATE_57600        57600
+#define USART_BAUDRATE_115200       115200
 
 /*
  * @USART_NumberOfStopBits
