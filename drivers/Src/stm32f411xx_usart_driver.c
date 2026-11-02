@@ -288,7 +288,19 @@ void USART_SendDataIT(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, ui
  * @Note                - none
  *
  */
-void USART_ReceiveDataIT(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Length);
+void USART_ReceiveDataIT(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Length)
+{
+    uint8_t rx_state = pUSARTHandle->RxState;
+
+    if(rx_state != USART_BUSY_RX)
+    {
+        pUSARTHandle->RxLength = Length;
+        pUSARTHandle->pRxBuffer = pRxBuffer;
+        pUSARTHandle->RxState = USART_BUSY_RX;
+
+        pUSARTHandle->pUSARTx->CR1 |= (1U << USART_CR1_RXNEIE);
+    }
+}
 
 /*******************************************************************
  * @fn                  - USART_IRQConfig
