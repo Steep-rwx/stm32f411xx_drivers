@@ -99,6 +99,13 @@ typedef struct
  */
 #define USART_EVENT_TX_COMPLETE     1
 #define USART_EVENT_RX_COMPLETE     2
+#define USART_EVENT_CTS             3
+#define USART_EVENT_IDLE            4
+#define USART_EVENT_ORE             5
+#define USART_EVENT_ERROR_FE        6
+#define USART_EVENT_ERROR_NE        7
+#define USART_EVENT_ERROR_ORE       8
+
 
 
 /*************************utility functions*******************************/
