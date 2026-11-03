@@ -355,8 +355,12 @@ static inline uint8_t gpio_base_to_code(const GPIO_Reg_TypeDef *pGPIOx)
 #define IRQ_NO_I2C1_EV    31
 #define IRQ_NO_I2C1_ER    32
 
-#define IRQ_SPI1          35
-#define IRQ_SPI2          36
+#define IRQ_NO_SPI1       35
+#define IRQ_NO_SPI2       36
+
+#define IRQ_NO_USART1     37
+#define IRQ_NO_USART2     38
+#define IRQ_NO_USART6     71 
 
 /*
  * IRQ Priority numbers
