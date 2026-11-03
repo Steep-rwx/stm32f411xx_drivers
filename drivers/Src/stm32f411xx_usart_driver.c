@@ -3,6 +3,7 @@
 #include "stm32f411xx_rcc_driver.h"
 
 #include <stdint.h>
+#include <stddef.h>
 
 
 /********************************************************************
@@ -324,11 +325,11 @@ void USART_IRQConfig(uint8_t IRQNumber, uint8_t EnOrDi)
     uint8_t bit_pos = IRQNumber % 32;
     if (EnOrDi)
     {
-        NVIC->ISER[ipr_idx] |= (1UL << bit_pos);
+        NVIC->ISER[ipr_idx] = (1UL << bit_pos);
     } 
     else 
     {
-        NVIC->ICER[ipr_idx] |= (1UL << bit_pos);
+        NVIC->ICER[ipr_idx] = (1UL << bit_pos);
     }
 }
 
@@ -357,6 +358,216 @@ void USART_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
     NVIC->IPR[ipr_idx] &= ~(0xFFUL << byte_shift);
 
     NVIC->IPR[ipr_idx] |= ((uint32_t)IRQPriority << shift_amount);
+}
+
+/*******************************************************************
+ * @fn                  - USART_IRQHandling
+ *
+ * @brief               - Handles USART IRQ's
+ *
+ * @param[in]           - pUSARTHandle: USARTHandle structure
+ *
+ * @return              - none
+ *
+ * @Note                - none
+ *
+ */
+void USART_IRQHandling(USART_Handle_TypeDef *pUSARTHandle)
+{
+    uint32_t tc_bit, tcie_bit;
+    uint32_t sr_reg = pUSARTHandle->pUSARTx->SR;
+
+    // Checking TC flag
+    tc_bit = pUSARTHandle->pUSARTx->SR & (1U << USART_SR_TC);
+
+    tcie_bit = pUSARTHandle->pUSARTx->CR1 & (1U << USART_CR1_TCIE);
+
+    if (tc_bit && tcie_bit)
+    {
+        if (pUSARTHandle->TxState == USART_BUSY_TX)
+        {
+            if (!pUSARTHandle->TxLength)
+            {
+                pUSARTHandle->pUSARTx->SR &= ~(1U << USART_SR_TC);
+
+                pUSARTHandle->pUSARTx->CR1 &= ~(1U << USART_CR1_TCIE);
+
+                pUSARTHandle->TxState = USART_READY;
+
+                pUSARTHandle->pTxBuffer = NULL;
+
+                pUSARTHandle->TxLength = 0;
+
+                USART_ApplicationEventCallback(pUSARTHandle, USART_EVENT_TX_COMPLETE);
+            }
+        }
+    }
+
+    // Checking TXE
+    uint32_t txe_bit, txeie_bit;
+
+    txe_bit = pUSARTHandle->pUSARTx->SR & (1U << USART_SR_TXE);
+
+    txeie_bit = pUSARTHandle->pUSARTx->CR1 & (1U << USART_CR1_TXEIE);
+
+    if (txe_bit && txeie_bit)
+    {
+        if (pUSARTHandle->TxState == USART_BUSY_TX)
+        {
+            if (pUSARTHandle->TxLength > 0)
+            {
+                if (pUSARTHandle->USART_Config.USART_WordLength == USART_WORD_LENGTH_9_BITS)
+                {
+                    uint16_t *pdata = (uint16_t*) pUSARTHandle->pTxBuffer;
+
+                    pUSARTHandle->pUSARTx->DR = (*pdata & (uint16_t)0x01FF);
+
+                    if (pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_CONTROL_DISABLED)
+                    {
+                        pUSARTHandle->pTxBuffer++;
+                        pUSARTHandle->pTxBuffer++;
+
+                        pUSARTHandle->TxLength--;
+                    }
+                    else
+                    {
+                        pUSARTHandle->pTxBuffer++;
+                        pUSARTHandle->TxLength--;
+                    }
+                }
+                else
+                {
+                    pUSARTHandle->pUSARTx->DR = (*pUSARTHandle->pTxBuffer & 0xFF);
+                    pUSARTHandle->pTxBuffer++;
+                    pUSARTHandle->TxLength--;
+                }
+            }
+            if (pUSARTHandle->TxLength == 0)
+            {
+                pUSARTHandle->pUSARTx->CR1 &= ~(1U << USART_CR1_TXEIE);
+            }
+        }
+    }
+
+    // Checking RXNE
+    uint32_t rxne_bit, rxneie_bit;
+
+    rxne_bit = pUSARTHandle->pUSARTx->SR & (1U << USART_SR_RXNE);
+    
+    rxneie_bit = pUSARTHandle->pUSARTx->CR1 & (1U << USART_CR1_RXNEIE);
+
+    if (rxne_bit && rxneie_bit)
+    {
+        if (pUSARTHandle->RxState == USART_BUSY_RX)
+        {
+            if (pUSARTHandle->RxLength > 0)
+            {
+                if (pUSARTHandle->USART_Config.USART_WordLength == USART_WORD_LENGTH_9_BITS)
+                {
+                    if (pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_CONTROL_DISABLED)
+                    {
+                        *((uint16_t*) pUSARTHandle->pRxBuffer) = (pUSARTHandle->pUSARTx->DR & (uint16_t) 0x01FF);
+
+                        pUSARTHandle->pRxBuffer++;
+                        pUSARTHandle->pRxBuffer++;
+
+                        pUSARTHandle->RxLength--;
+                    }
+                    else
+                    {
+                        *pUSARTHandle->pRxBuffer = (pUSARTHandle->pUSARTx->DR & (uint8_t) 0xFF);
+
+                        pUSARTHandle->pRxBuffer++;
+
+                        pUSARTHandle->RxLength--;
+                    }
+                }
+                else
+                {
+                    if(pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_CONTROL_DISABLED)
+                    {
+                        *pUSARTHandle->pRxBuffer = (pUSARTHandle->pUSARTx->DR & (uint8_t) 0xFF);
+                    }
+                    else
+                    {
+                        *pUSARTHandle->pRxBuffer = (pUSARTHandle->pUSARTx->DR & (uint8_t) 0x7F);
+                    }
+
+                    pUSARTHandle->pRxBuffer++;
+
+                    pUSARTHandle->RxLength--;
+                }
+            }
+
+            // Checking length == 0
+            if (!pUSARTHandle->RxLength)
+            {
+                pUSARTHandle->pUSARTx->CR1 &= ~(1U << USART_CR1_RXNEIE);
+                pUSARTHandle->RxState = USART_READY;
+                USART_ApplicationEventCallback(pUSARTHandle, USART_EVENT_RX_COMPLETE);
+            }
+        }
+    }
+
+    // Checking CTS
+    uint32_t cts_bit, ctse_bit, ctsie_bit;
+
+    cts_bit = pUSARTHandle->pUSARTx->SR & (1U << USART_SR_CTS);
+    ctse_bit = pUSARTHandle->pUSARTx->CR3 & (1U << USART_CR3_CTSE);
+    ctsie_bit = pUSARTHandle->pUSARTx->CR3 & (1U << USART_CR3_CTSIE);
+
+    if (cts_bit && ctse_bit && ctsie_bit)
+    {
+        pUSARTHandle->pUSARTx->SR &= ~(1U << USART_SR_CTS);
+
+        USART_ApplicationEventCallback(pUSARTHandle, USART_EVENT_CTS);
+    }
+
+    // Checking IDLE
+    uint32_t idle_bit, idleie_bit, dummy;
+
+    idle_bit = pUSARTHandle->pUSARTx->SR & (1U << USART_SR_IDLE);
+
+    idleie_bit = pUSARTHandle->pUSARTx->CR1 & (1U << USART_CR1_IDLEIE);
+
+    if (idle_bit && idleie_bit)
+    {
+        dummy = pUSARTHandle->pUSARTx->SR;
+        dummy = pUSARTHandle->pUSARTx->DR;
+        (void)dummy;
+
+        USART_ApplicationEventCallback(pUSARTHandle, USART_EVENT_IDLE);
+    }
+
+    // Checking Overrun
+    uint32_t ore_bit;
+
+    ore_bit = pUSARTHandle->pUSARTx->SR & (1U << USART_SR_ORE);
+
+    rxneie_bit = pUSARTHandle->pUSARTx->CR1 & (1U << USART_CR1_RXNEIE);
+
+    if (ore_bit && rxneie_bit)
+    {
+        dummy = pUSARTHandle->pUSARTx->SR;
+        dummy = pUSARTHandle->pUSARTx->DR;
+        (void)dummy;
+        USART_ApplicationEventCallback(pUSARTHandle, USART_EVENT_ORE);
+    }
+
+    if (sr_reg & (1U << USART_SR_FE))
+    {
+        dummy = pUSARTHandle->pUSARTx->SR;
+        dummy = pUSARTHandle->pUSARTx->DR;
+        (void)dummy;
+        USART_ApplicationEventCallback(pUSARTHandle, USART_EVENT_ERROR_FE);
+    }
+    if (sr_reg & (1U << USART_SR_NF))
+    {
+        dummy = pUSARTHandle->pUSARTx->SR;
+        dummy = pUSARTHandle->pUSARTx->DR;
+        (void)dummy;
+        USART_ApplicationEventCallback(pUSARTHandle, USART_EVENT_ERROR_NF);
+    }
 }
 
 /********************************************************************

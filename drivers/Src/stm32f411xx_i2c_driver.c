@@ -454,11 +454,11 @@ void I2C_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi)
     uint8_t bit_pos = IRQNumber % 32;
     if (enOrDi)
     {
-        NVIC->ISER[ipr_idx] |= (1UL << bit_pos);
+        NVIC->ISER[ipr_idx] = (1UL << bit_pos);
     } 
     else 
     {
-        NVIC->ICER[ipr_idx] |= (1UL << bit_pos);
+        NVIC->ICER[ipr_idx] = (1UL << bit_pos);
     }
 }
 
