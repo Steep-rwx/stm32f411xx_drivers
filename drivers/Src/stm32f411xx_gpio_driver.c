@@ -22,15 +22,13 @@
  */
 void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi)
 {
-    /* Checking if GPIO is NULL*/
     if (pGPIOx == NULL) return;
 
     /* Getting GPIO index to configure AHB1*/
     uint32_t index = ((uint32_t)pGPIOx - (uint32_t)GPIOA) / (0x0400);
-
+    
     if (index > 7) return;
-
-    /* Enable/Disable GPIO in AHB1 register */
+    
     if(enOrDi == ENABLE) 
     {
         RCC->AHB1ENR |= (1UL << index);
@@ -56,14 +54,13 @@ void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi)
  */
 void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
 {
-    /* Checking if GPIO is NULL and GPIO_PinNumber out of bounds */
     if (pGPIOHandle == NULL || pGPIOHandle->pGPIOx == NULL) return;
     if (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber > 15) return;
 
     /* Enabling peripheral */
     GPIO_PeriClockControl(pGPIOHandle->pGPIOx, ENABLE);
 
-    /* variable that used as temp in register setting loigc*/
+    /* variable that used as temp in register setting logic*/
     uint32_t temp = 0;
     
     /* Setting speed */
@@ -152,7 +149,9 @@ void GPIO_DeInit(GPIO_Reg_TypeDef *pGPIOx)
 
     if (index > 7) return;
 
+    
     RCC->AHB1RSTR |= (1UL << index);
+    /* Clearing AHB1 reset register, bcs its not clearing automatically */
     RCC->AHB1RSTR &= ~(1UL << index);
 }
 
@@ -175,7 +174,7 @@ void GPIO_DeInit(GPIO_Reg_TypeDef *pGPIOx)
  */
 uint8_t GPIO_ReadFromInputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
 {
-    uint8_t value = (uint8_t) ((pGPIOx->IDR >> pinNumber) & 0x00000001);
+    uint8_t value = (uint8_t) ((pGPIOx->IDR >> pinNumber) & 0x00000001U);
     return value;
 }
 
@@ -216,6 +215,7 @@ uint16_t GPIO_ReadFromInputPort(GPIO_Reg_TypeDef *pGPIOx)
 void GPIO_WriteToOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber, uint8_t value)
 {
     if (pGPIOx == NULL) return;
+    if (pinNumber > 15) return;
 
     if (value == GPIO_PIN_SET)
     {
@@ -245,6 +245,8 @@ void GPIO_WriteToOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber, uint8_t 
 void GPIO_WriteToOutputPort(GPIO_Reg_TypeDef *pGPIOx, uint16_t value)
 {
     if (pGPIOx == NULL) return;
+    /* Setting port value, that will be in binary 16-bit format, if
+    you set 3, it will set to true port 0 and port 1 */
     pGPIOx->ODR = value;
 }
 
@@ -267,6 +269,8 @@ void GPIO_WriteToOutputPort(GPIO_Reg_TypeDef *pGPIOx, uint16_t value)
  */
 void GPIO_ToggleOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
 {
+    if (pGPIOx == NULL) return;
+
     pGPIOx->ODR ^= (1UL << pinNumber);
 }
 
@@ -290,6 +294,7 @@ void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi)
 
     uint8_t ipr_idx = IRQNumber / 32;
     uint8_t bit_pos = IRQNumber % 32;
+
     if (enOrDi)
     {
         NVIC->ISER[ipr_idx] |= (1UL << bit_pos);
@@ -320,8 +325,10 @@ void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
     uint8_t ipr_idx = IRQNumber / 4;
     uint8_t byte_shift = ((IRQNumber % 4) * 8);
 
+    /* Different MCU got different number of PR bits, more in docs */
     uint8_t shift_amount = (byte_shift + (8 - NO_PR_BITS_IMPLEMENTED));
 
+    /* Clearing register bits */
     NVIC->IPR[ipr_idx] &= ~(0xFFUL << byte_shift);
 
     NVIC->IPR[ipr_idx] |= ((uint32_t)IRQPriority << shift_amount);
