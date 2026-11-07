@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <string.h>
 
 
 /********************************************************************
@@ -21,14 +22,19 @@
  */
 void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi)
 {
+    /* Checking if GPIO is NULL*/
+    if (pGPIOx == NULL) return;
+
+    /* Getting GPIO index to configure AHB1*/
     uint32_t index = ((uint32_t)pGPIOx - (uint32_t)GPIOA) / (0x0400);
 
     if (index > 7) return;
 
+    /* Enable/Disable GPIO in AHB1 register */
     if(enOrDi == ENABLE) 
     {
         RCC->AHB1ENR |= (1UL << index);
-    } 
+    }
     else
     {
         RCC->AHB1ENR &= ~(1UL << index);
@@ -50,9 +56,11 @@ void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi)
  */
 void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
 {
+    /* Checking if GPIO is NULL and GPIO_PinNumber out of bounds */
     if (pGPIOHandle == NULL || pGPIOHandle->pGPIOx == NULL) return;
     if (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber > 15) return;
 
+    /* Enabling peripheral */
     GPIO_PeriClockControl(pGPIOHandle->pGPIOx, ENABLE);
 
     uint32_t temp = 0;
@@ -110,7 +118,7 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
 
         uint8_t CRx = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 4;
         uint8_t CRpos = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 4;
-        uint8_t portcode = gpio_base_to_code(pGPIOHandle->pGPIOx);
+        uint8_t portcode = GPIO_BaseToCode(pGPIOHandle->pGPIOx);
         SYSCFG_PCLK_EN();
         SYSCFG->EXTICR[CRx] &= ~(0xFUL << (CRpos * 4));
         SYSCFG->EXTICR[CRx] |=  ((uint32_t)portcode << (CRpos * 4));
