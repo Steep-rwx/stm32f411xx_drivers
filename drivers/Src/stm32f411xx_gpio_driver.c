@@ -22,7 +22,7 @@
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi)
@@ -30,18 +30,20 @@ void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi)
     if (pGPIOx == NULL) return;
 
     /* Getting GPIO index to configure AHB1*/
-    uint32_t index = ((uint32_t)pGPIOx - (uint32_t)GPIOA) / (0x0400);
+    uint8_t code = GPIO_BaseToCode(pGPIOx);
     
-    if (index > 7) return;
+    if (code == GPIO_PORT_INVALID) return;
     
     if(enOrDi == ENABLE) 
     {
-        RCC->AHB1ENR |= (1UL << index);
+        RCC->AHB1ENR |= (1UL << code);
     }
     else
     {
-        RCC->AHB1ENR &= ~(1UL << index);
+        RCC->AHB1ENR &= ~(1UL << code);
     }
+
+    (void)RCC->AHB1ENR;
 }
 
 
@@ -54,7 +56,7 @@ void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
@@ -146,7 +148,7 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void GPIO_DeInit(GPIO_Reg_TypeDef *pGPIOx)
@@ -190,7 +192,7 @@ void GPIO_DeInit(GPIO_Reg_TypeDef *pGPIOx)
  *
  * @return              - Read value from pin
  *
- * @Note                - none
+ * @note                - none
  *
  */
 uint8_t GPIO_ReadFromInputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
@@ -211,7 +213,7 @@ uint8_t GPIO_ReadFromInputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
  *
  * @return              - Read value from port
  *
- * @Note                - none
+ * @note                - none
  *
  */
 uint16_t GPIO_ReadFromInputPort(GPIO_Reg_TypeDef *pGPIOx)
@@ -233,7 +235,7 @@ uint16_t GPIO_ReadFromInputPort(GPIO_Reg_TypeDef *pGPIOx)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void GPIO_WriteToOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber, uint8_t value)
@@ -263,7 +265,7 @@ void GPIO_WriteToOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber, uint8_t 
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void GPIO_WriteToOutputPort(GPIO_Reg_TypeDef *pGPIOx, uint16_t value)
@@ -287,7 +289,7 @@ void GPIO_WriteToOutputPort(GPIO_Reg_TypeDef *pGPIOx, uint16_t value)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void GPIO_ToggleOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
@@ -309,7 +311,7 @@ void GPIO_ToggleOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi)
@@ -336,7 +338,7 @@ void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
@@ -365,7 +367,7 @@ void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void GPIO_IRQHandling(uint8_t pinNumber)

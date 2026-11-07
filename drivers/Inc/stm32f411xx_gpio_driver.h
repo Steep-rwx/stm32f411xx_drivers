@@ -1,4 +1,8 @@
-
+/**
+ * @file    stm32f411xx_gpio_driver.h
+ * @brief   GPIO structures and definitions
+ *
+ */
 
 #ifndef INC_STM32F411XX_GPIO_DRIVER_H_
 #define INC_STM32F411XX_GPIO_DRIVER_H_
