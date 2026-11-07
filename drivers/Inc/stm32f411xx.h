@@ -2,8 +2,6 @@
  * @file    stm32f411xx.h
  * @brief   Peripheral register map and bit definitions for STM32F411xx
  *
- * Contains base addresses, register structures, peripheral instances,
- * clock enable/disable macros and bit position definitions.
  */
 
 #ifndef INC_STM32F411XX_H_

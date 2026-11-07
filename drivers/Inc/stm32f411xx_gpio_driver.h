@@ -6,18 +6,22 @@
 #include "stm32f411xx.h"
 #include <stdint.h>
 
-
+/*
+ * Structure to configure GPIO
+ */
 typedef struct
 {
-    uint8_t GPIO_PinNumber;                         /*!< possibly values from @GPIO_PIN_NUMBERS */
-    uint8_t GPIO_PinMode;                           /*!< possibly values from @GPIO_PIN_MODES */
-    uint8_t GPIO_PinSpeed;                          /*!< possibly values from @GPIO_SPEED_MODES */
-    uint8_t GPIO_PinPuPdControl;                    /*!< possibly values from @GPIO_PUPD_MODES */
-    uint8_t GPIO_PinOPType;                         /*!< pissibly values from @GPIO_PIN_OP_MODES */
+    uint8_t GPIO_PinNumber;                         /*!< possible values from @ref GPIO_PIN_NUMBERS */
+    uint8_t GPIO_PinMode;                           /*!< possible values from @ref GPIO_PIN_MODES */
+    uint8_t GPIO_PinSpeed;                          /*!< possible values from @ref GPIO_SPEED_MODES */
+    uint8_t GPIO_PinPuPdControl;                    /*!< possible values from @ref GPIO_PUPD_MODES */
+    uint8_t GPIO_PinOPType;                         /*!< possible values from @ref GPIO_PIN_OP_MODES */
     uint8_t GPIO_PinAltFunMode;
 } GPIO_PinConfig_TypeDef;
 
-
+/*
+ * Handle structure
+ */
 typedef struct
 {
     GPIO_Reg_TypeDef *pGPIOx;                       /*!< Base address of the GPIO */
@@ -26,8 +30,7 @@ typedef struct
 
 
 /*
- * @GPIO_PIN_NUMBERS
- * GPIO pin numbers
+ * GPIO_PIN_NUMBERS
  */
 
 #define GPIO_PIN_NO_0           0
@@ -48,8 +51,7 @@ typedef struct
 #define GPIO_PIN_NO_15          15
 
 /*
- * @GPIO_PIN_MODES
- * GPIO pin modes
+ * GPIO_PIN_MODES
  */
 #define GPIO_MODE_IN                0
 #define GPIO_MODE_OUT               1
@@ -61,14 +63,14 @@ typedef struct
 
 
 /*
- * @GPIO_PIN_OP_MODES
+ * GPIO_PIN_OP_MODES
  * GPIO port output configuration modes
  */
 #define GPIO_OUT_TYPER_PP               0
 #define GPIO_OUT_TYPER_OD               1
 
 /*
- * @GPIO_SPEED_MODES
+ * GPIO_SPEED_MODES
  * GPIO output speed configuration modes
  */
 #define GPIO_SPEED_LOW                  0
@@ -77,7 +79,7 @@ typedef struct
 #define GPIO_SPEED_HIGH                 3
 
 /*
- * @GPIO_PUPD_MODES
+ * GPIO_PUPD_MODES
  * GPIO port pull-up/pull-down modes
  */
 #define GPIO_NO_PUPD                    0
@@ -95,7 +97,7 @@ void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi);       /* e
  * Init and De-init
  */
 void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle);          /* Initialise GPIO through GPIO reg + GPIO settings struct */
-void GPIO_DeInit(GPIO_Reg_TypeDef *pGPIOx);                 /* Reset through RCC */
+void GPIO_DeInit(GPIO_Reg_TypeDef *pGPIOx);                /* Reset through RCC */
 
 /*
  * Read and write
