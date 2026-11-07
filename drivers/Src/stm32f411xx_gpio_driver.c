@@ -105,6 +105,12 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
     } 
     else
     {
+        uint8_t CRx = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 4;
+        uint8_t CRpos = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 4;
+        uint8_t portcode = GPIO_BaseToCode(pGPIOHandle->pGPIOx);
+
+        if (portcode == GPIO_PORT_INVALID) return;
+
         if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_FT)
         {
             EXTI->FTSR |= (1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
@@ -121,9 +127,6 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
             EXTI->RTSR |= (1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
         }
 
-        uint8_t CRx = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 4;
-        uint8_t CRpos = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 4;
-        uint8_t portcode = GPIO_BaseToCode(pGPIOHandle->pGPIOx);
         SYSCFG_PCLK_EN();
         SYSCFG->EXTICR[CRx] &= ~(0xFUL << (CRpos * 4));
         SYSCFG->EXTICR[CRx] |=  ((uint32_t)portcode << (CRpos * 4));
@@ -148,16 +151,29 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
  */
 void GPIO_DeInit(GPIO_Reg_TypeDef *pGPIOx)
 {
-    if (pGPIOx == NULL) return;
+    uint8_t code = GPIO_BaseToCode(pGPIOx);
+    if (code == GPIO_PORT_INVALID) return;
 
-    uint32_t index = ((uint32_t)pGPIOx - (uint32_t)GPIOA) / (0x0400);
+    RCC->AHB1RSTR |=  (1UL << code);
+    RCC->AHB1RSTR &= ~(1UL << code);
 
-    if (index > 7) return;
-
-    
-    RCC->AHB1RSTR |= (1UL << index);
-    /* Clearing AHB1 reset register, bcs its not clearing automatically */
-    RCC->AHB1RSTR &= ~(1UL << index);
+    /* Clear the EXTI lines (only when SYSCFG is on) */
+    SYSCFG_PCLK_EN();
+    uint32_t lines = 0;
+    for (uint32_t pin = 0; pin < 16U; pin++)
+    {
+        uint32_t pos = (pin % 4U) * 4U;
+        if (((SYSCFG->EXTICR[pin / 4U] >> pos) & 0xFU) == code)
+        {
+            lines |= (1UL << pin);
+            SYSCFG->EXTICR[pin / 4U] &= ~(0xFUL << pos);
+        }
+    }
+    EXTI->IMR  &= ~lines;
+    EXTI->EMR  &= ~lines;
+    EXTI->RTSR &= ~lines;
+    EXTI->FTSR &= ~lines;
+    EXTI->PR    =  lines;
 }
 
 
@@ -170,15 +186,17 @@ void GPIO_DeInit(GPIO_Reg_TypeDef *pGPIOx)
  * @brief               - Reads information from pin in the input mode
  *
  * @param[in]           - pGPIOx: base address of GPIO
- * @param[in]           - pinNumber: number of choosed pin
+ * @param[in]           - pinNumber: number of choosen pin
  *
- * @return              - Readed value from pin
+ * @return              - Read value from pin
  *
  * @Note                - none
  *
  */
 uint8_t GPIO_ReadFromInputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
 {
+    if (pGPIOx == NULL) return 0;
+    if (pinNumber > 15) return 0;
     uint8_t value = (uint8_t) ((pGPIOx->IDR >> pinNumber) & 0x00000001U);
     return value;
 }
@@ -191,13 +209,14 @@ uint8_t GPIO_ReadFromInputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
  *
  * @param[in]           - pGPIOx: base address of GPIO
  *
- * @return              - Readed value from port
+ * @return              - Read value from port
  *
  * @Note                - none
  *
  */
 uint16_t GPIO_ReadFromInputPort(GPIO_Reg_TypeDef *pGPIOx)
 {
+    if (pGPIOx == NULL) return 0;
     uint16_t value = (uint16_t) (pGPIOx->IDR);
     return value;   
 }
@@ -274,6 +293,7 @@ void GPIO_WriteToOutputPort(GPIO_Reg_TypeDef *pGPIOx, uint16_t value)
 void GPIO_ToggleOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
 {
     if (pGPIOx == NULL) return;
+    if (pinNumber > 15) return;
 
     pGPIOx->ODR ^= (1UL << pinNumber);
 }
@@ -323,16 +343,17 @@ void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
 {
     if (IRQNumber >= 240) return;
 
-    uint8_t ipr_idx = IRQNumber / 4;
+    if (IRQPriority >= (1U << NO_PR_BITS_IMPLEMENTED)) return;
+
     uint8_t byte_shift = ((IRQNumber % 4) * 8);
 
     /* Different MCU got different number of PR bits, more in docs */
     uint8_t shift_amount = (byte_shift + (8 - NO_PR_BITS_IMPLEMENTED));
 
     /* Clearing register bits */
-    NVIC->IPR[ipr_idx] &= ~(0xFFUL << byte_shift);
+    NVIC->IPR[IRQNumber / 4U] &= ~(0xFFUL << byte_shift);
 
-    NVIC->IPR[ipr_idx] |= ((uint32_t)IRQPriority << shift_amount);
+    NVIC->IPR[IRQNumber / 4U] |= ((uint32_t)IRQPriority << shift_amount);
 }
 
 /********************************************************************
@@ -353,6 +374,6 @@ void GPIO_IRQHandling(uint8_t pinNumber)
     if(EXTI->PR & (1 << pinNumber))
     {
         // writing 1 to clear PR
-        EXTI->PR |= (1 << pinNumber);
+        EXTI->PR = (1 << pinNumber);
     }
 }
