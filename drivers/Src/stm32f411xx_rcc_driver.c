@@ -1,3 +1,9 @@
+/**
+ * @file    stm32f411xx_rcc_driver.c
+ * @brief   RCC values logic
+ *
+ */
+
 #include "stm32f411xx_rcc_driver.h"
 #include "stm32f411xx.h"
 #include <stdint.h>
@@ -8,36 +14,35 @@ static const uint32_t APBx_Prescaler[4] = {2, 4, 8, 16};
 /********************************************************************
  * @fn                  - RCC_GetPCLK1Value
  *
- * @brief               - Getting APB1 value
+ * @brief               - Calculate APB1 value
  *
  *
- * @return              - APB1 Pclk value
+ * @return              - APB1 Pclk value in Hz
  *
- * @Note                - none
+ * @note                - none
  *
  */
 uint32_t RCC_GetPCLK1Value(void)
 {
-
-    uint32_t pclk1, system_clk;
+    uint32_t pclk1, system_clk = 0;
     uint16_t ahbprescl_value, apb1prescl_value;
     uint8_t clksrc, prescl_val_binary;
 
     clksrc = ((RCC->CFGR >> 2U) & 0x3);
     if (clksrc == 0)
     {
-        system_clk = 16000000;
+        system_clk = RCC_HSI_VALUE;
     } 
     else if (clksrc == 1)
     {
-        system_clk = 25000000;
+        system_clk = RCC_HSE_VALUE;
     } 
     else if (clksrc == 2)
     {
         system_clk = RCC_GetPLLOutputClock();
     }
 
-    //ahb
+    /* AHB */
     prescl_val_binary = ((RCC->CFGR >> 4) & 0xF);
     if (prescl_val_binary < 8)
     {
@@ -48,7 +53,7 @@ uint32_t RCC_GetPCLK1Value(void)
         ahbprescl_value = AHB_Prescaler[prescl_val_binary - 8];
     }
     
-    //apb1
+    /* APB1 */
     prescl_val_binary = ((RCC->CFGR >> 10) & 0x7);
     if (prescl_val_binary < 4)
     {
@@ -67,31 +72,31 @@ uint32_t RCC_GetPCLK1Value(void)
 /********************************************************************
  * @fn                  - RCC_GetPCLK2Value
  *
- * @brief               - Getting APB2 value
+ * @brief               - Calculate APB2 value
  *
  *
- * @return              - APB2 Pclk value
+ * @return              - APB2 Pclk value in Hz
  *
- * @Note                - none
+ * @note                - none
  *
  */
 uint32_t RCC_GetPCLK2Value(void)
 {
     uint32_t SystemClk = 0, temp, pclk2;
-    uint8_t ahb_prescale_value, apb2_prescaler_value;
+    uint16_t ahb_prescale_value, apb2_prescaler_value;
     uint8_t clk_selected = ((RCC->CFGR >> 2) & 0x03);
 
     if (clk_selected == 0)
     {
-        SystemClk = 16000000;
+        SystemClk = RCC_HSI_VALUE;
     } 
     else if (clk_selected == 1)
     {
-        SystemClk = 25000000;
+        SystemClk = RCC_HSE_VALUE;
     }
     else if (clk_selected == 2)
     {
-        RCC_GetPLLOutputClock();
+        SystemClk = RCC_GetPLLOutputClock();
     }
 
     temp = ((RCC->CFGR >> 4) & 0xF);
@@ -121,7 +126,7 @@ uint32_t RCC_GetPCLK2Value(void)
     return pclk2;
 }
 
-// Not used
+/* Not used */
 uint32_t RCC_GetPLLOutputClock(void)
 {
     return 0;

@@ -12,11 +12,25 @@
 
 
 /*****************Processor Specific Details****************/
+
+/** @addtogroup Processor_specific_details
+  * @{
+  */
+
 /**
   * @brief Number of Priority bits
   */
 #define NO_PR_BITS_IMPLEMENTED              4
 
+/**
+  * @brief 
+  */
+#define RCC_HSI_VALUE       16000000UL
+#define RCC_HSE_VALUE       25000000UL
+
+/**
+  * @}
+  */
 /*********************Memory map***************************/
 
 /** @addtogroup Memory_map
