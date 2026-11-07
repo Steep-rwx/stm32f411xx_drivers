@@ -1,16 +1,21 @@
+/**
+ * @file    stm32f411xx_gpio_driver.c
+ * @brief   GPIO logic
+ *
+ */
+
 #include "stm32f411xx_gpio_driver.h"
 #include "stm32f411xx.h"
 
 
 #include <stdint.h>
 #include <stddef.h>
-#include <string.h>
 
 
 /********************************************************************
  * @fn                  - GPIO_PeriClockControl
  *
- * @brief               - Function which enables/disables clock for choosed GPIO
+ * @brief               - Function which enables/disables clock for choosen GPIO
  *
  * @param[in]           - pGPIOx: GPIO base address
  * @param[in]           - enOrDi: ENABLE or DISABLE macro
@@ -41,7 +46,7 @@ void GPIO_PeriClockControl(GPIO_Reg_TypeDef *pGPIOx, uint8_t enOrDi)
 
 
 /********************************************************************
- * @fn                  - GPIO_Handler_TypeDef
+ * @fn                  - GPIO_Init
  *
  * @brief               - Initializes the specifies pin
  *
@@ -132,7 +137,7 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
 /********************************************************************
  * @fn                  - GPIO_DeInit
  *
- * @brief               - Deinitializes the specified pin
+ * @brief               - Deinitializes the specified port
  *
  * @param[in]           - pGPIOx: base address of GPIOx
  *
@@ -235,7 +240,7 @@ void GPIO_WriteToOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber, uint8_t 
  * @brief               - Writes a value to port in output mode
  *
  * @param[in]           - pGPIOx: base address of GPIO
- * @param[in]           - value: a value that need to write (0x3 - will be 1 to pin 0 and 1 to pin 1)
+ * @param[in]           - value: a value that need to write to whole port (0x3 - will be 1 to pin 0 and 1 to pin 1)
  *
  * @return              - none
  *
@@ -259,8 +264,7 @@ void GPIO_WriteToOutputPort(GPIO_Reg_TypeDef *pGPIOx, uint16_t value)
  * @brief               - Toggles output pin
  *
  * @param[in]           - pGPIOx: base address of GPIO port
- * @param[in]           - pinNumber: a number of choosed pin
- * @param[in]           -
+ * @param[in]           - pinNumber: a number of choosen pin
  *
  * @return              - none
  *
@@ -280,7 +284,7 @@ void GPIO_ToggleOutputPin(GPIO_Reg_TypeDef *pGPIOx, uint8_t pinNumber)
  *
  * @brief               - Configures IRQ from number
  *
- * @param[in]           - IRQNumber: Number choosed IRQ
+ * @param[in]           - IRQNumber: Number choosen IRQ
  * @param[in]           - enOrDi: ENABLE or DISABLE macro
  *
  * @return              - none
@@ -292,26 +296,23 @@ void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi)
 {
     if (IRQNumber >= 240) return;
 
-    uint8_t ipr_idx = IRQNumber / 32;
-    uint8_t bit_pos = IRQNumber % 32;
-
     if (enOrDi)
     {
-        NVIC->ISER[ipr_idx] |= (1UL << bit_pos);
+        NVIC->ISER[IRQNumber / 32U] = (1UL << IRQNumber % 32U);
     } 
     else 
     {
-        NVIC->ICER[ipr_idx] |= (1UL << bit_pos);
+        NVIC->ICER[IRQNumber / 32U] = (1UL << IRQNumber % 32U);
     }
 }
 
 /*******************************************************************
- * @fn                  - GPIO_IRQPriority
+ * @fn                  - GPIO_IRQPriorityConfig
  *
  * @brief               - Configures IRQ Priority
  *
- * @param[in]           - IRQNumber: Number choosed IRQ
- * @param[in]           - IRQPriority: Choosed priority 0-15
+ * @param[in]           - IRQNumber: Number choosen IRQ
+ * @param[in]           - IRQPriority: choosen priority 0-15
  *
  * @return              - none
  *
@@ -340,8 +341,6 @@ void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
  * @brief               - Clears pending interrupt
  *
  * @param[in]           - pinNumber: number which need to clear
- * @param[in]           - 
- * @param[in]           -
  *
  * @return              - none
  *
