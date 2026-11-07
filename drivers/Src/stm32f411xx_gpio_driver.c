@@ -63,22 +63,26 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
     /* Enabling peripheral */
     GPIO_PeriClockControl(pGPIOHandle->pGPIOx, ENABLE);
 
+    /* variable that used as temp in register setting loigc*/
     uint32_t temp = 0;
     
     /* Setting speed */
     temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
     pGPIOHandle->pGPIOx->OSPEEDR &= ~(0x3UL << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
     pGPIOHandle->pGPIOx->OSPEEDR |= temp;
+    temp = 0;
 
     /* Setting pupd */
     temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinPuPdControl << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
     pGPIOHandle->pGPIOx->PUPDR &= ~(0x3UL << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
     pGPIOHandle->pGPIOx->PUPDR |= temp;
+    temp = 0;
 
     /* Setting output type*/
     temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle->pGPIOx->OTYPER &= ~(0x1UL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle->pGPIOx->OTYPER |= temp;
+    temp = 0;
 
     /* Setting alternate function */
     if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_AF)
@@ -88,7 +92,6 @@ void GPIO_Init(GPIO_Handle_TypeDef *pGPIOHandle)
         pGPIOHandle->pGPIOx->AFR[AFR_choose] &= ~(0xFUL << (4 * AFR_pin_pos));
         pGPIOHandle->pGPIOx->AFR[AFR_choose] |= (pGPIOHandle->GPIO_PinConfig.GPIO_PinAltFunMode << (4 * AFR_pin_pos));
     }
-    temp = 0;
 
     /* Setting mode */
 
