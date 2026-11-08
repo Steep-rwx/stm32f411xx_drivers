@@ -1,6 +1,7 @@
 
 #include "stm32f411xx.h"
 #include "stm32f411xx_gpio_driver.h"
+#include "stm32f411xx_nvic_driver.h"
 
 #include <stdint.h>
 #include <string.h>
@@ -35,8 +36,8 @@ int main(void)
     GPIO_Init(&ledunit);
     GPIO_Init(&gpio_key);
 
-    GPIO_IRQPriorityConfig(IRQ_NO_EXTI0, NVIC_IRQ_PRIO15);
-    GPIO_IRQConfig(IRQ_NO_EXTI0, ENABLE);
+    NVIC_IRQPriorityConfig(IRQ_NO_EXTI0, NVIC_IRQ_PRIO15);
+    NVIC_IRQConfig(IRQ_NO_EXTI0, ENABLE);
 
     while(1);
 

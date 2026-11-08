@@ -162,10 +162,8 @@ void I2C_SlaveSendData(I2C_Reg_TypeDef *pI2Cx, uint8_t data);
 uint8_t I2C_SlaveReceiveData(I2C_Reg_TypeDef *pI2Cx);
 
 /*
- * IRQ Configuration and ISR handling
+ * IRQ handling
  */
-void I2C_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi);
-void I2C_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
 void I2C_EV_IRQHandling(I2C_Handle_TypeDef *pI2CHandle);
 void I2C_ER_IRQHandling(I2C_Handle_TypeDef *pI2CHandle);
 

@@ -59,8 +59,8 @@ void GPIO_Button_Init(void)
 
     GPIO_Init(&gpio_key);
 
-    GPIO_IRQPriorityConfig(IRQ_NO_EXTI0, NVIC_IRQ_PRIO15);
-    GPIO_IRQConfig(IRQ_NO_EXTI0, ENABLE);
+    NVIC_IRQPriorityConfig(IRQ_NO_EXTI0, NVIC_IRQ_PRIO15);
+    NVIC_IRQConfig(IRQ_NO_EXTI0, ENABLE);
 }
 
 

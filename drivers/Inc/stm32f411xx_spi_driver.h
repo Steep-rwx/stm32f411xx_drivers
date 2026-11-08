@@ -11,14 +11,14 @@
  */
 typedef struct 
 {
-    uint8_t SPI_DeviceMode;
-    uint8_t SPI_BusConfig;
-    uint8_t SPI_SclkSpeed;
-    uint8_t SPI_DFF;
-    uint8_t SPI_CPOL;
-    uint8_t SPI_CPHA;
-    uint8_t SPI_SSM;
-    uint8_t SPI_SSOE;
+    uint8_t SPI_DeviceMode;         /*!< possible values from @ref SPI_DEVICE_MODE */
+    uint8_t SPI_BusConfig;          /*!< possible values from @ref SPI_BUS_CONFIG */
+    uint8_t SPI_SclkSpeed;          /*!< possible values from @ref SPI_SCLK_SPEED */
+    uint8_t SPI_DFF;                /*!< possible values from @ref SPI_DFF */
+    uint8_t SPI_CPOL;               /*!< possible values from @ref SPI_CPOL */
+    uint8_t SPI_CPHA;               /*!< possible values from @ref SPI_CPHA */
+    uint8_t SPI_SSM;                /*!< possible values from @ref SPI_SSM */
+    uint8_t SPI_SSOE;               /*!< possible values from @ref SPI_SSOE */
 } SPI_Config_TypeDef;
 
 /*
@@ -26,31 +26,31 @@ typedef struct
  */
 typedef struct
 {
-    SPI_Reg_TypeDef     *pSPIx;
-    SPI_Config_TypeDef  SPIConfig;
-    uint8_t             *pTxBuffer;
-    uint8_t             *pRxBuffer;
-    uint32_t            TxLen;
-    uint32_t            RxLen;
-    uint8_t             TxState;
-    uint8_t             RxState;
+    SPI_Reg_TypeDef              *pSPIx;
+    SPI_Config_TypeDef           SPIConfig;
+    volatile const uint8_t       *pTxBuffer;
+    volatile uint8_t             *pRxBuffer;
+    volatile uint32_t            TxLen;
+    volatile uint32_t            RxLen;
+    volatile uint8_t             TxState;
+    volatile uint8_t             RxState;
 } SPI_Handle_TypeDef;
 
 /*
- * @SPI_DeviceMode
+ * SPI_DEVICE_MODE
  */
 #define SPI_DEVICE_MODE_MASTER      1
 #define SPI_DEVICE_MODE_SLAVE       0
 
 /*
- * @SPI_BusConfig
+ * SPI_BUS_CONFIG
  */
 #define SPI_BUS_CONFIG_FULLDUPLEX       0
 #define SPI_BUS_CONFIG_HALFDUPLEX       1
 #define SPI_BUS_CONFIG_SIMPLEX_RXONLY   2
 
 /*
- * @SPI_SclkSpeed
+ * SPI_SCLK_SPEED
  */
 #define SPI_SCLK_SPEED_DIV2                 0
 #define SPI_SCLK_SPEED_DIV4                 1
@@ -62,38 +62,38 @@ typedef struct
 #define SPI_SCLK_SPEED_DIV256               7
 
 /*
- * @SPI_DFF
+ * SPI_DFF
  */
 #define SPI_DFF_8BIT            0
 #define SPI_DFF_16BIT           1
 
 /*
- * @SPI_CPOL
+ * SPI_CPOL
  */
 #define SPI_CPOL_LOW            0
 #define SPI_CPOL_HIGH           1
 
 /*
- * @SPI_CPHA
+ * SPI_CPHA
  */
 #define SPI_CPHA_FIRST_CAPTURE      0
 #define SPI_CPHA_SECOND_CAPTURE     1
 
 /*
- * @SPI_SSM
+ * SPI_SSM
  */
 #define SPI_SSM_DISABLED            0
 #define SPI_SSM_ENABLED             1
 
 
 /*
- * @SPI_SSI
+ * SPI_SSI
  */
 #define SPI_SSI_DISABLED            0
 #define SPI_SSI_ENABLED             1
 
 /*
- * @SPI_SSOE
+ * SPI_SSOE
  */
 #define SPI_SSOE_DISABLED            0
 #define SPI_SSOE_ENABLED             1
@@ -101,9 +101,9 @@ typedef struct
 /*
  * SPI flag definitions
  */
-#define SPI_TXE_FLAG            (1 << SPI_SR_TXE)
-#define SPI_RXNE_FLAG           (1 << SPI_SR_RXNE)
-#define SPI_BUSY_FLAG           (1 << SPI_SR_BSY)
+#define SPI_TXE_FLAG            (1U << SPI_SR_TXE)
+#define SPI_RXNE_FLAG           (1U << SPI_SR_RXNE)
+#define SPI_BUSY_FLAG           (1U << SPI_SR_BSY)
 
 /*
  * SPI status definitions
@@ -154,17 +154,15 @@ void SPI_DeInit(SPI_Reg_TypeDef *pSPIx);                /* Reset through RCC */
 /*
  * Data send and receive
  */
-void SPI_SendData(SPI_Reg_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t length);
+void SPI_SendData(SPI_Reg_TypeDef *pSPIx, const uint8_t *pTxBuffer, uint32_t length);
 void SPI_ReceiveData(SPI_Reg_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t length);
 
-uint8_t SPI_SendDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pTxBuffer, uint32_t length);
+uint8_t SPI_SendDataIT(SPI_Handle_TypeDef *pSPIHandle, const uint8_t *pTxBuffer, uint32_t length);
 uint8_t SPI_ReceiveDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pRxBuffer, uint32_t length);
 
 /*
- * IRQ Configuration and ISR handling
+ * IRQ handling
  */
-void SPI_IRQConfig(uint8_t IRQNumber, uint8_t enOrDi);
-void SPI_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
 void SPI_IRQHandling(SPI_Handle_TypeDef *pSPIHandle);
 
 /*

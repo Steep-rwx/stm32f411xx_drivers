@@ -2,6 +2,7 @@
 #include "stm32f411xx.h"
 #include "stm32f411xx_gpio_driver.h"
 #include "stm32f411xx_spi_driver.h"
+#include "stm32f411xx_nvic_driver.h"
 
 #include <stdint.h>
 #include <string.h>
@@ -64,8 +65,8 @@ void SPI2_Inits(void)
 
     SPI_Init(&SPI2Handle);
 
-    SPI_IRQPriorityConfig(IRQ_SPI2, NVIC_IRQ_PRIO14);
-    SPI_IRQConfig(IRQ_SPI2, ENABLE);
+    NVIC_IRQPriorityConfig(IRQ_SPI2, NVIC_IRQ_PRIO14);
+    NVIC_IRQConfig(IRQ_SPI2, ENABLE);
 }
 
 void GPIO_Button_Init(void)
@@ -80,8 +81,8 @@ void GPIO_Button_Init(void)
 
     GPIO_Init(&gpio_key);
 
-    GPIO_IRQPriorityConfig(IRQ_NO_EXTI0, NVIC_IRQ_PRIO15);
-    GPIO_IRQConfig(IRQ_NO_EXTI0, ENABLE);
+    NVIC_IRQPriorityConfig(IRQ_NO_EXTI0, NVIC_IRQ_PRIO15);
+    NVIC_IRQConfig(IRQ_NO_EXTI0, ENABLE);
 }
 
 char user_data[] = "Hello world!";

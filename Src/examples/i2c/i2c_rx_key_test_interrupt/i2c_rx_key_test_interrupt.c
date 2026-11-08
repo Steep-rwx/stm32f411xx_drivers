@@ -2,7 +2,7 @@
 #include "stm32f411xx.h"
 #include "stm32f411xx_gpio_driver.h"
 #include "stm32f411xx_i2c_driver.h"
-#include "stm32f411xx_spi_driver.h"
+#include "stm32f411xx_nvic_driver.h"
 
 #include <stdint.h>
 #include <string.h>
@@ -44,8 +44,8 @@ void I2C1_Inits(void)
 
     I2C_Init(&I2C1Handle);
 
-    I2C_IRQPriorityConfig(IRQ_NO_I2C1_EV, NVIC_IRQ_PRIO14);
-    I2C_IRQConfig(IRQ_NO_I2C1_EV, ENABLE);
+    NVIC_IRQPriorityConfig(IRQ_NO_I2C1_EV, NVIC_IRQ_PRIO14);
+    NVIC_IRQConfig(IRQ_NO_I2C1_EV, ENABLE);
 }
 
 void GPIO_Button_Init(void)
@@ -61,8 +61,8 @@ void GPIO_Button_Init(void)
 
     GPIO_Init(&gpio_key);
 
-    GPIO_IRQPriorityConfig(IRQ_NO_EXTI0, NVIC_IRQ_PRIO15);
-    GPIO_IRQConfig(IRQ_NO_EXTI0, ENABLE);
+    NVIC_IRQPriorityConfig(IRQ_NO_EXTI0, NVIC_IRQ_PRIO15);
+    NVIC_IRQConfig(IRQ_NO_EXTI0, ENABLE);
 }
 
 

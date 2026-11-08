@@ -143,10 +143,8 @@ void USART_SendDataIT(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, ui
 void USART_ReceiveDataIT(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Length);
 
 /*
- * IRQ Configuration and ISR handling
+ * IRQ handling
  */
-void USART_IRQConfig(uint8_t IRQNumber, uint8_t EnOrDi);
-void USART_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
 void USART_IRQHandling(USART_Handle_TypeDef *pUSARTHandle);
 
 /*
