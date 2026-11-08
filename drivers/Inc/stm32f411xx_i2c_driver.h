@@ -1,3 +1,9 @@
+/**
+ * @file    stm32f411xx_i2c_driver.h
+ * @brief   I2C structures and definitions
+ *
+ */
+
 #ifndef INC_STM32F411XX_I2C_DRIVER_H_
 #define INC_STM32F411XX_I2C_DRIVER_H_
 
@@ -23,8 +29,8 @@ typedef struct
 {
     I2C_Reg_TypeDef              *pI2Cx;
     I2C_Config_TypeDef           I2C_Config;
-    volatile const uint8_t       *pTxBuffer;
-    volatile uint8_t             *pRxBuffer;
+    const uint8_t                *pTxBuffer;
+    uint8_t                      *pRxBuffer;
     volatile uint32_t            TxLen;
     volatile uint32_t            RxLen;
     volatile uint8_t             TxRxState;

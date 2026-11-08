@@ -1,3 +1,9 @@
+/**
+ * @file    stm32f411xx_i2c_driver.c
+ * @brief   I2C Logic
+ *
+ */
+
 #include "stm32f411xx_i2c_driver.h"
 #include "stm32f411xx.h"
 #include "stm32f411xx_rcc_driver.h"

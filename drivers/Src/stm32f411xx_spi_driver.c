@@ -1,3 +1,9 @@
+/**
+ * @file    stm32f411xx_spi_driver.c
+ * @brief   SPI Logic
+ *
+ */
+
 #include "stm32f411xx_spi_driver.h"
 #include "stm32f411xx.h"
 

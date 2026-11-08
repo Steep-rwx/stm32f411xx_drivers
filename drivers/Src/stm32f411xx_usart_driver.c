@@ -1,3 +1,9 @@
+/**
+ * @file    stm32f411xx_usart_driver.c
+ * @brief   USART Logic
+ *
+ */
+
 #include "stm32f411xx_usart_driver.h"
 #include "stm32f411xx.h"
 #include "stm32f411xx_rcc_driver.h"
@@ -16,7 +22,7 @@
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void USART_PeriClockControl(USART_Reg_TypeDef *pUSARTx, uint8_t EnOrDi)
@@ -43,7 +49,7 @@ void USART_PeriClockControl(USART_Reg_TypeDef *pUSARTx, uint8_t EnOrDi)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void USART_Init(USART_Handle_TypeDef *pUSARTHandle)
@@ -55,7 +61,7 @@ void USART_Init(USART_Handle_TypeDef *pUSARTHandle)
 
     /*****************Configuring CR1 register*********************/
 
-    // Configuring a mode TX, RX, TX_RX
+    /* Configuring a mode TX, RX, TX_RX */
     if (pUSARTHandle->USART_Config.USART_Mode == USART_MODE_TX_ONLY)
     {
         cr1 |= (1U << USART_CR1_TE);
@@ -70,10 +76,10 @@ void USART_Init(USART_Handle_TypeDef *pUSARTHandle)
         cr1 |= (1U << USART_CR1_RE);
     }
 
-    // Configuring word length
+    /* Configuring word length */
     cr1 |= (pUSARTHandle->USART_Config.USART_WordLength << USART_CR1_M);
 
-    // Configuring parity control
+    /* Configuring parity control */
     if (pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_CONTROL_ENABLED_EVEN)
     {
         cr1 |= (1U << USART_CR1_PCE);
@@ -88,14 +94,14 @@ void USART_Init(USART_Handle_TypeDef *pUSARTHandle)
 
     /*****************Configuring CR2 register*********************/
 
-    // Configuring number of stop bits
+    /* Configuring number of stop bits */
     cr2 |= (pUSARTHandle->USART_Config.USART_NumberOfStopBits << USART_CR2_STOP);
 
     pUSARTHandle->pUSARTx->CR2 = cr2;
 
     /*****************Configuring CR3 register*********************/
 
-    // Configuring hardware flow control
+    /* Configuring hardware flow control */
 
     if (pUSARTHandle->USART_Config.USART_HardwareFlowControl == USART_HARDWARE_FLOW_CONTROL_ENABLED_CTS)
     {
@@ -116,7 +122,6 @@ void USART_Init(USART_Handle_TypeDef *pUSARTHandle)
     /*****************Configuring BRR register*********************/
 
     USART_SetBaudRate(pUSARTHandle->pUSARTx, pUSARTHandle->USART_Config.USART_Baudrate);
-
 }
 
 /********************************************************************
@@ -128,23 +133,26 @@ void USART_Init(USART_Handle_TypeDef *pUSARTHandle)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void USART_DeInit(USART_Reg_TypeDef *pUSARTx)
 {
     if (pUSARTx == USART1)
     {
+        /* Reset USART1 in APB2 reset register */
         RCC->APB2RSTR |= (1U << 4U);
         RCC->APB2RSTR &= ~(1U << 4U);
     } 
     else if (pUSARTx == USART2)
     {
+        /* Reset USART2 in APB1 reset register */
         RCC->APB1RSTR |= (1U << 17U);
         RCC->APB1RSTR &= ~(1U << 17U);
     } 
     else if (pUSARTx == USART6)
     {
+        /* Reset USART6 in APB2 reset register */
         RCC->APB2RSTR |= (1U << 5U);
         RCC->APB2RSTR &= ~(1U << 5U);
     }
@@ -161,10 +169,10 @@ void USART_DeInit(USART_Reg_TypeDef *pUSARTx)
  *
  * @return              - none
  *
- * @Note                - This is blocking call
+ * @note                - This is blocking call
  *
  */
-void USART_SendData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Length)
+void USART_SendData(USART_Handle_TypeDef *pUSARTHandle, const uint8_t *pTxBuffer, uint32_t Length)
 {
     uint16_t *pdata;
     for (uint32_t i = 0; i < Length; i++)
@@ -205,9 +213,9 @@ void USART_SendData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, uint
  * @param[in]           - pRxBuffer: Rx buffer
  * @param[in]           - Length: length of info
  *
- * @return              - This is blocking call
+ * @return              - none
  *
- * @Note                - none
+ * @note                - This is blocking call
  *
  */
 void USART_ReceiveData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Length)
@@ -257,11 +265,12 @@ void USART_ReceiveData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, u
  *
  * @return              - none
  *
- * @Note                - This is non-blocking call
+ * @note                - This is non-blocking call
  *
  */
-void USART_SendDataIT(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Length)
+void USART_SendDataIT(USART_Handle_TypeDef *pUSARTHandle, const uint8_t *pTxBuffer, uint32_t Length)
 {
+    if (Length <= 0) return;
     uint8_t tx_state = pUSARTHandle->TxState;
 
     if (tx_state != USART_BUSY_TX)
@@ -285,13 +294,14 @@ void USART_SendDataIT(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, ui
  * @param[in]           - pRxBuffer: Rx buffer
  * @param[in]           - Length: length of info
  *
- * @return              - This is non-blocking call
+ * @return              - none
  *
- * @Note                - none
+ * @note                - This is non-blocking call
  *
  */
 void USART_ReceiveDataIT(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Length)
 {
+    if (Length <= 0) return;
     uint8_t rx_state = pUSARTHandle->RxState;
 
     if(rx_state != USART_BUSY_RX)
@@ -313,7 +323,7 @@ void USART_ReceiveDataIT(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer,
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void USART_IRQHandling(USART_Handle_TypeDef *pUSARTHandle)
@@ -321,7 +331,7 @@ void USART_IRQHandling(USART_Handle_TypeDef *pUSARTHandle)
     uint32_t tc_bit, tcie_bit;
     uint32_t sr_reg = pUSARTHandle->pUSARTx->SR;
 
-    // Checking TC flag
+    /* Checking TC flag */
     tc_bit = pUSARTHandle->pUSARTx->SR & (1U << USART_SR_TC);
 
     tcie_bit = pUSARTHandle->pUSARTx->CR1 & (1U << USART_CR1_TCIE);
@@ -347,7 +357,7 @@ void USART_IRQHandling(USART_Handle_TypeDef *pUSARTHandle)
         }
     }
 
-    // Checking TXE
+    /* Checking TXE */
     uint32_t txe_bit, txeie_bit;
 
     txe_bit = pUSARTHandle->pUSARTx->SR & (1U << USART_SR_TXE);
@@ -362,19 +372,19 @@ void USART_IRQHandling(USART_Handle_TypeDef *pUSARTHandle)
             {
                 if (pUSARTHandle->USART_Config.USART_WordLength == USART_WORD_LENGTH_9_BITS)
                 {
-                    uint16_t *pdata = (uint16_t*) pUSARTHandle->pTxBuffer;
-
-                    pUSARTHandle->pUSARTx->DR = (*pdata & (uint16_t)0x01FF);
-
                     if (pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_CONTROL_DISABLED)
                     {
+                        const uint16_t *pData = (const uint16_t*) pUSARTHandle->pTxBuffer;
+                        pUSARTHandle->pUSARTx->DR = (*pData & (uint16_t)0x01FF);
                         pUSARTHandle->pTxBuffer++;
                         pUSARTHandle->pTxBuffer++;
 
                         pUSARTHandle->TxLength--;
                     }
                     else
-                    {
+                    {   
+                        const uint8_t *pData = pUSARTHandle->pTxBuffer;
+                        pUSARTHandle->pUSARTx->DR = (*pData & (uint8_t) 0xFF);
                         pUSARTHandle->pTxBuffer++;
                         pUSARTHandle->TxLength--;
                     }
@@ -393,7 +403,7 @@ void USART_IRQHandling(USART_Handle_TypeDef *pUSARTHandle)
         }
     }
 
-    // Checking RXNE
+    /* Checking RXNE */
     uint32_t rxne_bit, rxneie_bit;
 
     rxne_bit = pUSARTHandle->pUSARTx->SR & (1U << USART_SR_RXNE);
@@ -443,7 +453,7 @@ void USART_IRQHandling(USART_Handle_TypeDef *pUSARTHandle)
                 }
             }
 
-            // Checking length == 0
+            /* Checking length == 0 */
             if (!pUSARTHandle->RxLength)
             {
                 pUSARTHandle->pUSARTx->CR1 &= ~(1U << USART_CR1_RXNEIE);
@@ -453,7 +463,7 @@ void USART_IRQHandling(USART_Handle_TypeDef *pUSARTHandle)
         }
     }
 
-    // Checking CTS
+    /* Checking CTS */
     uint32_t cts_bit, ctse_bit, ctsie_bit;
 
     cts_bit = pUSARTHandle->pUSARTx->SR & (1U << USART_SR_CTS);
@@ -467,7 +477,7 @@ void USART_IRQHandling(USART_Handle_TypeDef *pUSARTHandle)
         USART_ApplicationEventCallback(pUSARTHandle, USART_EVENT_CTS);
     }
 
-    // Checking IDLE
+    /* Checking IDLE */
     uint32_t idle_bit, idleie_bit, dummy;
 
     idle_bit = pUSARTHandle->pUSARTx->SR & (1U << USART_SR_IDLE);
@@ -483,14 +493,10 @@ void USART_IRQHandling(USART_Handle_TypeDef *pUSARTHandle)
         USART_ApplicationEventCallback(pUSARTHandle, USART_EVENT_IDLE);
     }
 
-    // Checking Overrun
-    uint32_t ore_bit;
-
-    ore_bit = pUSARTHandle->pUSARTx->SR & (1U << USART_SR_ORE);
-
+    /* Checking Overrun */
     rxneie_bit = pUSARTHandle->pUSARTx->CR1 & (1U << USART_CR1_RXNEIE);
 
-    if (ore_bit && rxneie_bit)
+    if ((sr_reg & (1U << USART_SR_ORE)) && rxneie_bit)
     {
         dummy = pUSARTHandle->pUSARTx->SR;
         dummy = pUSARTHandle->pUSARTx->DR;
@@ -524,7 +530,7 @@ void USART_IRQHandling(USART_Handle_TypeDef *pUSARTHandle)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void USART_PeripheralControl(USART_Reg_TypeDef *pUSARTx, uint8_t EnOrDi)
@@ -549,18 +555,20 @@ void USART_PeripheralControl(USART_Reg_TypeDef *pUSARTx, uint8_t EnOrDi)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void USART_SetBaudRate(USART_Reg_TypeDef *pUSARTx, uint32_t BaudRate)
 {
-    // For APB clock
+    if (BaudRate == 0U) return;
+
+    /* For APB clock */
     uint32_t PCLKx;
 
-    // coded number
+    /* coded number */
     uint32_t USARTDIV;
 
-    // For mantissa & fraction values
+    /* For mantissa & fraction values */
     uint32_t mantissa, fraction;
 
     uint32_t brr = 0;
@@ -574,6 +582,8 @@ void USART_SetBaudRate(USART_Reg_TypeDef *pUSARTx, uint32_t BaudRate)
         PCLKx = RCC_GetPCLK1Value();
     }
 
+    if (PCLKx == 0U) return;
+
     if (pUSARTx->CR1 & (1U << USART_CR1_OVER8))
     {
         USARTDIV = ((25 * PCLKx) / (2 * BaudRate));
@@ -585,19 +595,28 @@ void USART_SetBaudRate(USART_Reg_TypeDef *pUSARTx, uint32_t BaudRate)
 
     mantissa = USARTDIV / 100;
 
-    brr |= (mantissa << 4U);
-
     fraction = USARTDIV % 100;
 
     if (pUSARTx->CR1 & (1U << USART_CR1_OVER8))
     {
         fraction = (((fraction * 8) + 50) / 100) & ((uint8_t)0x07);
+        if (fraction > 0x07U) /* if fraction > 7, then it will be non correctly round up */
+        {
+            mantissa++;
+            fraction = 0U;
+        }
     } 
     else
     {
         fraction = (((fraction * 16) + 50) / 100) & ((uint8_t)0x0F);
+        if (fraction > 0x0FU) /* if fraction > 15, then it will be non correctly round up */
+        {
+            mantissa++;
+            fraction = 0U;
+        }
     }
 
+    brr |= (mantissa << 4U);
     brr |= fraction;
     
     pUSARTx->BRR = brr;
@@ -613,7 +632,7 @@ void USART_SetBaudRate(USART_Reg_TypeDef *pUSARTx, uint32_t BaudRate)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 __attribute__((weak)) void USART_ApplicationEventCallback(USART_Handle_TypeDef *pUSARTHandle, uint8_t ApplicationEvent)

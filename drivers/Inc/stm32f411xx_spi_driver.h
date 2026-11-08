@@ -1,3 +1,9 @@
+/**
+ * @file    stm32f411xx_spi_driver.h
+ * @brief   SPI structures and definitions
+ *
+ */
+
 #ifndef INC_STM32F411XX_SPI_DRIVER_H_
 #define INC_STM32F411XX_SPI_DRIVER_H_
 
@@ -28,8 +34,8 @@ typedef struct
 {
     SPI_Reg_TypeDef              *pSPIx;
     SPI_Config_TypeDef           SPIConfig;
-    volatile const uint8_t       *pTxBuffer;
-    volatile uint8_t             *pRxBuffer;
+    const uint8_t                *pTxBuffer;
+    uint8_t                      *pRxBuffer;
     volatile uint32_t            TxLen;
     volatile uint32_t            RxLen;
     volatile uint8_t             TxState;

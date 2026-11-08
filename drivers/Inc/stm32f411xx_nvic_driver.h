@@ -1,4 +1,8 @@
-
+/**
+ * @file    stm32f411xx_nvic_driver.h
+ * @brief   NVIC functions signatures
+ *
+ */
 
 #ifndef INC_STM32F411XX_NVIC_DRIVER_H_
 #define INC_STM32F411XX_NVIC_DRIVER_H_

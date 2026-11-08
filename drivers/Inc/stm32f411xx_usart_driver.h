@@ -1,3 +1,9 @@
+/**
+ * @file    stm32f411xx_usart_driver.h
+ * @brief   USART structures and definitions
+ *
+ */
+
 #ifndef INC_STM32F411XX_USART_DRIVER_H_
 #define INC_STM32F411XX_USART_DRIVER_H_
 
@@ -10,12 +16,12 @@
  */
 typedef struct
 {
-    uint8_t     USART_Mode;                         
-    uint32_t    USART_Baudrate;                 
-    uint8_t     USART_NumberOfStopBits;         
-    uint8_t     USART_WordLength;               
-    uint8_t     USART_ParityControl;
-    uint8_t     USART_HardwareFlowControl;
+    uint8_t     USART_Mode;                         /*!< possible values from @ref USART_MODE */
+    uint32_t    USART_Baudrate;                     /*!< possible values from @ref USART_BAUDRATE */
+    uint8_t     USART_NumberOfStopBits;             /*!< possible values from @ref USART_NUMBER_OF_STOP_BITS */
+    uint8_t     USART_WordLength;                   /*!< possible values from @ref USART_WORD_LENGTH */
+    uint8_t     USART_ParityControl;                /*!< possible values from @ref USART_PARITY_CONTROL */
+    uint8_t     USART_HardwareFlowControl;          /*!< possible values from @ref USART_HARDWARE_FLOW_CONTROL */
 } USART_Config_TypeDef;
 
 /*
@@ -23,25 +29,25 @@ typedef struct
  */
 typedef struct
 {
-    USART_Reg_TypeDef       *pUSARTx;
-    USART_Config_TypeDef    USART_Config;
-    uint8_t                 *pTxBuffer;
-    uint8_t                 *pRxBuffer;
-    uint32_t                TxLength;
-    uint32_t                RxLength;
-    uint8_t                 TxState;
-    uint8_t                 RxState;
+    USART_Reg_TypeDef                *pUSARTx;
+    USART_Config_TypeDef             USART_Config;
+    const uint8_t                    *pTxBuffer;
+    uint8_t                          *pRxBuffer;
+    volatile uint32_t                TxLength;
+    volatile uint32_t                RxLength;
+    volatile uint8_t                 TxState;
+    volatile uint8_t                 RxState;
 } USART_Handle_TypeDef;
 
 /*
- * @USART_Mode
+ * USART_MODE
  */
 #define USART_MODE_TX_RX        0
 #define USART_MODE_TX_ONLY      1
 #define USART_MODE_RX_ONLY      2
 
 /*
- * @USART_Baudrate
+ * USART_BAUDRATE
  */
 #define USART_BAUDRATE_1200         1200
 #define USART_BAUDRATE_2400         2400
@@ -52,7 +58,7 @@ typedef struct
 #define USART_BAUDRATE_115200       115200
 
 /*
- * @USART_NumberOfStopBits
+ * USART_NUMBER_OF_STOP_BITS
  */
 #define USART_NUMBER_OF_STOP_BITS_1_0         0
 #define USART_NUMBER_OF_STOP_BITS_0_5         1
@@ -60,20 +66,20 @@ typedef struct
 #define USART_NUMBER_OF_STOP_BITS_1_5         3
 
 /*
- * @USART_WordLength
+ * USART_WORD_LENGTH
  */
 #define USART_WORD_LENGTH_8_BITS                0
 #define USART_WORD_LENGTH_9_BITS                1
 
 /*
- * @USART_ParityControl
+ * USART_PARITY_CONTROL
  */
 #define USART_PARITY_CONTROL_DISABLED           0
 #define USART_PARITY_CONTROL_ENABLED_EVEN       1
 #define USART_PARITY_CONTROL_ENABLED_ODD        2
 
 /*
- * @USART_HardwareFlowControl
+ * USART_HARDWARE_FLOW_CONTROL
  */
 #define USART_HARDWARE_FLOW_CONTROL_DISABLED            0
 #define USART_HARDWARE_FLOW_CONTROL_ENABLED_CTS         1
@@ -104,7 +110,6 @@ typedef struct
 #define USART_EVENT_ORE             5
 #define USART_EVENT_ERROR_FE        6
 #define USART_EVENT_ERROR_NF        7
-#define USART_EVENT_ERROR_ORE       8
 
 
 
@@ -113,11 +118,6 @@ typedef struct
 static inline uint8_t USART_GetFlagStatus(USART_Reg_TypeDef *pUSARTx, uint32_t FlagName)
 {
     return (pUSARTx->SR & FlagName) ? FLAG_SET : FLAG_RESET;
-}
-
-static inline void USART_ClearFLag(USART_Reg_TypeDef *pUSARTx, uint32_t FlagName)
-{
-    pUSARTx->SR &= ~(FlagName);
 }
 
 /******************APIs supported by this driver**********************/
@@ -136,10 +136,10 @@ void USART_DeInit(USART_Reg_TypeDef *pUSARTx);
 /*
  * Data send and receive
  */
-void USART_SendData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Length);
+void USART_SendData(USART_Handle_TypeDef *pUSARTHandle, const uint8_t *pTxBuffer, uint32_t Length);
 void USART_ReceiveData(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Length);
 
-void USART_SendDataIT(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Length);
+void USART_SendDataIT(USART_Handle_TypeDef *pUSARTHandle, const uint8_t *pTxBuffer, uint32_t Length);
 void USART_ReceiveDataIT(USART_Handle_TypeDef *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Length);
 
 /*
@@ -158,4 +158,4 @@ void USART_SetBaudRate(USART_Reg_TypeDef *pUSARTx, uint32_t BaudRate);
  */
 void USART_ApplicationEventCallback(USART_Handle_TypeDef *pUSARTHandle, uint8_t ApplicationEvent);
 
-#endif /* INC_STM32F411XX_I2C_DRIVER_H_ */
+#endif /* INC_STM32F411XX_USART_DRIVER_H_ */
