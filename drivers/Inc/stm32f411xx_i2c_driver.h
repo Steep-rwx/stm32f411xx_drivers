@@ -10,10 +10,10 @@
  */
 typedef struct
 {
-    uint32_t I2C_SCLSpeed;
-    uint8_t  I2C_DeviceAddress;
-    uint8_t  I2C_ACKControl;
-    uint8_t  I2C_FMDutyCycle;
+    uint32_t I2C_SCLSpeed;          /*!< possible values from @ref I2C_SCL_SPEED */
+    uint8_t  I2C_DeviceAddress;     /*!< Device own address */
+    uint8_t  I2C_ACKControl;        /*!< possible values from @ref I2C_ACK_CONTROL */
+    uint8_t  I2C_FMDutyCycle;       /*!< possible values from @ref I2C_FM_DUTY_CYCLE */
 } I2C_Config_TypeDef;
 
 /*
@@ -21,32 +21,32 @@ typedef struct
  */
 typedef struct
 {
-    I2C_Reg_TypeDef     *pI2Cx;
-    I2C_Config_TypeDef  I2C_Config;
-    uint8_t             *pTxBuffer;
-    uint8_t             *pRxBuffer;
-    uint32_t            TxLen;
-    uint32_t            RxLen;
-    uint8_t             TxRxState;
-    uint8_t             DevAddr;
-    uint32_t            RxSize;
-    uint8_t             RepeatedStart;
+    I2C_Reg_TypeDef              *pI2Cx;
+    I2C_Config_TypeDef           I2C_Config;
+    volatile const uint8_t       *pTxBuffer;
+    volatile uint8_t             *pRxBuffer;
+    volatile uint32_t            TxLen;
+    volatile uint32_t            RxLen;
+    volatile uint8_t             TxRxState;
+    volatile uint8_t             DevAddr;
+    volatile uint32_t            RxSize;
+    volatile uint8_t             RepeatedStart;
 } I2C_Handle_TypeDef;
 
 /*
- * @I2C_SCLSpeed
+ * I2C_SCL_SPEED
  */
 #define I2C_SCL_SPEED_SM    100000
 #define I2C_SCL_SPEED_FM    400000
 
 /*
- * @I2C_ACKControl;
+ * I2C_ACK_CONTROL
  */
 #define I2C_ACK_ENABLE      1
 #define I2C_ACK_DISABLE     0
 
 /*
- * @I2C_FMDutyCycle;
+ * I2C_FM_DUTY_CYCLE
  */
 #define I2C_FM_DUTY_2       0
 #define I2C_FM_DUTY_16_9    1
@@ -54,17 +54,17 @@ typedef struct
 /*
  * I2C flag definitions
  */
-#define I2C_FLAG_TXE            (1 << I2C_SR1_TXE)
-#define I2C_FLAG_RXNE           (1 << I2C_SR1_RXNE)
-#define I2C_FLAG_SB             (1 << I2C_SR1_SB)
-#define I2C_FLAG_ADDR           (1 << I2C_SR1_ADDR)
-#define I2C_FLAG_BTF            (1 << I2C_SR1_BTF)
-#define I2C_FLAG_STOPF          (1 << I2C_SR1_STOPF)
-#define I2C_FLAG_BERR           (1 << I2C_SR1_BERR)
-#define I2C_FLAG_ARLO           (1 << I2C_SR1_ARLO)
-#define I2C_FLAG_AF             (1 << I2C_SR1_AF)
-#define I2C_FLAG_OVR            (1 << I2C_SR1_OVR)
-#define I2C_FLAG_TIMEOUT        (1 << I2C_SR1_TIMEOUT)
+#define I2C_FLAG_TXE            (1U << I2C_SR1_TXE)
+#define I2C_FLAG_RXNE           (1U << I2C_SR1_RXNE)
+#define I2C_FLAG_SB             (1U << I2C_SR1_SB)
+#define I2C_FLAG_ADDR           (1U << I2C_SR1_ADDR)
+#define I2C_FLAG_BTF            (1U << I2C_SR1_BTF)
+#define I2C_FLAG_STOPF          (1U << I2C_SR1_STOPF)
+#define I2C_FLAG_BERR           (1U << I2C_SR1_BERR)
+#define I2C_FLAG_ARLO           (1U << I2C_SR1_ARLO)
+#define I2C_FLAG_AF             (1U << I2C_SR1_AF)
+#define I2C_FLAG_OVR            (1U << I2C_SR1_OVR)
+#define I2C_FLAG_TIMEOUT        (1U << I2C_SR1_TIMEOUT)
 
 /*
  * I2C Read or write definitions
@@ -131,7 +131,7 @@ void I2C_DeInit(I2C_Reg_TypeDef *pI2Cx);                /* Reset through RCC */
  * Data send and receive
  */
 void I2C_MasterSendData(I2C_Handle_TypeDef *pI2CHandle, 
-                        uint8_t *pTxBuffer, 
+                        const uint8_t *pTxBuffer, 
                         uint32_t length, 
                         uint8_t slaveAddr, 
                         uint8_t repeatedStart);
@@ -145,7 +145,7 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
  * Data send and receive with interrupts 
  */
 uint8_t I2C_MasterSendDataIT(I2C_Handle_TypeDef *pI2CHandle, 
-                          uint8_t *pTxBuffer, 
+                          const uint8_t *pTxBuffer, 
                           uint32_t length, 
                           uint8_t slaveAddr, 
                           uint8_t repeatedStart);
