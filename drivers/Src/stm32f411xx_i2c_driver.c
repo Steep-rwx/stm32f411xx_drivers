@@ -3,7 +3,7 @@
 #include "stm32f411xx_rcc_driver.h"
 
 #include <stdint.h>
-#include <sys/types.h>
+#include <stddef.h>
 
 
 /************************Private functions prototypes*********************************/
@@ -21,14 +21,14 @@ static void I2C_CloseReceiveData(I2C_Handle_TypeDef *pI2CHandle);
 /********************************************************************
  * @fn                  - I2C_PeriClockControl
  *
- * @brief               - Function which enables/disables clock for choosed I2C
+ * @brief               - Function which enables/disables clock for choosen I2C
  *
  * @param[in]           - pI2Cx: I2C base address
  * @param[in]           - enOrDi: ENABLE or DISABLE macro
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void I2C_PeriClockControl(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi)
@@ -52,13 +52,13 @@ void I2C_PeriClockControl(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi)
 /********************************************************************
  * @fn                  - I2C_Init
  *
- * @brief               - Initializes the specifies I2C
+ * @brief               - Initializes the specified I2C
  *
  * @param[in]           - pI2CHandle: A structure that contains pin base address and pin config
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void I2C_Init(I2C_Handle_TypeDef *pI2CHandle)
@@ -68,18 +68,18 @@ void I2C_Init(I2C_Handle_TypeDef *pI2CHandle)
 
     uint32_t tempreg = 0;
 
-    // freq control bits
+    /* freq control */
     tempreg = 0;
     tempreg |= RCC_GetPCLK1Value() / 1000000U;
     pI2CHandle->pI2Cx->CR2 = (tempreg & 0x3F);
 
-    // address config
+    /* address config */
     tempreg = 0;
     tempreg |= pI2CHandle->I2C_Config.I2C_DeviceAddress << I2C_OAR1_ADD71;
-    tempreg |= (1U << 14U); //Always high bit, more info in docs
+    tempreg |= (1U << 14U); /* Always high bit, more info in docs */
     pI2CHandle->pI2Cx->OAR1 = tempreg;
 
-    // CCR config & calculations
+    /* CCR config & calculations */
     uint16_t ccr_value = 0;
     tempreg = 0;
     if (pI2CHandle->I2C_Config.I2C_SCLSpeed <= I2C_SCL_SPEED_SM)
@@ -104,35 +104,34 @@ void I2C_Init(I2C_Handle_TypeDef *pI2CHandle)
     pI2CHandle->pI2Cx->CCR = tempreg;
 
     tempreg = 0;
-    //TRISE config
+    /* TRISE config */
     if (pI2CHandle->I2C_Config.I2C_SCLSpeed == I2C_SCL_SPEED_SM)
     {
         tempreg = (RCC_GetPCLK1Value() / 1000000U) + 1;
     } 
     else
     {
-        tempreg = ((RCC_GetPCLK1Value() * 300) / 1000000000U) + 1;
+        tempreg = ((RCC_GetPCLK1Value() * 3) / 10000000U) + 1;
     }
 
     pI2CHandle->pI2Cx->TRISE = (tempreg & 0x3F);
+    tempreg = 0;
 
     I2C_PeripheralControl(pI2CHandle->pI2Cx, ENABLE);
 
-    // ack control bit
-    tempreg |= (pI2CHandle->I2C_Config.I2C_ACKControl << I2C_CR1_ACK);
-    pI2CHandle->pI2Cx->CR1 = tempreg;
+    I2C_ACKToggle(pI2CHandle->pI2Cx, pI2CHandle->I2C_Config.I2C_ACKControl);
 }
 
 /********************************************************************
  * @fn                  - I2C_DeInit
  *
- * @brief               - Deinitializes the specified pin
+ * @brief               - Deinitializes the specified I2C
  *
  * @param[in]           - pI2Cx: A base address of I2Cx
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void I2C_DeInit(I2C_Reg_TypeDef *pI2Cx)
@@ -162,12 +161,12 @@ void I2C_DeInit(I2C_Reg_TypeDef *pI2Cx)
  * @param[in]           - pI2CHandle: base address of I2C handle
  * @param[in]           - pTxBuffer: Tx buffer
  * @param[in]           - length: length of info
- * @param[in]           - slaveAddr: slave addres in 7-bit format
+ * @param[in]           - slaveAddr: slave address in 7-bit format
  * @param[in]           - repeatedStart: enable or disable repeated start
  *
  * @return              - none
  *
- * @Note                - This is blocking call
+ * @note                - This is blocking call
  *
  */
 void I2C_MasterSendData(I2C_Handle_TypeDef *pI2CHandle, 
@@ -210,12 +209,12 @@ void I2C_MasterSendData(I2C_Handle_TypeDef *pI2CHandle,
  * @param[in]           - pI2CHandle: base address of I2C handle
  * @param[in]           - pRxBuffer: Rx buffer
  * @param[in]           - length: length of info
- * @param[in]           - slaveAddr: slave addres in 7 bit format
+ * @param[in]           - slaveAddr: slave address in 7 bit format
  * @param[in]           - repeatedStart: enable or disable repeated start
  *
  * @return              - none
  *
- * @Note                - This is blocking call
+ * @note                - This is blocking call
  *
  */
 void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle, 
@@ -224,6 +223,7 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
                            uint8_t slaveAddr,
                            uint8_t repeatedStart)
 {
+    if (length <= 0) return;
     I2C_GenerateStartCondition(pI2CHandle->pI2Cx);
 
     while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_SB)));
@@ -234,7 +234,7 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
 
     if (length == 1)
     {
-        I2C_ACKToggle(pI2CHandle->pI2Cx, I2C_ACK_DISABLE);
+        I2C_ACKToggle(pI2CHandle->pI2Cx, DISABLE);
 
         I2C_ClearADDRFlag(pI2CHandle);
 
@@ -274,6 +274,7 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
     } 
     else
     {
+        I2C_ACKToggle(pI2CHandle->pI2Cx, ENABLE);
         I2C_ClearADDRFlag(pI2CHandle);
         for (uint32_t i = length; i > 3; i--)
         {
@@ -282,7 +283,7 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
         }
 
         while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_BTF)));
-        I2C_ACKToggle(pI2CHandle->pI2Cx, I2C_ACK_DISABLE);
+        I2C_ACKToggle(pI2CHandle->pI2Cx, DISABLE);
         *pRxBuffer++ = pI2CHandle->pI2Cx->DR;
 
         while(!(I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_BTF)));
@@ -296,7 +297,7 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
 
     if(pI2CHandle->I2C_Config.I2C_ACKControl == I2C_ACK_ENABLE)
     {
-        I2C_ACKToggle(pI2CHandle->pI2Cx, I2C_ACK_ENABLE);
+        I2C_ACKToggle(pI2CHandle->pI2Cx, ENABLE);
     }
 }
 
@@ -308,12 +309,12 @@ void I2C_MasterReceiveData(I2C_Handle_TypeDef *pI2CHandle,
  * @param[in]           - pI2CHandle: base address
  * @param[in]           - pTxBuffer: Tx buffer
  * @param[in]           - length: length of info
- * @param[in]           - slaveAddr: slave addres in 7-bit format
+ * @param[in]           - slaveAddr: slave address in 7-bit format
  * @param[in]           - repeatedStart: enable or disable repeated start
  *
  * @return              - none
  *
- * @Note                - This is non blocking call
+ * @note                - This is non blocking call
  *
  */
 uint8_t I2C_MasterSendDataIT(I2C_Handle_TypeDef *pI2CHandle, 
@@ -356,12 +357,12 @@ uint8_t I2C_MasterSendDataIT(I2C_Handle_TypeDef *pI2CHandle,
  * @param[in]           - pI2CHandle: base address of I2C handle
  * @param[in]           - pRxBuffer: Rx buffer
  * @param[in]           - length: length of info
- * @param[in]           - slaveAddr: slave addres in 7 bit format
+ * @param[in]           - slaveAddr: slave address in 7 bit format
  * @param[in]           - repeatedStart: enable or disable repeated start
  *
  * @return              - none
  *
- * @Note                - This is non blocking call
+ * @note                - This is non blocking call
  *
  */
 uint8_t I2C_MasterReceiveDataIT(I2C_Handle_TypeDef *pI2CHandle, 
@@ -401,14 +402,14 @@ uint8_t I2C_MasterReceiveDataIT(I2C_Handle_TypeDef *pI2CHandle,
 /*******************************************************************
  * @fn                  - I2C_SlaveSendData
  *
- * @brief               - Sending one byte to master
+ * @brief               - Sending one byte from master
  *
  * @param[in]           - pI2Cx: address of I2Cx
  * @param[in]           - data: data that need to send
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void I2C_SlaveSendData(I2C_Reg_TypeDef *pI2Cx, uint8_t data)
@@ -419,13 +420,13 @@ void I2C_SlaveSendData(I2C_Reg_TypeDef *pI2Cx, uint8_t data)
 /*******************************************************************
  * @fn                  - I2C_SlaveReceiveData
  *
- * @brief               - Receiving one byte to master
+ * @brief               - Receiving one byte from master
  *
  * @param[in]           - pI2Cx: address of I2Cx
  *
  * @return              - Received data (one byte)
  *
- * @Note                - none
+ * @note                - none
  *
  */
 uint8_t I2C_SlaveReceiveData(I2C_Reg_TypeDef *pI2Cx)
@@ -442,7 +443,7 @@ uint8_t I2C_SlaveReceiveData(I2C_Reg_TypeDef *pI2Cx)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void I2C_EV_IRQHandling(I2C_Handle_TypeDef *pI2CHandle)
@@ -499,7 +500,7 @@ void I2C_EV_IRQHandling(I2C_Handle_TypeDef *pI2CHandle)
         {
             if (pI2CHandle->pI2Cx->SR1 & (1U << I2C_SR1_RXNE))
             {
-                ;
+                /* Nothing to do */
             }
         }
     }
@@ -562,13 +563,13 @@ void I2C_EV_IRQHandling(I2C_Handle_TypeDef *pI2CHandle)
 /*******************************************************************
  * @fn                  - I2C_ER_IRQHandling
  *
- * @brief               - Handles the erorr IRQ's
+ * @brief               - Handles the error IRQ's
  *
  * @param[in]           - pI2CHandle: address of I2C structure
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void I2C_ER_IRQHandling(I2C_Handle_TypeDef *pI2CHandle)
@@ -631,7 +632,7 @@ void I2C_ER_IRQHandling(I2C_Handle_TypeDef *pI2CHandle)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void I2C_PeripheralControl(I2C_Reg_TypeDef *pI2Cx, uint8_t enOrDi)
@@ -685,7 +686,7 @@ void I2C_SlaveToggleInterrupts(I2C_Reg_TypeDef *pI2Cx, uint8_t EnOrDi)
  *
  * @return              - none
  *
- * @Note                - You can rewrite this function in your code
+ * @note                - You can rewrite this function in your code
  *
  */
 __attribute__((weak)) void I2C_ApplicationEventCallback(I2C_Handle_TypeDef *pI2CHandle, uint8_t ApplicationEvent)
@@ -729,22 +730,12 @@ static void I2C_ExecuteAddressPhase(I2C_Reg_TypeDef *pI2Cx, uint8_t slaveAddr, u
 static void I2C_ClearADDRFlag(I2C_Handle_TypeDef *pI2CHandle)
 {
     uint32_t dummyRead; 
-
-    if (pI2CHandle->pI2Cx->SR2 & (1U << I2C_SR2_MSL))
+    if (pI2CHandle->TxRxState == I2C_BUSY_RX)
     {
-        if (pI2CHandle->TxRxState == I2C_BUSY_RX)
+        if (pI2CHandle->RxSize == 1)
         {
-            if (pI2CHandle->RxSize == 1)
-            {
-                I2C_ACKToggle(pI2CHandle->pI2Cx, DISABLE);
+            I2C_ACKToggle(pI2CHandle->pI2Cx, DISABLE);
 
-                dummyRead = pI2CHandle->pI2Cx->SR1;
-                dummyRead = pI2CHandle->pI2Cx->SR2;
-                (void) dummyRead;
-            }
-        }
-        else
-        {
             dummyRead = pI2CHandle->pI2Cx->SR1;
             dummyRead = pI2CHandle->pI2Cx->SR2;
             (void) dummyRead;
