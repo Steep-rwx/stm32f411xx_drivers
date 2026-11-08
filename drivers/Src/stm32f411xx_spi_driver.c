@@ -20,7 +20,7 @@ static void spi_ovr_interrupt_handle(SPI_Handle_TypeDef *pSPIHandle);
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void SPI_PeriClockControl(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi)
@@ -49,7 +49,7 @@ void SPI_PeriClockControl(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void SPI_Init(SPI_Handle_TypeDef *pSPIHandle)
@@ -106,29 +106,32 @@ void SPI_Init(SPI_Handle_TypeDef *pSPIHandle)
 /********************************************************************
  * @fn                  - SPI_DeInit
  *
- * @brief               - Deinitializes the specified pin
+ * @brief               - Deinitializes the specified SPI
  *
  * @param[in]           - pSPIx: A base address of SPIx
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void SPI_DeInit(SPI_Reg_TypeDef *pSPIx)
 {
     if (pSPIx == SPI1)
     {
+        /* SPI1 reset in APB2 */
         RCC->APB2RSTR |= (1U << 12);
         RCC->APB2RSTR &= ~(1U << 12);
     } 
     else if (pSPIx == SPI2)
     {
+        /* SPI2 reset in APB1 */
         RCC->APB1RSTR |= (1U << 14);
         RCC->APB1RSTR &= ~(1U << 14);
     } 
     else if (pSPIx == SPI3)
     {
+        /* SPI3 reset in APB1 */
         RCC->APB1RSTR |= (1U << 15);
         RCC->APB1RSTR &= ~(1U << 15);
     }
@@ -145,7 +148,7 @@ void SPI_DeInit(SPI_Reg_TypeDef *pSPIx)
  *
  * @return              - none
  *
- * @Note                - This is blocking call
+ * @note                - This is blocking call
  *
  */
 void SPI_SendData(SPI_Reg_TypeDef *pSPIx, const uint8_t *pTxBuffer, uint32_t length)
@@ -173,7 +176,12 @@ void SPI_SendData(SPI_Reg_TypeDef *pSPIx, const uint8_t *pTxBuffer, uint32_t len
             pTxBuffer++;
             length--;
         }        
-    } 
+    }
+    
+    /* Last frame DR clearing */
+    SPI_WaitTxEmpty(pSPIx);
+    while(pSPIx->SR & SPI_BUSY_FLAG);
+    SPI_ClearOVRFlag(pSPIx);
 }
 
 /********************************************************************
@@ -187,7 +195,7 @@ void SPI_SendData(SPI_Reg_TypeDef *pSPIx, const uint8_t *pTxBuffer, uint32_t len
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void SPI_ReceiveData(SPI_Reg_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t length)
@@ -225,7 +233,7 @@ void SPI_ReceiveData(SPI_Reg_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t length
 }
 
 /********************************************************************
- * @fn                  - SPI_SendDataIt
+ * @fn                  - SPI_SendDataIT
  *
  * @brief               - Send data through SPI with interrupt
  *
@@ -235,7 +243,7 @@ void SPI_ReceiveData(SPI_Reg_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t length
  *
  * @return              - none
  *
- * @Note                - This is non blocking call
+ * @note                - This is non blocking call
  *
  */
 uint8_t SPI_SendDataIT(SPI_Handle_TypeDef *pSPIHandle, const uint8_t *pTxBuffer, uint32_t length)
@@ -244,13 +252,13 @@ uint8_t SPI_SendDataIT(SPI_Handle_TypeDef *pSPIHandle, const uint8_t *pTxBuffer,
 
     if(state != SPI_BUSY_TX)
     {
-        pSPIHandle->pTxBuffer = pTxBuffer; /* Saving TxBuffer */
+        pSPIHandle->pTxBuffer = pTxBuffer;
 
-        pSPIHandle->TxLen = length; /* Saving length of buffer */
+        pSPIHandle->TxLen = length;
 
-        pSPIHandle->TxState = SPI_BUSY_TX; /* Setting busy flag */
+        pSPIHandle->TxState = SPI_BUSY_TX;
 
-        pSPIHandle->pSPIx->CR2 |= (1U << SPI_CR2_TXEIE); /* Setting TXEIE */
+        pSPIHandle->pSPIx->CR2 |= (1U << SPI_CR2_TXEIE);
     }
 
     return state;
@@ -267,7 +275,7 @@ uint8_t SPI_SendDataIT(SPI_Handle_TypeDef *pSPIHandle, const uint8_t *pTxBuffer,
  *
  * @return              - none
  *
- * @Note                - None blocking
+ * @note                - None blocking
  *
  */
 uint8_t SPI_ReceiveDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pRxBuffer, uint32_t length)
@@ -276,13 +284,15 @@ uint8_t SPI_ReceiveDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pRxBuffer, ui
 
     if(state != SPI_BUSY_RX)
     {
-        pSPIHandle->pRxBuffer = pRxBuffer; /* Saving RxBuffer */
+        pSPIHandle->pRxBuffer = pRxBuffer;
 
-        pSPIHandle->RxLen = length; /* Saving length of buffer */
+        pSPIHandle->RxLen = length;
 
-        pSPIHandle->RxState = SPI_BUSY_RX; /* Setting busy flag */
+        pSPIHandle->RxState = SPI_BUSY_RX;
 
-        pSPIHandle->pSPIx->CR2 |= (1U << SPI_CR2_RXNEIE); /* Setting RXNEIE */
+        pSPIHandle->pSPIx->CR2 |= (1U << SPI_CR2_RXNEIE);
+
+        pSPIHandle->pSPIx->CR2 |= (1U << SPI_CR2_ERRIE);
     }
 
     return state;
@@ -291,13 +301,13 @@ uint8_t SPI_ReceiveDataIT(SPI_Handle_TypeDef *pSPIHandle, uint8_t *pRxBuffer, ui
 /********************************************************************
  * @fn                  - SPI_IRQHandling
  *
- * @brief               - Clears pending interrupt
+ * @brief               - Handles IRQ
  *
  * @param[in]           - pSPIHandle: address of SPIHandle struct
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void SPI_IRQHandling(SPI_Handle_TypeDef *pSPIHandle)
@@ -338,7 +348,7 @@ void SPI_IRQHandling(SPI_Handle_TypeDef *pSPIHandle)
  *
  * @return              - none
  *
- * @Note                - none
+ * @note                - none
  *
  */
 void SPI_PeripheralControl(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi)
@@ -352,6 +362,71 @@ void SPI_PeripheralControl(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi)
         pSPIx->CR1 &= ~(1U << SPI_CR1_SPE);
     }
 }
+
+/********************************************************************
+ * @fn                  - SPI_SSISet
+ *
+ * @brief               - Set SSI in specified SPI
+ *
+ * @param[in]           - pSPIx: base address
+ * @param[in]           - enOrDi: ENABLE or DISABLE
+ *
+ * @return              - none
+ *
+ * @note                - none
+ *
+ */
+void SPI_SSISet(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi)
+{
+    if (enOrDi)
+    {
+        pSPIx->CR1 |= (1U << SPI_CR1_SSI);
+    }
+    else
+    {
+        pSPIx->CR1 &= ~(1U << SPI_CR1_SSI);
+    }
+}
+
+/********************************************************************
+ * @fn                  - SPI_ClearOVRFlag
+ *
+ * @brief               - Clear OVR flag
+ *
+ * @param[in]           - pSPIx: base address
+ *
+ * @return              - none
+ *
+ * @note                - none
+ *
+ */
+void SPI_ClearOVRFlag(SPI_Reg_TypeDef *pSPIx)
+{
+    uint8_t ovr_status;
+    ovr_status = pSPIx->DR;
+    ovr_status = pSPIx->SR;
+    (void) ovr_status;
+}
+
+/********************************************************************
+ * @fn                  - SPI_ApplicationEventCallback
+ *
+ * @brief               - Application callback function
+ *
+ * @param[in]           - pSPIHandle: pointer to the handle of the SPI peripheral
+ * @param[in]           - ApplicationEvent: event code
+ *
+ * @return              - none
+ *
+ * @note                - none
+ *
+ */
+__attribute__((weak)) void SPI_ApplicationEventCallback(SPI_Handle_TypeDef *pSPIHandle, uint8_t ApplicationEvent)
+{
+
+}
+
+/**********************Driver private functions*************************/
 
 static void spi_txe_interrupt_handle(SPI_Handle_TypeDef *pSPIHandle)
 {
@@ -414,28 +489,6 @@ static void spi_ovr_interrupt_handle(SPI_Handle_TypeDef *pSPIHandle)
     SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_OVR_ERR);
 }
 
-
-void SPI_SSISet(SPI_Reg_TypeDef *pSPIx, uint8_t enOrDi)
-{
-    if (enOrDi)
-    {
-        pSPIx->CR1 |= (1U << SPI_CR1_SSI);
-    }
-    else
-    {
-        pSPIx->CR1 &= ~(1U << SPI_CR1_SSI);
-    }
-}
-
-
-void SPI_ClearOVRFlag(SPI_Reg_TypeDef *pSPIx)
-{
-    uint8_t ovr_status;
-    ovr_status = pSPIx->DR;
-    ovr_status = pSPIx->SR;
-    (void) ovr_status;
-}
-
 void SPI_CloseTransmission(SPI_Handle_TypeDef *pSPIHandle)
 {
     pSPIHandle->pSPIx->CR2 &= ~(1U << SPI_CR2_TXEIE);
@@ -447,13 +500,8 @@ void SPI_CloseTransmission(SPI_Handle_TypeDef *pSPIHandle)
 void SPI_CloseReception(SPI_Handle_TypeDef *pSPIHandle)
 {
     pSPIHandle->pSPIx->CR2 &= ~(1U << SPI_CR2_RXNEIE);
+    pSPIHandle->pSPIx->CR2 &= ~(1U << SPI_CR2_ERRIE);
     pSPIHandle->pRxBuffer = NULL;
     pSPIHandle->RxLen = 0;
     pSPIHandle->RxState = SPI_READY;
-}
-
-
-__attribute__((weak)) void SPI_ApplicationEventCallback(SPI_Handle_TypeDef *pSPIHandle, uint8_t ApplicationEvent)
-{
-
 }
